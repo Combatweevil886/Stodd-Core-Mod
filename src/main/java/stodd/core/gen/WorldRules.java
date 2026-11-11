@@ -426,4 +426,9 @@ public final class WorldRules {
     public String skyName(int cx, int cz, int seed) {
         return islandName("sky", Hash.hash3(cx + 5, cz - 9, seed ^ 0x1f3d5b79));
     }
+
+    /** The name of the sunken island centred on (cx, cz). */
+    public String deepName(int cx, int cz, int seed) {
+        return islandName("deep", Hash.hash3(cx - 11, cz + 3, seed ^ 0x2545f491));
+    }
 }

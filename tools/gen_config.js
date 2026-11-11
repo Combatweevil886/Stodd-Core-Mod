@@ -16,11 +16,12 @@ const FILES = [
   {
     name: 'world', title: 'the island world',
     intro: [
-      'The island world: the spawn islands and their spacing, the sky islands (normal islands lifted into the sky), how often an',
+      'The island world: the spawn islands and their spacing, the sky islands (normal islands lifted into the sky), the sunken',
+      'islands (sunk deep under the sea inside a bubble dome), how often an',
       'island is a city or a dressed island, island themes and names, waystones, the Log Pose and /stodd locate.',
       'World generation settings apply to worlds created afterwards (spawnIslands needs a game restart first); the rest after /reload.'
     ],
-    keys: ['spawnIslands', 'skyIslands', 'city', 'makeover', 'islandThemes', 'islandNames', 'islandSyllables', 'oceanTheme',
+    keys: ['spawnIslands', 'skyIslands', 'deepIslands', 'city', 'makeover', 'islandThemes', 'islandNames', 'islandSyllables', 'oceanTheme',
       'islandLandThreshold', 'islandPeakStep', 'islandMergeRadius', 'islandLinkRadius', 'islandScanStep', 'islandThemeCell',
       'spawn', 'waystones', 'logPose', 'locate', 'world']
   },

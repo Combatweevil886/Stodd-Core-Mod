@@ -10,6 +10,7 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import stodd.core.gen.IslandFinder;
 import stodd.core.gen.IslePlanner;
+import stodd.core.gen.SkyField;
 import stodd.core.gen.WorldRules;
 
 import java.util.ArrayList;
@@ -23,7 +24,8 @@ import java.util.Optional;
  * the surface repainted by the theme's rules, the theme's biome and, on some cells, a landmark (the big centrepiece in the middle).
  * stodd:sky_block (kind "sky") - one cell of a lifted sky island: the odd ruin and, when the config asks for them, a fixed biome
  * and extra trees / flowers / boulders (by default a sky island keeps the biomes and plants it would have had on the ground).
- * Both are generated with their chunks; IslePlanner decides the layout once per island.
+ * stodd:deep_block (kind "deep") - one cell of a sunken island's bubble dome (CellDomePiece).
+ * All are generated with their chunks; IslePlanner decides the layout once per island.
  */
 public final class IsleStructure extends Structure {
     public static final Codec<IsleStructure> CODEC = RecordCodecBuilder.create(i -> i.group(
@@ -49,6 +51,17 @@ public final class IsleStructure extends Structure {
         int mx = x0 + half, mz = z0 + half;
         int seed = WorldRules.scriptSeed(ctx.seed());
         Heights h = (x, z) -> ctx.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG, ctx.heightAccessor(), ctx.randomState());
+        if ("deep".equals(kind)) {
+            // a cell of a sunken island's bubble dome (any cell the dome reaches into, over land or sea)
+            SkyField f = tools.skyField;
+            if (f == null) return Optional.empty();
+            List<SkyField.Dome> ds = f.domesTouching(x0, z0, x0 + cell - 1, z0 + cell - 1);
+            if (ds.isEmpty()) return Optional.empty();
+            SkyField.Dome d = ds.get(0);
+            int yMin = (int) Math.floor(d.base - d.down) - 2, yMax = (int) Math.ceil(d.base + d.up) + 2;
+            final CellDomePiece piece = new CellDomePiece(x0, z0, cell, d.cx, d.cz, d.r, d.base, d.up, d.down, f.p.deepLighting, yMin, yMax);
+            return Optional.of(new GenerationStub(new BlockPos(mx, (int) d.base + 2, mz), builder -> builder.addPiece(piece)));
+        }
         if ("sky".equals(kind)) {
             if (tools.sky == null || !rules.skyDress) return Optional.empty();
             if (!tools.sky.isLand(mx, mz)) {

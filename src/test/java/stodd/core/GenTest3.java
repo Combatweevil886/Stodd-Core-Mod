@@ -49,6 +49,7 @@ public final class GenTest3 {
         toml();
         config();
         sky();
+        deep();
         System.out.println("\nGenTest3: " + pass + " passed, " + fail + " failed");
         if (fail > 0) System.exit(1);
     }
@@ -257,6 +258,7 @@ public final class GenTest3 {
         SkyField.Params p = new SkyField.Params();
         p.chance = 0.4;
         p.minSpawnDistance = 300;
+        p.deepChance = 0;
         SkyField f = new SkyField(12345L, p, raw, (x, z) -> Math.sin(x * 0.05) * Math.cos(z * 0.05));
         int lifted = 0, kept = 0;
         boolean spawnKept = true, consistent = true, groundOk = true, skyOk = true, bottomOk = true;
@@ -318,7 +320,7 @@ public final class GenTest3 {
         ok(fringeLow, "...but not down at the sea, where the sea stays sea");
         ok(seaFar, "open sea far from any sky island keeps its ocean climate up high");
         SkyField.Params pb = new SkyField.Params();
-        pb.chance = 0.4; pb.minSpawnDistance = 300; pb.beaches = true;
+        pb.chance = 0.4; pb.minSpawnDistance = 300; pb.beaches = true; pb.deepChance = 0;
         SkyField fb = new SkyField(12345L, pb, raw, (x, z) -> Math.sin(x * 0.05) * Math.cos(z * 0.05));
         double beachC = 99;
         for (int d = 0; d < 400; d += 2) if (fb.mask(cx + d, cz) > 0 && raw.at(cx + d, cz) < pb.landThreshold + 0.03) beachC = Math.min(beachC, fb.climateContinents(cx + d, cz));
@@ -330,12 +332,13 @@ public final class GenTest3 {
             if (f.mask(x, z) != f2.mask(x, z) || f.bottom(x, z) != f2.bottom(x, z)) det = false;
         }
         ok(det, "the same seed gives the same sky, column by column");
-        SkyField other = new SkyField(99L, p, raw, (x, z) -> 0);
+        SkyField other = new SkyField(99L, p, raw, (x, z) -> 0);   // (p: sky islands only)
         int diff = 0;
         for (int[] g : isl) { IslandFinder.Island a = other.rawIslands().islandAt(g[0], g[1]); if (other.isLifted(a) != f.isLifted(f.rawIslands().islandAt(g[0], g[1]))) diff++; }
         ok(diff > 0, "another seed lifts other islands (" + diff + " differ)");
         SkyField.Params off = new SkyField.Params();
         off.chance = 0;
+        off.deepChance = 0;
         SkyField none = new SkyField(12345L, off, raw, null);
         boolean allGround = true;
         for (int[] g : isl) if (none.mask(g[0], g[1]) > 0 || none.ground(g[0], g[1], raw.at(g[0], g[1])) != raw.at(g[0], g[1])) allGround = false;
@@ -351,5 +354,101 @@ public final class GenTest3 {
         }
         ok(push, "no weirdness in the river band, unchanged outside it, sign kept");
         ok(Math.abs(SkyField.pushRidges(0.2499999) - 0.25) < 1e-5, "continuous where it joins");
+    }
+
+    // ---------------------------------------------------------------- sunken islands under bubble domes
+
+    static void deep() {
+        section("sunken islands: some islands sink, inside a dome that stays under the sea");
+        final List<int[]> isl = new ArrayList<>();
+        for (int i = -4; i <= 4; i++) for (int j = -4; j <= 4; j++) isl.add(new int[] { i * 700 + ((i * 37 + j * 11) % 90), j * 700 + ((i * 13 - j * 29) % 90), 150 + Math.abs((i * 7 + j * 3) % 60) });
+        SkyField.Raw raw = (x, z) -> {
+            double v = -1;
+            for (int[] g : isl) v = Math.max(v, 0.6 - 0.79 * Math.hypot(x - g[0], z - g[1]) / g[2]);
+            return v;
+        };
+        SkyField.Params p = new SkyField.Params();
+        p.chance = 0.25;
+        p.deepChance = 0.4;
+        p.minSpawnDistance = 300;
+        SkyField f = new SkyField(777L, p, raw, (x, z) -> 0);
+        int sunk = 0, lifted = 0, both = 0;
+        boolean spawn = true, covers = true, groundGone = true, domeUnder = true, othersFree = true, apron = true, climate = true;
+        for (int[] g : isl) {
+            IslandFinder.Island a = f.rawIslands().islandAt(g[0], g[1]);
+            boolean dn = f.isSunk(a), up = f.isLifted(a);
+            if (dn) sunk++;
+            if (up) lifted++;
+            if (dn && up) both++;
+            if (!dn) continue;
+            if (Math.hypot(g[0], g[1]) < 300) spawn = false;
+            SkyField.Dome d = f.domeOf(a);
+            if (!(d.base + d.up < p.seaLevel - 3)) domeUnder = false;
+            // every point of the island's land is under the dome, and the ground lost it
+            for (int k = 0; k < 16; k++) {
+                double ang = k * Math.PI / 8;
+                for (double rr = 0; rr < g[2] * 1.4; rr += 12) {
+                    int x = (int) (g[0] + rr * Math.cos(ang)), z = (int) (g[1] + rr * Math.sin(ang));
+                    double r = raw.at(x, z);
+                    if (r < p.landThreshold) continue;
+                    if (f.domeAt(x, z) != d) covers = false;
+                    if (f.ground(x, z, r) >= p.landThreshold) groundGone = false;
+                    if (f.deepContinents(x, z) != r || !(f.deepLift(x, z) < 0)) apron = false;
+                    if (!(f.deepCeiling(x, z) <= d.base + d.up - 3 + 1e-9)) apron = false;
+                    if (!f.domeClimate(x, (int) d.base + 2, z) || f.domeClimate(x, p.seaLevel, z)) climate = false;
+                }
+            }
+            // the sea just inside the wall is still under the dome; just outside it is not
+            int ex = (int) Math.round(d.cx + (d.r - 3)), ox = (int) Math.round(d.cx + d.r + 3);
+            if (f.domeAt(ex, (int) d.cz) != d || f.domeAt(ox, (int) d.cz) != null) covers = false;
+            // no other island under it
+            for (int[] h : isl) if (h != g && d.covers(h[0], h[1])) othersFree = false;
+        }
+        ok(sunk > 0 && sunk < isl.size(), "some islands sink (" + sunk + " of " + isl.size() + ")");
+        ok(both == 0 && lifted > 0, "never one island both lifted and sunk (" + lifted + " lifted)");
+        ok(spawn, "the island at the spawn stays where it is");
+        ok(covers, "the dome covers all of the island and the sea round it, and ends at its wall");
+        ok(groundGone, "the sea floor no longer has the island");
+        ok(domeUnder, "the top of every dome is under the sea");
+        ok(othersFree, "no other island under a dome");
+        ok(apron, "under the dome: the island's own terrain, lowered, its hills kept under the roof");
+        ok(climate, "the island's climate inside the dome, the sea's above it");
+
+        section("sunken islands: the dome's wall is closed for water");
+        IslandFinder.Island one = null;
+        for (int[] g : isl) { IslandFinder.Island a = f.rawIslands().islandAt(g[0], g[1]); if (f.isSunk(a)) { one = a; break; } }
+        SkyField.Dome d = f.domeOf(one);
+        // water moves along the six faces: from any outside block, a step into the dome lands on the wall
+        int bad = 0, cells = 0;
+        int y0 = (int) Math.floor(d.base - d.down) - 2, y1 = (int) Math.ceil(d.base + d.up) + 2;
+        for (int x = (int) (d.cx - d.r - 2); x <= d.cx + d.r + 2; x += 3) for (int z = (int) d.cz - 6; z <= d.cz + 6; z++) for (int y = y0; y <= y1; y++) {
+            if (d.f(x, y, z) <= 1) continue;
+            int[][] nb = { { 1, 0, 0 }, { -1, 0, 0 }, { 0, 1, 0 }, { 0, -1, 0 }, { 0, 0, 1 }, { 0, 0, -1 } };
+            for (int[] n : nb) {
+                int qx = x + n[0], qy = y + n[1], qz = z + n[2];
+                if (d.f(qx, qy, qz) > 1) continue;
+                cells++;
+                boolean wall = false;
+                for (int[] n2 : nb) if (d.f(qx + n2[0], qy + n2[1], qz + n2[2]) > 1) wall = true;
+                if (!wall) bad++;
+            }
+        }
+        ok(cells > 100 && bad == 0, "every block of the dome water can reach from outside is part of the wall (" + cells + " checked)");
+        ok(d.f(d.cx, d.base + d.up - 0.5, d.cz) < 1 && d.f(d.cx, d.base + d.up + 1, d.cz) > 1 && d.f(d.cx, d.base - d.down + 0.5, d.cz) < 1, "the roof and the bottom where they should be");
+        ok(f.domesTouching((int) (d.cx + d.r - 10), (int) d.cz, (int) (d.cx + d.r + 30), (int) d.cz + 40).size() == 1
+            && f.domesTouching((int) (d.cx + d.r + 20), (int) d.cz, (int) (d.cx + d.r + 60), (int) d.cz + 40).isEmpty(), "the cells a dome reaches into are found, the next ones are not");
+
+        section("sunken islands: settings and determinism");
+        SkyField f2 = new SkyField(777L, p, raw, (x, z) -> 0);
+        boolean det = true;
+        for (int[] g : isl) if (f.isSunk(f.rawIslands().islandAt(g[0], g[1])) != f2.isSunk(f2.rawIslands().islandAt(g[0], g[1]))) det = false;
+        ok(det, "the same seed sinks the same islands");
+        SkyField.Params off = new SkyField.Params();
+        off.chance = 0; off.deepChance = 0;
+        SkyField none = new SkyField(777L, off, raw, null);
+        boolean untouched = true;
+        for (int[] g : isl) if (none.domeAt(g[0], g[1]) != null || none.ground(g[0], g[1], raw.at(g[0], g[1])) != raw.at(g[0], g[1]) || none.deepMask(g[0], g[1]) > 0) untouched = false;
+        ok(untouched, "rarity none: no domes, the world untouched");
+        ok(p.domeTop() == p.seaLevel - p.deepWaterAbove, "the top of the dome is waterAbove under the sea");
     }
 }

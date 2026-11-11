@@ -50,6 +50,26 @@ global.stodd.cfg = {
     extraPlants: 0           // extra trees / flowers / rocks per 48 x 48 cell, on top of the biome's own (the old sky-meadow dressing used 5)
   },
 
+  // ---------------------------------------------------------------- SUNKEN ISLANDS (world generation)
+  // A sunken island is one of the normal islands, on the normal spacing, sunk deep under the sea inside a giant dome of
+  // bubble (stodd_core:bubble): you walk and swim through the bubble, water cannot. Inside the dome the island is dry, with its
+  // own biomes, grass, trees and animals, on a flat floor; the whole dome stays under the sea (it never reaches the surface).
+  // Never the island at the spawn, never a sky island. Changes apply to worlds created afterwards.
+  deepIslands: {
+    enabled: true,
+    // share of the islands that are sunk:  none (0)  very_rare (3%)  rare (6%)  normal (10%)  common (18%)  very_common (30%)
+    rarity: 'normal',
+    chance: -1,              // exact share instead of the rarity, 0 to 1 (-1 = use rarity)
+    coastDepth: 16,          // height of the island's coast and of the dome's floor (the sea is at 63, so about 47 blocks down)
+    waterAbove: 10,          // at least this much water over the top of the dome (at least 4: the dome never reaches the surface)
+    relief: 0.6,             // how tall the hills are compared with the same island on the ground; they always stay under the roof
+    margin: 24,              // room between the island's coast and the dome's wall
+    depthBelow: 20,          // how far the dome reaches into the ground under the island (it drains the caves down there too)
+    lighting: 12,            // an invisible light every this many blocks over the island, as daylight does not reach that deep (0 = none)
+    bubbleLight: 7,          // light given off by the bubble itself, 0 to 15 (needs a game restart)
+    bubbleBreakable: false   // true: the bubble can be broken like glass (and the dome flooded); false: unbreakable (needs a game restart)
+  },
+
   // ---------------------------------------------------------------- WORLD SPAWN (47_spawn.js)
   // The map is mostly sea, so on a brand-new world the spawn point is moved to the nearest island, inland.
   spawn: {
@@ -630,7 +650,8 @@ global.stodd.cfg = {
     ruins: ['Ruins', 'Temple', 'Overgrowth', 'Lost Court', 'Vault', 'Citadel'],
     crystal: ['Spires', 'Geode', 'Prism', 'Lode', 'Shard', 'Cluster'],
     skull: ['Cove', 'Bay', 'Wreck', 'Skull Rock', 'Gallows', 'Deadwater'],
-    sky: ['Drift', 'Perch', 'Aerie', 'Cloudhold', 'Float', 'Eyrie']
+    sky: ['Drift', 'Perch', 'Aerie', 'Cloudhold', 'Float', 'Eyrie'],
+    deep: ['Abyss', 'Deep', 'Grotto', 'Trench', 'Sunken Hold', 'Pearl']
   },
   islandSyllables: ['ka', 'ro', 'mi', 'ze', 'tsu', 'na', 'vel', 'dor', 'shi', 'ra', 'ku', 'lo', 'bel', 'yu', 'gan', 'te', 'mor', 'ai'],
   // Ocean counts as One Piece water (Sea Kings, marine ships), nothing else.

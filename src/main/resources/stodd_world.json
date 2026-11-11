@@ -305,6 +305,14 @@
    "Cloudhold",
    "Float",
    "Eyrie"
+  ],
+  "deep": [
+   "Abyss",
+   "Deep",
+   "Grotto",
+   "Trench",
+   "Sunken Hold",
+   "Pearl"
   ]
  },
  "syllables": [

@@ -148,6 +148,14 @@ public final class ModCommands {
                     + (p == null ? "" : ", " + p.cells.size() + " cells, " + p.landmarks() + " landmarks" + (p.skyStyle == null ? "" : " (" + p.skyStyle.name + ")")) + ".";
             }
         }
+        if (t.skyField != null) {
+            stodd.core.gen.SkyField.Dome d = t.skyField.domeAt(x, z);
+            if (d != null) {
+                String where = pos.y > d.base + d.up + 1 ? "below you" : pos.y < d.base - d.down ? "above you" : "around you";
+                return "Sunken island " + t.rules.deepName(d.island.cx, d.island.cz, seed) + ", under a bubble dome " + where
+                    + ": centre " + d.island.cx + ", " + d.island.cz + ", dome " + (int) (2 * d.r) + " blocks across, floor at y " + (int) d.base + ", top at y " + (int) (d.base + d.up) + ".";
+            }
+        }
         IslandFinder.Island isl = t.ground.islandAt(x, z);
         if (isl == null) return t.sky != null && t.sky.isLand(x, z) ? "Open sea, under a sky island (look up)." : "Open sea.";
         WorldRules.Theme th = t.rules.themeAt(isl.cx, isl.cz, seed);

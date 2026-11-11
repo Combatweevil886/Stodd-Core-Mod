@@ -14,6 +14,12 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import stodd.core.StoddCore;
 
 /** Everything STODD Core registers: the sky-island density function, three structure types, their pieces, the cell-grid placement and the Log Pose. */
@@ -25,6 +31,28 @@ public final class StoddRegistry {
     public static final DeferredRegister<StructurePlacementType<?>> PLACEMENTS = DeferredRegister.create(Registries.STRUCTURE_PLACEMENT, StoddCore.MOD_ID);
     public static final DeferredRegister<Codec<? extends DensityFunction>> DENSITY_TYPES = DeferredRegister.create(Registries.DENSITY_FUNCTION_TYPE, StoddCore.MOD_ID);
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, StoddCore.MOD_ID);
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, StoddCore.MOD_ID);
+
+    /** the wall of a sunken island's dome (BubbleBlock); its light and toughness come from [deepIslands] in the config */
+    public static final RegistryObject<Block> BUBBLE = BLOCKS.register("bubble", () -> {
+        stodd.core.config.StoddConfig c = stodd.core.config.StoddConfig.get();
+        final int light = Math.max(0, Math.min(15, c.integer("deepIslands.bubbleLight", 7)));
+        boolean breakable = c.bool("deepIslands.bubbleBreakable", false);
+        BlockBehaviour.Properties p = BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WATER)
+            .noCollission()
+            .noOcclusion()
+            .forceSolidOn()                     // "solid" for water: it may not flow into it or wash it away
+            .pushReaction(PushReaction.BLOCK)
+            .sound(SoundType.GLASS)
+            .lightLevel(s -> light)
+            .isValidSpawn((s, l, pos, e) -> false)
+            .isRedstoneConductor((s, l, pos) -> false)
+            .isSuffocating((s, l, pos) -> false)
+            .isViewBlocking((s, l, pos) -> false);
+        p = breakable ? p.strength(0.6F) : p.strength(-1.0F, 3600000.0F).noLootTable();
+        return new BubbleBlock(p);
+    });
 
     public static final RegistryObject<Codec<? extends DensityFunction>> SKY_DENSITY = DENSITY_TYPES.register("sky", () -> SkyDensity.CODEC.codec());
 
@@ -34,9 +62,11 @@ public final class StoddRegistry {
     public static final RegistryObject<StructurePieceType> GROUND_PIECE = piece("cell_ground", CellGroundPiece::new);
     public static final RegistryObject<StructurePieceType> TEMPLATE_PIECE = piece("cell_template", CellTemplatePiece::new);
     public static final RegistryObject<StructurePieceType> FEATURE_PIECE = piece("cell_features", CellFeaturePiece::new);
+    public static final RegistryObject<StructurePieceType> DOME_PIECE = piece("cell_dome", CellDomePiece::new);
 
     public static final RegistryObject<StructurePlacementType<CellGridPlacement>> CELL_GRID = PLACEMENTS.register("cell_grid", () -> () -> CellGridPlacement.CODEC);
 
+    public static final RegistryObject<Item> BUBBLE_ITEM = ITEMS.register("bubble", () -> new BlockItem(BUBBLE.get(), new Item.Properties()));
     public static final RegistryObject<Item> LOG_POSE = ITEMS.register("log_pose", () -> new LogPoseItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
 
     private static RegistryObject<StructurePieceType> piece(String name, StructurePieceType type) {
@@ -45,6 +75,7 @@ public final class StoddRegistry {
 
     public static void register(IEventBus modBus) {
         DENSITY_TYPES.register(modBus);
+        BLOCKS.register(modBus);
         STRUCTURE_TYPES.register(modBus);
         PIECES.register(modBus);
         PLACEMENTS.register(modBus);
@@ -53,5 +84,6 @@ public final class StoddRegistry {
 
     public static void onCreativeTab(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) event.accept(LOG_POSE.get());
+        if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) event.accept(BUBBLE_ITEM.get());
     }
 }

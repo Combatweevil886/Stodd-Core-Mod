@@ -516,6 +516,21 @@ public final class StoddConfig {
         return SKY_RARITY[3];
     }
 
+    static final double[] DEEP_RARITY = { 0, 0.03, 0.06, 0.1, 0.18, 0.3 };
+
+    /** The share of islands sunk under bubble domes. */
+    public double deepChance() {
+        if (!bool("deepIslands.enabled", true)) return 0;
+        double ch = num("deepIslands.chance", -1);
+        if (ch >= 0) return Math.min(1, ch);
+        Object r = value("deepIslands.rarity");
+        if (r instanceof Number) return Math.max(0, Math.min(1, ((Number) r).doubleValue()));
+        String s = String.valueOf(r).toLowerCase(Locale.ROOT);
+        for (int i = 0; i < SKY_RARITY_NAMES.length; i++) if (SKY_RARITY_NAMES[i].equals(s)) return DEEP_RARITY[i];
+        notes.add("deepIslands.rarity = " + r + " is not one of " + String.join(", ", SKY_RARITY_NAMES) + ", using normal");
+        return DEEP_RARITY[3];
+    }
+
     private double clampNote(String path, double v, double lo, double hi) {
         if (v < lo || v > hi) {
             double c = Math.max(lo, Math.min(hi, v));
@@ -539,6 +554,23 @@ public final class StoddConfig {
         p.minSpawnDistance = (int) Math.round(clampNote("skyIslands.minSpawnDistance", num("skyIslands.minSpawnDistance", 700), 0, 1_000_000));
         p.minRadius = (int) Math.round(clampNote("skyIslands.minRadius", num("skyIslands.minRadius", 40), 0, 4000));
         p.beaches = bool("skyIslands.beaches", false);
+        // sunken islands
+        p.deepChance = deepChance();
+        p.deepEnabled = p.deepChance > 0;
+        p.deepWaterAbove = (int) Math.round(clampNote("deepIslands.waterAbove", num("deepIslands.waterAbove", 10), 4, 50));
+        p.deepCoast = (int) Math.round(clampNote("deepIslands.coastDepth", num("deepIslands.coastDepth", 16), -40, p.seaLevel - p.deepWaterAbove - 16));
+        p.deepRelief = clampNote("deepIslands.relief", num("deepIslands.relief", 0.6), 0.1, 1.5);
+        p.deepMargin = (int) Math.round(clampNote("deepIslands.margin", num("deepIslands.margin", 24), 6, 200));
+        p.deepDown = (int) Math.round(clampNote("deepIslands.depthBelow", num("deepIslands.depthBelow", 20), 4, 60));
+        if (p.deepCoast - p.deepDown < -58) { p.deepDown = p.deepCoast + 58; notes.add("deepIslands.depthBelow reaches the lava at the bottom of the world, using " + p.deepDown); }
+        // an island's land reaches about 1.35 x islandSize from its middle (the size of the spawn islands, preset or set)
+        double isize = num("spawnIslands.islandSize", 0);
+        if (isize <= 0) {
+            String pr = str("spawnIslands.preset", "default").toLowerCase(Locale.ROOT);
+            isize = pr.equals("packed") ? 110 : pr.equals("large") ? 200 : pr.equals("grand") ? 300 : 140;
+        }
+        p.deepReach = (int) Math.round(isize * 1.6 + p.deepMargin + 96);
+        p.deepLighting = (int) Math.round(clampNote("deepIslands.lighting", num("deepIslands.lighting", 12), 0, 64));
         p.landThreshold = num("islandLandThreshold", -0.19);
         p.peakStep = Math.max(8, integer("islandPeakStep", 32));
         p.cell = Math.max(16, integer("city.cell", 48));

@@ -92,20 +92,20 @@ public final class WorldCheck {
         if (!islands) out.add(new Line('i', "New chunks will not be islands. If this world was created before STODD Core 3, or while another world type was forced, delete the world folder and start again."));
         // the sky islands: lifted islands of this world near the spawn
         if (tools.skyField == null) out.add(new Line('w', "Sky islands: this world's terrain does not use the STODD sky functions (another world type, or a world from before 3.1)."));
-        else if (!tools.skyField.p.enabled) out.add(new Line('i', "Sky islands: off (skyIslands in config/stodd/world.toml)."));
         else {
-            java.util.Set<String> ground = new java.util.HashSet<>(), sky = new java.util.HashSet<>();
+            java.util.Set<String> ground = new java.util.HashSet<>(), sky = new java.util.HashSet<>(), deep = new java.util.HashSet<>();
             for (int i = -6; i <= 6; i++) for (int j = -6; j <= 6; j++) {
                 int x = i * 512 + 256, z = j * 512 + 256;
                 for (int a = 0; a < 512; a += 64) for (int b = 0; b < 512; b += 64) {
                     IslandFinder.Island r = tools.skyField.rawIslands().isLand(x - 256 + a, z - 256 + b) ? tools.skyField.rawIslands().islandAt(x - 256 + a, z - 256 + b) : null;
                     if (r == null) continue;
-                    (tools.skyField.isLifted(r) ? sky : ground).add(r.key());
+                    (tools.skyField.isLifted(r) ? sky : tools.skyField.isSunk(r) ? deep : ground).add(r.key());
                 }
             }
-            int all = ground.size() + sky.size();
+            int all = ground.size() + sky.size() + deep.size();
             out.add(new Line('o', "Sky islands: " + sky.size() + " of the " + all + " islands within 3.3 km of 0,0 are lifted into the sky (" + Math.round(tools.skyField.p.chance * 100)
-                + "% asked for, coasts at y " + (tools.skyField.p.height - tools.skyField.p.heightVariation) + "-" + (tools.skyField.p.height + tools.skyField.p.heightVariation) + ")."));
+                + "% asked for, coasts at y " + (tools.skyField.p.height - tools.skyField.p.heightVariation) + "-" + (tools.skyField.p.height + tools.skyField.p.heightVariation) + "); "
+                + deep.size() + " are sunk under bubble domes (" + Math.round(tools.skyField.p.deepChance * 100) + "% asked for, floor at y " + tools.skyField.p.deepCoast + ", top at y " + tools.skyField.p.domeTop() + ")."));
         }
         boolean cities = server.registryAccess().registryOrThrow(Registries.STRUCTURE_SET).containsKey(new ResourceLocation("stodd", "city_blocks"));
         out.add(new Line(cities ? 'o' : 'w', cities ? "Cities, dressed islands and sky-island landmarks are generated with the chunks (structure sets stodd:city_blocks, stodd:isle_blocks, stodd:sky_blocks)."

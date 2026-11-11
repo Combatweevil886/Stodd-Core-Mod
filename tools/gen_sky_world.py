@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Writes the lifted sky islands into the island world (STODD Core 3.1).
+"""Writes the lifted sky islands and the sunken islands under bubble domes into the island world (STODD Core 3.1).
 
 Sky islands are ordinary islands of the world's island noise that were lifted into the sky (src/main/java/stodd/core/gen/SkyField.java):
   * stodd:overworld/continents_raw   Survival Island's continentalness, untouched (what the islands are found in)
@@ -100,8 +100,56 @@ files[DF + '/overworld/sky_islands.json'] = {'type': 'minecraft:squeeze', 'argum
                       'when_in_range': solid, 'when_out_of_range': -1.0},
     'when_out_of_range': -1.0}})}
 
+# ---------------------------------------------------------------- sunken islands under bubble domes (3.1)
+# Inside a dome the terrain is the sunken island only: its own terrain lowered to the dome's floor (deepIslands.coastDepth), its
+# hills kept under the roof, a flat floor round it; the sea floor there is left out. Outside a dome, the ground as before. The
+# water the sea fills the dome with is drained, and the wall built, by the dome structure (CellDomePiece).
+files[DF + '/deep/mask.json'] = flat(sky('deep_mask'))
+files[DF + '/deep/inside.json'] = sky('dome')
+files[DF + '/deep/continents.json'] = flat(sky('deep_continents'))
+files[DF + '/deep/lift.json'] = flat(sky('deep_lift'))
+files[DF + '/deep/relief.json'] = sky('deep_relief')
+files[DF + '/deep/ceiling.json'] = flat(sky('deep_ceiling'))
+files[DF + '/deep/apron.json'] = flat(sky('deep_apron'))
+dtable = {'stodd:overworld/continents': 'stodd:deep/continents', 'minecraft:overworld/ridges': 'stodd:sky/ridges',
+          'minecraft:overworld/ridges_folded': 'stodd:sky/ridges_folded'}
+for name in ('offset', 'factor', 'jaggedness'):
+    files[DF + '/deep/%s.json' % name] = replace_refs(load(DF + '/overworld/%s.json' % name), dtable)
+files[DF + '/deep/depth.json'] = add(
+    {'type': 'minecraft:y_clamped_gradient', 'from_value': 1.5, 'from_y': -64, 'to_value': -1.5, 'to_y': 320},
+    add('stodd:deep/lift', add(-0.50375, mul('stodd:deep/relief', add(0.50375, 'stodd:deep/offset')))))
+files[DF + '/deep/sloped_cheese.json'] = add(
+    mul(4.0, {'type': 'minecraft:quarter_negative', 'argument': mul(
+        add('stodd:deep/depth', mul(mul('stodd:deep/jaggedness', 'stodd:deep/relief'),
+                                    {'type': 'minecraft:half_negative', 'argument': {'type': 'minecraft:noise', 'noise': 'minecraft:jagged', 'xz_scale': 1500.0, 'y_scale': 0.0}})),
+        'stodd:deep/factor')}),
+    'minecraft:overworld/base_3d_noise')
+under_roof = add('stodd:deep/ceiling', mul(-1.0, 'stodd:overworld/y'))
+floor = add('stodd:deep/apron', mul(-1.0, 'stodd:overworld/y'))
+files[DF + '/overworld/deep_islands.json'] = {'type': 'minecraft:squeeze', 'argument': mul(0.64, {'type': 'minecraft:interpolated', 'argument': {
+    'type': 'minecraft:range_choice', 'input': 'stodd:deep/mask', 'min_inclusive': 0.0, 'max_exclusive': 2.0,
+    'when_in_range': {'type': 'minecraft:max',
+                      'argument1': {'type': 'minecraft:min', 'argument1': 'stodd:deep/sloped_cheese', 'argument2': mul(0.1, under_roof)},
+                      'argument2': mul(0.2, floor)},
+    'when_out_of_range': -1.0}})}
+
 # ---------------------------------------------------------------- the router: biomes see the sky island up there
 ns = load('minecraft/worldgen/noise_settings/overworld.json')
+# final density: max(<inside a dome: the sunken island | elsewhere: the ground>, the sky islands)
+fd = ns['noise_router']['final_density']
+assert fd['type'] == 'minecraft:max' and fd['argument2'] == 'stodd:overworld/sky_islands', 'unexpected final_density'
+ground = fd['argument1']
+if isinstance(ground, dict) and ground.get('type') == 'minecraft:range_choice' and ground.get('input') == 'stodd:deep/mask':
+    ground = ground['when_out_of_range']
+if ground == 'stodd:overworld/ground_density':
+    ground = load(DF + '/overworld/ground_density.json')
+# the ground's own density (the world's terrain as before), named so it is written once and used twice
+files[DF + '/overworld/ground_density.json'] = ground
+ground = 'stodd:overworld/ground_density'
+fd['argument1'] = {'type': 'minecraft:range_choice', 'input': 'stodd:deep/mask', 'min_inclusive': 0.0, 'max_exclusive': 2.0,
+                   'when_in_range': {'type': 'minecraft:range_choice', 'input': 'stodd:deep/inside', 'min_inclusive': -1000000.0, 'max_exclusive': 1.0,
+                                     'when_in_range': 'stodd:overworld/deep_islands', 'when_out_of_range': ground},
+                   'when_out_of_range': ground}
 ns['noise_router']['continents'] = sky('climate_continents', 'stodd:overworld/continents')
 ns['noise_router']['ridges'] = sky('climate_ridges', 'minecraft:overworld/ridges')
 files['minecraft/worldgen/noise_settings/overworld.json'] = ns

@@ -6,7 +6,8 @@
    "name": "world",
    "title": "the island world",
    "intro": [
-    "The island world: the spawn islands and their spacing, the sky islands (normal islands lifted into the sky), how often an",
+    "The island world: the spawn islands and their spacing, the sky islands (normal islands lifted into the sky), the sunken",
+    "islands (sunk deep under the sea inside a bubble dome), how often an",
     "island is a city or a dressed island, island themes and names, waystones, the Log Pose and /stodd locate.",
     "World generation settings apply to worlds created afterwards (spawnIslands needs a game restart first); the rest after /reload."
    ],
@@ -331,6 +332,118 @@
      "def": 0,
      "re": false,
      "note": "extra trees / flowers / rocks per 48 x 48 cell, on top of the biome's own (the old sky-meadow dressing used 5)",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "deepIslands",
+     "pre": [
+      "---- SUNKEN ISLANDS (world generation)",
+      "A sunken island is one of the normal islands, on the normal spacing, sunk deep under the sea inside a giant dome of",
+      "bubble (stodd_core:bubble): you walk and swim through the bubble, water cannot. Inside the dome the island is dry, with its",
+      "own biomes, grass, trees and animals, on a flat floor; the whole dome stays under the sea (it never reaches the surface).",
+      "Never the island at the spawn, never a sky island. Changes apply to worlds created afterwards."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "deepIslands.enabled",
+     "key": "enabled",
+     "def": true,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "deepIslands.rarity",
+     "key": "rarity",
+     "def": "normal",
+     "re": false,
+     "note": "",
+     "pre": [
+      "share of the islands that are sunk:  none (0)  very_rare (3%)  rare (6%)  normal (10%)  common (18%)  very_common (30%)"
+     ]
+    },
+    {
+     "t": "key",
+     "path": "deepIslands.chance",
+     "key": "chance",
+     "def": -1,
+     "re": false,
+     "note": "exact share instead of the rarity, 0 to 1 (-1 = use rarity)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "deepIslands.coastDepth",
+     "key": "coastDepth",
+     "def": 16,
+     "re": false,
+     "note": "height of the island's coast and of the dome's floor (the sea is at 63, so about 47 blocks down)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "deepIslands.waterAbove",
+     "key": "waterAbove",
+     "def": 10,
+     "re": false,
+     "note": "at least this much water over the top of the dome (at least 4: the dome never reaches the surface)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "deepIslands.relief",
+     "key": "relief",
+     "def": 0.6,
+     "re": false,
+     "note": "how tall the hills are compared with the same island on the ground; they always stay under the roof",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "deepIslands.margin",
+     "key": "margin",
+     "def": 24,
+     "re": false,
+     "note": "room between the island's coast and the dome's wall",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "deepIslands.depthBelow",
+     "key": "depthBelow",
+     "def": 20,
+     "re": false,
+     "note": "how far the dome reaches into the ground under the island (it drains the caves down there too)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "deepIslands.lighting",
+     "key": "lighting",
+     "def": 12,
+     "re": false,
+     "note": "an invisible light every this many blocks over the island, as daylight does not reach that deep (0 = none)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "deepIslands.bubbleLight",
+     "key": "bubbleLight",
+     "def": 7,
+     "re": false,
+     "note": "light given off by the bubble itself, 0 to 15 (needs a game restart)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "deepIslands.bubbleBreakable",
+     "key": "bubbleBreakable",
+     "def": false,
+     "re": false,
+     "note": "true: the bubble can be broken like glass (and the dome flooded); false: unbreakable (needs a game restart)",
      "pre": []
     },
     {
@@ -2016,6 +2129,22 @@
       "Cloudhold",
       "Float",
       "Eyrie"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandNames.deep",
+     "key": "deep",
+     "def": [
+      "Abyss",
+      "Deep",
+      "Grotto",
+      "Trench",
+      "Sunken Hold",
+      "Pearl"
      ],
      "re": false,
      "note": "",

@@ -26,12 +26,18 @@ import java.util.Objects;
  *   bottom / ceiling    the underside of the island here (1000 where there is none) and the highest block a sky island may have
  *   climate_continents  the continentalness the biomes are chosen with: "argument" (the ground's), or the island's up in the sky
  *   climate_ridges      the same for the weirdness
+ *   deep_mask           > 0 where a sunken island's bubble dome covers the column, -1 elsewhere
+ *   dome                the dome's shape at the point (< 1 inside, 1000 where there is none)
+ *   deep_continents / deep_lift / deep_relief   the sunken island's terrain (its own continentalness, lowered)
+ *   deep_ceiling / deep_apron                   the roof the terrain stays under, and the flat floor of the dome
  * "raw" is the raw continentalness (Survival Island's function), "noise" the underside noise. The settings are read from the STODD
  * config when the world is created (when its RandomState wires the functions), so a new world picks up a changed config.
  */
 public final class SkyDensity implements DensityFunction {
-    static final String[] MODES = { "ground", "mask", "continents", "ridges", "lift", "relief", "bottom", "ceiling", "climate_continents", "climate_ridges" };
-    static final int GROUND = 0, MASK = 1, CONT = 2, RIDGES = 3, LIFT = 4, RELIEF = 5, BOTTOM = 6, CEILING = 7, CLIMATE_CONT = 8, CLIMATE_RIDGES = 9;
+    static final String[] MODES = { "ground", "mask", "continents", "ridges", "lift", "relief", "bottom", "ceiling", "climate_continents", "climate_ridges",
+        "deep_mask", "dome", "deep_continents", "deep_lift", "deep_relief", "deep_ceiling", "deep_apron" };
+    static final int GROUND = 0, MASK = 1, CONT = 2, RIDGES = 3, LIFT = 4, RELIEF = 5, BOTTOM = 6, CEILING = 7, CLIMATE_CONT = 8, CLIMATE_RIDGES = 9,
+        DEEP_MASK = 10, DOME = 11, DEEP_CONT = 12, DEEP_LIFT = 13, DEEP_RELIEF = 14, DEEP_CEILING = 15, DEEP_APRON = 16;
 
     public static final MapCodec<SkyDensity> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
         Codec.STRING.fieldOf("mode").forGetter(s -> s.mode),
@@ -68,8 +74,10 @@ public final class SkyDensity implements DensityFunction {
             switch (m) {
                 case GROUND: return raw.compute(c);
                 case CLIMATE_CONT: case CLIMATE_RIDGES: case RIDGES: return argument.compute(c);
-                case MASK: case CONT: return -1;
-                case RELIEF: return 1;
+                case MASK: case CONT: case DEEP_MASK: case DEEP_CONT: return -1;
+                case DOME: return 1000;
+                case DEEP_CEILING: case DEEP_APRON: return -64;
+                case RELIEF: case DEEP_RELIEF: return 1;
                 case BOTTOM: return 1000;
                 case CEILING: return 316;
                 default: return 0;
@@ -85,11 +93,22 @@ public final class SkyDensity implements DensityFunction {
             case RELIEF: return f.relief();
             case BOTTOM: return f.bottom(x, z);
             case CEILING: return f.ceiling();
-            case CLIMATE_CONT: return f.skyClimate(x, c.blockY(), z) ? f.climateContinents(x, z) : argument.compute(c);
+            case CLIMATE_CONT: {
+                int y = c.blockY();
+                return f.skyClimate(x, y, z) || f.domeClimate(x, y, z) ? f.climateContinents(x, z) : argument.compute(c);
+            }
             case CLIMATE_RIDGES: {
                 double w = argument.compute(c);
-                return f.skyClimate(x, c.blockY(), z) ? SkyField.pushRidges(w) : w;
+                int y = c.blockY();
+                return f.skyClimate(x, y, z) || f.domeClimate(x, y, z) ? SkyField.pushRidges(w) : w;
             }
+            case DEEP_MASK: return f.deepMask(x, z);
+            case DOME: return f.domeShape(x, c.blockY(), z);
+            case DEEP_CONT: return f.deepContinents(x, z);
+            case DEEP_LIFT: return f.deepLift(x, z);
+            case DEEP_RELIEF: return f.deepRelief();
+            case DEEP_CEILING: return f.deepCeiling(x, z);
+            case DEEP_APRON: return f.deepApron(x, z);
             default: return 0;
         }
     }
@@ -120,6 +139,11 @@ public final class SkyDensity implements DensityFunction {
             case CEILING: return 0;
             case CLIMATE_CONT: return Math.min(-1, argument.minValue());
             case CLIMATE_RIDGES: return Math.min(-1, argument.minValue());
+            case DEEP_MASK: case DEEP_CONT: return -1;
+            case DOME: return 0;
+            case DEEP_LIFT: return -3;
+            case DEEP_RELIEF: return 0;
+            case DEEP_CEILING: case DEEP_APRON: return -64;
             default: return -1;
         }
     }
@@ -137,6 +161,12 @@ public final class SkyDensity implements DensityFunction {
             case CEILING: return 400;
             case CLIMATE_CONT: return Math.max(argument.maxValue(), Math.max(1.5, raw.maxValue()));
             case CLIMATE_RIDGES: return Math.max(1, argument.maxValue());
+            case DEEP_MASK: return 1;
+            case DOME: return 1000;
+            case DEEP_CONT: return Math.max(1.5, raw.maxValue());
+            case DEEP_LIFT: return 1;
+            case DEEP_RELIEF: return 2;
+            case DEEP_CEILING: case DEEP_APRON: return 320;
             default: return 1;
         }
     }
@@ -174,8 +204,8 @@ public final class SkyDensity implements DensityFunction {
                 (x, z) -> rawFn.compute(new DensityFunction.SinglePointContext(x, 0, z)),
                 (x, z) -> nh.getValue(x, 0, z));
             FIELDS.put(key, f);
-            StoddCore.LOG.info("[STODD Core] sky islands: {} (a share of {} of the islands is lifted to about y {}; settings from config/stodd/world.toml)",
-                p.enabled && p.chance > 0 ? "on" : "off", p.chance, p.height);
+            StoddCore.LOG.info("[STODD Core] sky islands: {} ({} of the islands lifted to about y {}); sunken islands: {} ({} of the islands under bubble domes, floor at y {}, top at y {}); settings from config/stodd/world.toml",
+                p.enabled && p.chance > 0 ? "on" : "off", p.chance, p.height, p.deepEnabled && p.deepChance > 0 ? "on" : "off", p.deepChance, p.deepCoast, p.domeTop());
             return f;
         }
     }

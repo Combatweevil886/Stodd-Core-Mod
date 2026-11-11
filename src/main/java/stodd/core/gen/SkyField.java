@@ -1,5 +1,8 @@
 package stodd.core.gen;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -37,11 +40,25 @@ public final class SkyField {
         /** false: no beach / stony-shore biome up there (sandy rims would invite beached shipwrecks and buried treasure) */
         public boolean beaches = false;
         public int cell = 48, peakStep = 32;
+        // sunken islands under bubble domes ([deepIslands])
+        public boolean deepEnabled = true;
+        public double deepChance = 0.1;
+        public int seaLevel = 63, deepCoast = 16, deepWaterAbove = 10, deepDown = 20, deepMargin = 24, deepLighting = 12;
+        public double deepRelief = 0.6;
+        /** how far from a point the middle of a dome over it can be: about an island's radius + the margin (from the spawn-island size) */
+        public int deepReach = 420;
 
         public String key() {
             return enabled + "|" + chance + "|" + minSpawnDistance + "|" + minRadius + "|" + height + "|" + heightVariation + "|" + thickness + "|"
-                + spikes + "|" + relief + "|" + maxHeight + "|" + landThreshold + "|" + centreContinents + "|" + cell + "|" + peakStep + "|" + beaches;
+                + spikes + "|" + relief + "|" + maxHeight + "|" + landThreshold + "|" + centreContinents + "|" + cell + "|" + peakStep + "|" + beaches
+                + "|" + deepEnabled + "|" + deepChance + "|" + seaLevel + "|" + deepCoast + "|" + deepWaterAbove + "|" + deepDown + "|" + deepMargin
+                + "|" + deepLighting + "|" + deepRelief + "|" + deepReach;
         }
+
+        /** the highest block of a bubble dome (always under the sea) */
+        public int domeTop() { return seaLevel - deepWaterAbove; }
+
+        boolean deepOn() { return deepEnabled && deepChance > 0; }
 
         /** the lowest a sky island's surface can be (the rim of the lowest island) */
         public int lowestSurface() { return height - heightVariation - 4; }
@@ -59,10 +76,54 @@ public final class SkyField {
         public final double level;         // the island's coast height (sky columns only)
         public final double bottom;        // lowest solid block of the island here (sky columns only; 1000 elsewhere)
         public final IslandFinder.Island island;
-        Column(boolean sky, double raw, double t, double level, double bottom, IslandFinder.Island island) { this(sky, false, raw, t, level, bottom, island); }
-        Column(boolean sky, boolean fringe, double raw, double t, double level, double bottom, IslandFinder.Island island) {
+        public final boolean sunk;         // land of a sunken island (gone from the sea floor)
+        public final Dome dome;            // the bubble dome over this column, or null
+        Column(boolean sky, double raw, double t, double level, double bottom, IslandFinder.Island island) { this(sky, false, raw, t, level, bottom, island, false, null); }
+        Column(boolean sky, boolean fringe, double raw, double t, double level, double bottom, IslandFinder.Island island, boolean sunk, Dome dome) {
             this.sky = sky; this.fringe = fringe; this.raw = raw; this.t = t; this.level = level; this.bottom = bottom; this.island = island;
+            this.sunk = sunk; this.dome = dome;
         }
+        Column with(boolean sunk, Dome dome) { return sunk == this.sunk && dome == this.dome ? this : new Column(sky, fringe, raw, t, level, bottom, island, sunk, dome); }
+    }
+
+    /**
+     * The bubble dome of a sunken island: a flattened ellipsoid round the island, its floor (the island's coast) at base, rising
+     * `up` blocks to the top (always under the sea) and reaching `down` blocks into the ground underneath.
+     */
+    public static final class Dome {
+        public final IslandFinder.Island island;
+        public final double cx, cz, r, base, up, down;
+        Dome(IslandFinder.Island island, double cx, double cz, double r, double base, double up, double down) {
+            this.island = island; this.cx = cx; this.cz = cz; this.r = r; this.base = base; this.up = up; this.down = down;
+        }
+
+        /** < 1 inside, 1 on the surface, > 1 outside */
+        public double f(double x, double y, double z) {
+            double h = ((x - cx) * (x - cx) + (z - cz) * (z - cz)) / (r * r);
+            double v = y >= base ? (y - base) / up : (base - y) / down;
+            return h + v * v;
+        }
+
+        /** the inner surface of the roof over (x, z) (base where the dome does not reach) */
+        public double ceiling(double x, double z) {
+            double h = ((x - cx) * (x - cx) + (z - cz) * (z - cz)) / (r * r);
+            return h >= 1 ? base : base + up * Math.sqrt(1 - h);
+        }
+
+        public double floor(double x, double z) {
+            double h = ((x - cx) * (x - cx) + (z - cz) * (z - cz)) / (r * r);
+            return h >= 1 ? base : base - down * Math.sqrt(1 - h);
+        }
+
+        public boolean covers(double x, double z) { return (x - cx) * (x - cx) + (z - cz) * (z - cz) < r * r; }
+
+        /** true when the dome reaches into the rectangle */
+        public boolean touches(int x0, int z0, int x1, int z1) {
+            double nx = Math.max(x0, Math.min(x1, cx)), nz = Math.max(z0, Math.min(z1, cz));
+            return (nx - cx) * (nx - cx) + (nz - cz) * (nz - cz) <= (r + 1) * (r + 1);
+        }
+
+        public String key() { return island.key(); }
     }
 
     private static final Object NONE = new Object();
@@ -75,6 +136,8 @@ public final class SkyField {
     private final int hseed;
     private final Map<Long, Object> cells = new ConcurrentHashMap<>();
     private final Map<String, Boolean> lifted = new ConcurrentHashMap<>();
+    private final Map<String, Object> domes = new ConcurrentHashMap<>();
+    private final Map<Long, List<Dome>> domeCells = new ConcurrentHashMap<>();
 
     public SkyField(long seed, Params p, Raw raw, Noise under) {
         this.seed = seed;
@@ -104,6 +167,78 @@ public final class SkyField {
         if (lifted.size() > 200_000) lifted.clear();
         lifted.put(isl.key(), v);
         return v;
+    }
+
+    /** true when this island of the raw field is sunk deep under the sea, inside a bubble dome */
+    public boolean isSunk(IslandFinder.Island isl) { return domeOf(isl) != null; }
+
+    /** The bubble dome of a sunken island (null: the island is not sunken). */
+    public Dome domeOf(IslandFinder.Island isl) {
+        if (isl == null || !p.deepOn()) return null;
+        Object o = domes.get(isl.key());
+        if (o != null) return o == NONE ? null : (Dome) o;
+        Dome d = null;
+        if (isl.radius >= p.minRadius && Math.hypot(isl.cx, isl.cz) >= p.minSpawnDistance && !isl.contains(0, 0)
+            && !isLifted(isl) && unit(isl, 5) < p.deepChance) {
+            // round the whole island: its farthest land lattice point (+ the lattice step, land reaches past it) + the margin
+            double far = 0;
+            for (long k : isl.lattice) far = Math.max(far, Math.hypot((int) (k >> 32) - isl.cx, (int) k - isl.cz));
+            double r = far + IslandFinder.LATTICE + p.deepMargin;
+            double base = p.deepCoast, up = Math.max(8, p.domeTop() - base), down = Math.max(4, p.deepDown);
+            // every point under the dome must be able to find it (domesTouching looks this far): a bigger island (two grown into
+            // one) stays where it is
+            boolean fits = r <= Math.max(p.deepReach, p.deepMargin + 4 * IslandFinder.LATTICE) - 16;
+            // no other island's land under the dome
+            for (int a = 0; a < 64 && fits; a++) {
+                double ang = a * Math.PI / 32;
+                for (double rr : new double[] { r + 4, r * 0.75 }) {
+                    int x = (int) Math.round(isl.cx + rr * Math.cos(ang)), z = (int) Math.round(isl.cz + rr * Math.sin(ang));
+                    if (raw.at(x, z) >= p.landThreshold) {
+                        IslandFinder.Island o2 = islands.islandAt(x, z);
+                        if (o2 != null && !o2.key().equals(isl.key())) { fits = false; break; }
+                    }
+                }
+            }
+            if (fits) d = new Dome(isl, isl.cx, isl.cz, r, base, up, down);
+        }
+        if (domes.size() > 200_000) domes.clear();
+        domes.put(isl.key(), d == null ? NONE : d);
+        return d;
+    }
+
+    /** The domes that may reach into the rectangle (the islands with land within reach of it). */
+    public List<Dome> domesTouching(int x0, int z0, int x1, int z1) {
+        if (!p.deepOn()) return Collections.emptyList();
+        // the middle of an island is land, so every dome over the rectangle has land within reach of it; islands are wider than
+        // two lattice steps, so a coarse look finds them
+        int L = IslandFinder.LATTICE * 2, reach = Math.max(p.deepReach, p.deepMargin + 4 * IslandFinder.LATTICE);
+        List<Dome> out = new ArrayList<>();
+        java.util.Set<String> seen = new java.util.HashSet<>();
+        for (int lx = Math.floorDiv(x0 - reach, L) * L; lx <= x1 + reach; lx += L)
+            for (int lz = Math.floorDiv(z0 - reach, L) * L; lz <= z1 + reach; lz += L) {
+                if (raw.at(lx, lz) < p.landThreshold) continue;
+                IslandFinder.Island isl = islands.islandAt(lx, lz);
+                if (isl == null || !seen.add(isl.key())) continue;
+                Dome d = domeOf(isl);
+                if (d != null && d.touches(x0, z0, x1, z1)) out.add(d);
+            }
+        return out;
+    }
+
+    /** The dome over column (x, z), or null (looked up once per 32 x 32 lattice cell). */
+    public Dome domeAt(int x, int z) {
+        if (!p.deepOn()) return null;
+        int L = IslandFinder.LATTICE;
+        int ix = Math.floorDiv(x, L), iz = Math.floorDiv(z, L);
+        long key = ((long) ix << 32) ^ (iz & 0xffffffffL);
+        List<Dome> l = domeCells.get(key);
+        if (l == null) {
+            l = domesTouching(ix * L, iz * L, ix * L + L - 1, iz * L + L - 1);
+            if (domeCells.size() > 2_000_000) domeCells.clear();
+            domeCells.put(key, l);
+        }
+        for (Dome d : l) if (d.covers(x, z)) return d;
+        return null;
     }
 
     /** The coast height of a sky island. */
@@ -164,14 +299,29 @@ public final class SkyField {
 
     private Column compute(int x, int z, double knownRaw) {
         double r = Double.isNaN(knownRaw) ? raw.at(x, z) : knownRaw;
-        if (!p.enabled || p.chance <= 0) return new Column(false, r, 0, 0, 1000, null);
+        Column c = computeSky(x, z, r);
+        if (!p.deepOn()) return c;
+        Dome d = domeAt(x, z);
+        boolean sunk = d != null && r >= p.landThreshold && c.island != null && d.island.key().equals(c.island.key());
+        if (!sunk && r >= p.landThreshold && d == null && c.island == null) {
+            IslandFinder.Island own = islandOfLand(x, z);
+            sunk = own != null && isSunk(own);
+        }
+        return c.with(sunk, d);
+    }
+
+    private Column computeSky(int x, int z, double r) {
+        if (!p.enabled || p.chance <= 0) {
+            if (r >= p.landThreshold && p.deepOn()) return new Column(false, false, r, 0, 0, 1000, islandOfLand(x, z), false, null);
+            return new Column(false, r, 0, 0, 1000, null);
+        }
         if (r < p.landThreshold) {
             // the sea just off a lifted island's coast: its air up at the island's height must not count as ocean either, or a
             // structure that looks for the highest ground in an ocean (a shipwreck) could land on the island's edge
             if (r < p.landThreshold - FRINGE) return new Column(false, r, 0, 0, 1000, null);
             IslandFinder.Island near = islandOfLand(x, z);
             boolean f = near != null && isLifted(near);
-            return new Column(false, f, r, 0, 0, 1000, f ? near : null);
+            return new Column(false, f, r, 0, 0, 1000, f ? near : null, false, null);
         }
         IslandFinder.Island isl = islandOfLand(x, z);
         if (isl == null || !isLifted(isl)) return new Column(false, r, 0, 0, 1000, isl);
@@ -195,7 +345,9 @@ public final class SkyField {
     /** The ground's continentalness: a lifted island is pulled just under the coast (a shallow sea where it stood). */
     public double ground(int x, int z, double groundValue) {
         Column c = column(x, z, groundValue);
-        return c.sky ? Math.min(groundValue, p.landThreshold - 0.04) : groundValue;
+        if (c.sky) return Math.min(groundValue, p.landThreshold - 0.04);
+        if (c.sunk) return Math.min(groundValue, p.landThreshold - 0.12);   // the sea floor where a sunken island stood (its dome replaces it)
+        return groundValue;
     }
 
     /** > 0 inside a sky island (0..1 from coast to middle), -1 elsewhere. */
@@ -234,7 +386,7 @@ public final class SkyField {
      */
     public double climateContinents(int x, int z) {
         Column c = column(x, z);
-        double v = c.sky ? c.raw : INLAND;
+        double v = c.sky || c.dome != null ? c.raw : INLAND;
         return p.beaches ? Math.max(v, p.landThreshold + 0.005) : Math.max(v, INLAND);
     }
 
@@ -249,4 +401,32 @@ public final class SkyField {
 
     /** A field for an IslandFinder that sees only the ground islands. */
     public IslandFinder.Field groundOnly(IslandFinder.Field ground) { return (x, z) -> ground(x, z, ground.at(x, z)); }
+
+    // ---------------------------------------------------------------- sunken islands: what the density functions read
+
+    /** > 0 where a bubble dome covers the column, -1 elsewhere */
+    public double deepMask(int x, int z) { return column(x, z).dome != null ? 1 : -1; }
+
+    /** the dome's shape value at a point (< 1 inside), 1000 where no dome is */
+    public double domeShape(int x, int y, int z) { Dome d = column(x, z).dome; return d == null ? 1000 : d.f(x, y, z); }
+
+    /** the continentalness the sunken terrain is made from (the island's own; -1 where no dome is) */
+    public double deepContinents(int x, int z) { Column c = column(x, z); return c.dome != null ? c.raw : -1; }
+
+    public double deepLift(int x, int z) { Column c = column(x, z); return c.dome != null ? (c.dome.base - 64) / 128.0 : 0; }
+
+    public double deepRelief() { return p.deepRelief; }
+
+    /** the highest the island's terrain may reach under the roof (3 blocks of air under it at least) */
+    public double deepCeiling(int x, int z) { Column c = column(x, z); return c.dome != null ? c.dome.ceiling(x, z) - 3 : -64; }
+
+    /** the flat floor of the dome, one block under the island's coast */
+    public double deepApron(int x, int z) { Column c = column(x, z); return c.dome != null ? c.dome.base - 1 : -64; }
+
+    /** true when the climate at (x, y, z) is the sunken island's: inside its dome */
+    public boolean domeClimate(int x, int y, int z) {
+        if (!p.deepOn() || y > p.domeTop() + 2) return false;
+        Dome d = column(x, z).dome;
+        return d != null && d.f(x, y, z) < 1.05;
+    }
 }
