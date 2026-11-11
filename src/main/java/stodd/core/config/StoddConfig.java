@@ -570,7 +570,7 @@ public final class StoddConfig {
             isize = pr.equals("packed") ? 110 : pr.equals("large") ? 200 : pr.equals("grand") ? 300 : 140;
         }
         p.deepReach = (int) Math.round(isize * 1.6 + p.deepMargin + 96);
-        p.deepLighting = (int) Math.round(clampNote("deepIslands.lighting", num("deepIslands.lighting", 12), 0, 64));
+        p.deepLighting = (int) Math.round(clampNote("deepIslands.lighting", num("deepIslands.lighting", 8), 0, 64));
         p.landThreshold = num("islandLandThreshold", -0.19);
         p.peakStep = Math.max(8, integer("islandPeakStep", 32));
         p.cell = Math.max(16, integer("city.cell", 48));

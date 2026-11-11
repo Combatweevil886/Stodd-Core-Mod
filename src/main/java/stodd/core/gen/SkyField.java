@@ -43,7 +43,7 @@ public final class SkyField {
         // sunken islands under bubble domes ([deepIslands])
         public boolean deepEnabled = true;
         public double deepChance = 0.1;
-        public int seaLevel = 63, deepCoast = 16, deepWaterAbove = 10, deepDown = 20, deepMargin = 24, deepLighting = 12;
+        public int seaLevel = 63, deepCoast = 16, deepWaterAbove = 10, deepDown = 20, deepMargin = 24, deepLighting = 8;
         public double deepRelief = 0.6;
         /** how far from a point the middle of a dome over it can be: about an island's radius + the margin (from the spawn-island size) */
         public int deepReach = 420;

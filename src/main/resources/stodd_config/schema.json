@@ -423,9 +423,9 @@
      "t": "key",
      "path": "deepIslands.lighting",
      "key": "lighting",
-     "def": 12,
+     "def": 8,
      "re": false,
-     "note": "an invisible light every this many blocks over the island, as daylight does not reach that deep (0 = none)",
+     "note": "an invisible light every this many blocks over the island, as daylight does not reach that deep (0 = none: dark, mobs spawn)",
      "pre": []
     },
     {

@@ -65,7 +65,7 @@ global.stodd.cfg = {
     relief: 0.6,             // how tall the hills are compared with the same island on the ground; they always stay under the roof
     margin: 24,              // room between the island's coast and the dome's wall
     depthBelow: 20,          // how far the dome reaches into the ground under the island (it drains the caves down there too)
-    lighting: 12,            // an invisible light every this many blocks over the island, as daylight does not reach that deep (0 = none)
+    lighting: 8,             // an invisible light every this many blocks over the island, as daylight does not reach that deep (0 = none: dark, mobs spawn)
     bubbleLight: 7,          // light given off by the bubble itself, 0 to 15 (needs a game restart)
     bubbleBreakable: false   // true: the bubble can be broken like glass (and the dome flooded); false: unbreakable (needs a game restart)
   },
