@@ -23,6 +23,7 @@ jobs:
         run: |
           node tools/gen_config.js
           python3 tools/gen_sky_world.py
+          node tools/gen_world_json.js src/main/resources/embedded/kubejs/server_scripts/stodd src/main/resources/stodd_world.json
           git diff --exit-code -- src/main/resources || (echo "run node tools/gen_config.js and python3 tools/gen_sky_world.py, then commit" && exit 1)
       - uses: gradle/actions/setup-gradle@v4
       - name: Build the mod (ForgeGradle downloads Minecraft and Forge 1.20.1 the first time)

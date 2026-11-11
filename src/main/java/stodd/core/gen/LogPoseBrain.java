@@ -114,11 +114,12 @@ public final class LogPoseBrain {
         WorldRules.Mode mode = modes.get(mi);
         o.modeName = mode.name;
         if (s.mode != mi) { s.mode = mi; s.target = null; s.tinfo = null; }
-        // up in the sky: above the sky islands' height (logPose.skyMinY, 0 = from the sky-island settings) and not standing on high
-        // ground of a ground island
+        // up in the sky: above the sky islands' height (logPose.skyMinY, 0 = from the sky-island settings); over a ground island
+        // 50 blocks more, so a player on a high hill is not "up in the sky"
         int upY = rules.lpSkyMinY > 0 ? rules.lpSkyMinY : index.skyMinY();
-        boolean up = rules.skyEnabled && index.sky() != null && y >= upY
-            && (index.sky().isLand((int) Math.floor(x), (int) Math.floor(z)) || !index.ground().isLand((int) Math.floor(x), (int) Math.floor(z)));
+        int ix = (int) Math.floor(x), iz = (int) Math.floor(z);
+        boolean overGround = index.ground().isLand(ix, iz) && !(index.sky() != null && index.sky().isLand(ix, iz));
+        boolean up = rules.skyEnabled && index.sky() != null && y >= upY + (overGround ? 50 : 0);
         if (up != s.up) { s.up = up; if (mode.kind.equals("next")) { s.target = null; s.tinfo = null; } }
         boolean wantSky = mode.kind.equals("sky") || (mode.kind.equals("next") && up);
         Info here = here(x, up ? y : 0, z);

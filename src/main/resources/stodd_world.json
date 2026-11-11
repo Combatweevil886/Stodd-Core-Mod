@@ -1988,10 +1988,10 @@
   },
   "sky": {
    "enabled": true,
-   "biome": "stodd:sky_meadow",
-   "biomeLow": 146,
-   "biomeHigh": 262,
-   "perCell": 5,
+   "biome": "",
+   "biomeLow": 80,
+   "biomeHigh": 318,
+   "perCell": 0,
    "density": 0.9,
    "foundation": "minecraft:stone",
    "styles": [
@@ -2568,7 +2568,7 @@
  },
  "sky": {
   "enabled": true,
-  "minY": 200,
+  "minY": 150,
   "probeY": 227,
   "scanStep": 64,
   "minRadius": 48

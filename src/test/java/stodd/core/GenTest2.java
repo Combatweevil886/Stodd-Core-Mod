@@ -191,7 +191,18 @@ public final class GenTest2 {
         IslandFinder.Island s1 = sky.islandAt(5100, 5050), s1b = sky.islandAt(4900, 4950);
         ok(s1 != null && s1b != null && s1.key().equals(s1b.key()), "two points of one sky island give one centre");
         ok(s1 != null && Math.abs(s1.cx - 5000) <= 24 && Math.abs(s1.cz - 5000) <= 24 && Math.abs(s1.radius - 170) < 20, "centre in the middle, radius about right (" + (s1 == null ? "-" : s1.key() + " r" + s1.radius) + ")");
-        IslePlanner.Plan sp = new IslePlanner(rules).sky(sky, s1, seed);
+        // 3.1: a sky island keeps its natural plants by default; the old dressing (extra trees) is skyIslands.extraPlants
+        IslePlanner.Plan natural = new IslePlanner(rules).sky(sky, s1, seed);
+        int nf = 0;
+        if (natural != null) for (IslePlanner.Cell c : natural.cells) nf += c.features.size();
+        ok(natural != null && nf == 0 && rules.skyBiome.isEmpty(), "by default no extra plants and no fixed biome (" + nf + ")");
+        String meadowJson;
+        try (java.io.InputStream in = GenTest2.class.getResourceAsStream("/stodd_world.json")) {
+            meadowJson = new String(in.readAllBytes(), StandardCharsets.UTF_8).replaceFirst("\"perCell\": 0", "\"perCell\": 5").replaceFirst("\"biome\": \"\",\\s*\"biomeLow\"", "\"biome\": \"stodd:sky_meadow\", \"biomeLow\"");
+        }
+        WorldRules meadow = WorldRules.fromJson(meadowJson, "test: sky meadow");
+        ok(meadow.skyPerCell == 5, "extra plants asked for");
+        IslePlanner.Plan sp = new IslePlanner(meadow).sky(sky, s1, seed);
         ok(sp != null && sp.sky && sp.skyStyle != null, "a sky plan with a style (" + (sp == null || sp.skyStyle == null ? "-" : sp.skyStyle.name) + ")");
         boolean onIsland = true, awayFromMiddle = true;
         int feats = 0;
