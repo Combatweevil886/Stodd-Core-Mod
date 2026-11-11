@@ -92,6 +92,9 @@ tasks.register('stoddVectors', Exec) {
         args vectors.get().asFile.path
     }
 }
+// the tests are plain programs (no JUnit), run by the tasks above: Gradle's own test task has nothing to do
+tasks.named('test') { enabled = false }
+
 // not part of `build`, so building on a PC does not need Node; the CI workflow runs it
 tasks.register('stoddTests') { dependsOn 'stoddGenTest', 'stoddGenTest2' }
 
