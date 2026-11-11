@@ -60,12 +60,13 @@ global.stodd.cfg = {
     // share of the islands that are sunk:  none (0)  very_rare (3%)  rare (6%)  normal (10%)  common (18%)  very_common (30%)
     rarity: 'normal',
     chance: -1,              // exact share instead of the rarity, 0 to 1 (-1 = use rarity)
-    coastDepth: 16,          // height of the island's coast and of the dome's floor (the sea is at 63, so about 47 blocks down)
-    waterAbove: 10,          // at least this much water over the top of the dome (at least 4: the dome never reaches the surface)
+    coastDepth: 24,          // height of the island's coast inside the dome and of the sea round it in there (the outer sea is at 63)
+    waterAbove: 6,           // at least this much water over the top of the dome (at least 4: the dome never reaches the surface)
     relief: 0.6,             // how tall the hills are compared with the same island on the ground; they always stay under the roof
-    margin: 24,              // room between the island's coast and the dome's wall
-    depthBelow: 20,          // how far the dome reaches into the ground under the island (it drains the caves down there too)
-    lighting: 8,             // an invisible light every this many blocks over the island, as daylight does not reach that deep (0 = none: dark, mobs spawn)
+    margin: 40,              // room between the island's coast and the dome's wall: the shallow sea round the island in there
+    depthBelow: 24,          // how far the dome reaches under the inner sea (at least 20; the sea in there is at most 18 deep)
+    slope: 64,               // round the dome the sea floor is lowered to its foot and rises back over this many blocks (0 = no hollow)
+    lighting: 8,             // an invisible light every this many blocks over the island and its sea, as daylight does not reach that deep (0 = none: dark, mobs spawn)
     bubbleLight: 7,          // light given off by the bubble itself, 0 to 15 (needs a game restart)
     bubbleBreakable: false,  // true: the bubble can be broken like glass (and the dome flooded); false: unbreakable (needs a game restart)
     villages: 0.6,           // share of sunken islands with a village round their middle (0 = none, 1 = all)

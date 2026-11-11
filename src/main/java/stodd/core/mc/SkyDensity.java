@@ -29,15 +29,17 @@ import java.util.Objects;
  *   deep_mask           > 0 where a sunken island's bubble dome covers the column, -1 elsewhere
  *   dome                the dome's shape at the point (< 1 inside, 1000 where there is none)
  *   deep_continents / deep_lift / deep_relief   the sunken island's terrain (its own continentalness, lowered)
- *   deep_ceiling / deep_apron                   the roof the terrain stays under, and the flat floor of the dome
+ *   deep_ceiling / deep_apron                   the roof the terrain stays under, and the deepest the sea inside gets
+ *   deep_carve          the highest the sea floor may reach (lowered under and round a dome so it stands free; 10000 elsewhere)
+ *   deep_climate        1 where the climate is a sunken island's (inside its dome), -1 elsewhere
  * "raw" is the raw continentalness (Survival Island's function), "noise" the underside noise. The settings are read from the STODD
  * config when the world is created (when its RandomState wires the functions), so a new world picks up a changed config.
  */
 public final class SkyDensity implements DensityFunction {
     static final String[] MODES = { "ground", "mask", "continents", "ridges", "lift", "relief", "bottom", "ceiling", "climate_continents", "climate_ridges",
-        "deep_mask", "dome", "deep_continents", "deep_lift", "deep_relief", "deep_ceiling", "deep_apron" };
+        "deep_mask", "dome", "deep_continents", "deep_lift", "deep_relief", "deep_ceiling", "deep_apron", "deep_carve", "deep_climate" };
     static final int GROUND = 0, MASK = 1, CONT = 2, RIDGES = 3, LIFT = 4, RELIEF = 5, BOTTOM = 6, CEILING = 7, CLIMATE_CONT = 8, CLIMATE_RIDGES = 9,
-        DEEP_MASK = 10, DOME = 11, DEEP_CONT = 12, DEEP_LIFT = 13, DEEP_RELIEF = 14, DEEP_CEILING = 15, DEEP_APRON = 16;
+        DEEP_MASK = 10, DOME = 11, DEEP_CONT = 12, DEEP_LIFT = 13, DEEP_RELIEF = 14, DEEP_CEILING = 15, DEEP_APRON = 16, DEEP_CARVE = 17, DEEP_CLIMATE = 18;
 
     public static final MapCodec<SkyDensity> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
         Codec.STRING.fieldOf("mode").forGetter(s -> s.mode),
@@ -74,7 +76,8 @@ public final class SkyDensity implements DensityFunction {
             switch (m) {
                 case GROUND: return raw.compute(c);
                 case CLIMATE_CONT: case CLIMATE_RIDGES: case RIDGES: return argument.compute(c);
-                case MASK: case CONT: case DEEP_MASK: case DEEP_CONT: return -1;
+                case MASK: case CONT: case DEEP_MASK: case DEEP_CONT: case DEEP_CLIMATE: return -1;
+                case DEEP_CARVE: return SkyField.NO_CARVE;
                 case DOME: return 1000;
                 case DEEP_CEILING: case DEEP_APRON: return -64;
                 case RELIEF: case DEEP_RELIEF: return 1;
@@ -109,6 +112,8 @@ public final class SkyDensity implements DensityFunction {
             case DEEP_RELIEF: return f.deepRelief();
             case DEEP_CEILING: return f.deepCeiling(x, z);
             case DEEP_APRON: return f.deepApron(x, z);
+            case DEEP_CARVE: return f.deepCarve(x, z);
+            case DEEP_CLIMATE: return f.domeClimate(x, c.blockY(), z) ? 1 : -1;
             default: return 0;
         }
     }
@@ -144,6 +149,8 @@ public final class SkyDensity implements DensityFunction {
             case DEEP_LIFT: return -3;
             case DEEP_RELIEF: return 0;
             case DEEP_CEILING: case DEEP_APRON: return -64;
+            case DEEP_CARVE: return -64;
+            case DEEP_CLIMATE: return -1;
             default: return -1;
         }
     }
@@ -167,6 +174,8 @@ public final class SkyDensity implements DensityFunction {
             case DEEP_LIFT: return 1;
             case DEEP_RELIEF: return 2;
             case DEEP_CEILING: case DEEP_APRON: return 320;
+            case DEEP_CARVE: return SkyField.NO_CARVE;
+            case DEEP_CLIMATE: return 1;
             default: return 1;
         }
     }
@@ -204,7 +213,7 @@ public final class SkyDensity implements DensityFunction {
                 (x, z) -> rawFn.compute(new DensityFunction.SinglePointContext(x, 0, z)),
                 (x, z) -> nh.getValue(x, 0, z));
             FIELDS.put(key, f);
-            StoddCore.LOG.info("[STODD Core] sky islands: {} ({} of the islands lifted to about y {}); sunken islands: {} ({} of the islands under bubble domes, floor at y {}, top at y {}); settings from config/stodd/world.toml",
+            StoddCore.LOG.info("[STODD Core] sky islands: {} ({} of the islands lifted to about y {}); sunken islands: {} ({} of the islands under bubble domes, their coast and inner sea at y {}, top at y {}); settings from config/stodd/world.toml",
                 p.enabled && p.chance > 0 ? "on" : "off", p.chance, p.height, p.deepEnabled && p.deepChance > 0 ? "on" : "off", p.deepChance, p.deepCoast, p.domeTop());
             return f;
         }

@@ -153,7 +153,7 @@ public final class ModCommands {
             if (d != null) {
                 String where = pos.y > d.base + d.up + 1 ? "below you" : pos.y < d.base - d.down ? "above you" : "around you";
                 return "Sunken island " + t.rules.deepName(d.island.cx, d.island.cz, seed) + ", under a bubble dome " + where
-                    + ": centre " + d.island.cx + ", " + d.island.cz + ", dome " + (int) (2 * d.r) + " blocks across, floor at y " + (int) d.base + ", top at y " + (int) (d.base + d.up) + ".";
+                    + ": centre " + d.island.cx + ", " + d.island.cz + ", dome " + (int) (2 * d.r) + " blocks across, its coast and inner sea at y " + (int) d.base + ", top at y " + (int) (d.base + d.up) + ".";
             }
         }
         IslandFinder.Island isl = t.ground.islandAt(x, z);

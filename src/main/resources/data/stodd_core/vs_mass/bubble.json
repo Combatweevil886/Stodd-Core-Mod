@@ -1,0 +1,7 @@
+[
+  {
+    "block": "stodd_core:bubble",
+    "mass": 1.0,
+    "no_collision": true
+  }
+]

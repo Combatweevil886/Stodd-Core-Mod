@@ -192,6 +192,21 @@ public final class GenTest3 {
         ok(after.contains("# islandThemes.city.bogus = 1"), "an unknown setting is kept as a comment");
         ok(c3.integer("skyIslands.heightVariation", 0) == 12, "deleted setting = default");
 
+        section("config: an old default moves to the new one, a value someone chose stays");
+        String old = new String(Files.readAllBytes(world), StandardCharsets.UTF_8);
+        old = old.replace("coastDepth = 24", "coastDepth = 16").replace("waterAbove = 6", "waterAbove = 10").replace("margin = 40", "margin = 31");
+        Files.write(world, old.getBytes(StandardCharsets.UTF_8));
+        StoddConfig c3b = StoddConfig.load(game);
+        SkyField.Params pb = c3b.skyParams();
+        ok(pb.deepCoast == 24 && pb.domeTop() == 57, "the 3.1.0 defaults of the sunken islands become the new ones: coast " + pb.deepCoast + ", top " + pb.domeTop());
+        ok(pb.deepMargin == 31, "a value someone chose is kept: " + pb.deepMargin);
+        String rewritten = new String(Files.readAllBytes(world), StandardCharsets.UTF_8);
+        ok(rewritten.contains("coastDepth = 24") && rewritten.contains("margin = 31"), "the file is rewritten with the new default, the chosen value kept");
+        boolean toldOld = false;
+        for (String n : c3b.notes()) if (n.contains("deepIslands.coastDepth") && n.contains("old default")) toldOld = true;
+        ok(toldOld, "the move is reported: " + c3b.notes());
+        ok(pb.deepRing == 64 && pb.deepReach >= 64 + 140, "the slope round the dome, and the reach that finds it: " + pb.deepRing + ", " + pb.deepReach);
+
         section("config: a file with a mistake is left alone");
         Path prog = game.resolve("config/stodd/progression.toml");
         String ptext = new String(Files.readAllBytes(prog), StandardCharsets.UTF_8).replace("maxLevel = 20", "maxLevel = 25\nbroken = [1, 2");
@@ -440,6 +455,42 @@ public final class GenTest3 {
         }
         ok(cells > 100 && bad == 0, "every block of the dome water can reach from outside is part of the wall (" + cells + " checked)");
         ok(d.f(d.cx, d.base + d.up - 0.5, d.cz) < 1 && d.f(d.cx, d.base + d.up + 1, d.cz) > 1 && d.f(d.cx, d.base - d.down + 0.5, d.cz) < 1, "the roof and the bottom where they should be");
+        ok(d.f(d.cx + d.r * 0.98, d.base - d.down + 1, d.cz) < 1 && d.f(d.cx + d.r * 0.98, d.base - 1, d.cz) < 1 && d.f(d.cx, d.base - d.down - 1, d.cz) > 1,
+            "under the inner sea the wall goes straight down (the sea inside is as deep at the wall as in the middle)");
+
+        section("sunken islands: an island in its own sea, the dome standing free");
+        // the sea round the island inside: real sea biomes, at most 18 blocks deep, and the sea floor round the dome lowered
+        int sx = (int) Math.round(d.cx + d.r - 6), sz = (int) Math.round(d.cz);
+        ok(raw.at(sx, sz) < p.landThreshold && f.domeClimate(sx, (int) d.base - 3, sz) && f.climateContinents(sx, sz) < p.landThreshold,
+            "the sea inside the dome is sea, for the biomes too (ocean and beach biomes in there)");
+        ok(Math.abs(f.deepApron(sx, sz) - (d.base - 18)) < 1e-9 && f.deepApron(sx, sz) > d.base - d.down, "the inner sea is at most 18 deep, above the dome's bottom");
+        ok(d.sea() == (int) Math.floor(d.base) && d.base == p.deepCoast, "the inner sea's surface is the island's coast height");
+        boolean carve = true;
+        for (int k = 0; k < 24; k++) {
+            double ang = k * Math.PI / 12;
+            double prev = -1e9;
+            for (double rr = 0; rr <= d.r + d.ring + 20; rr += 4) {
+                int x = (int) Math.round(d.cx + rr * Math.cos(ang)), z = (int) Math.round(d.cz + rr * Math.sin(ang));
+                double c = f.carveAt(x, z), dd = Math.hypot(x - d.cx, z - d.cz);
+                if (dd < d.r - 1 && Math.abs(c - (d.base - 3)) > 1e-9) carve = false;          // under the dome: its foot
+                if (dd > d.r + d.ring + 1 && c != SkyField.NO_CARVE) carve = false;          // beyond the slope: untouched
+                if (c + 1e-9 < prev && c != SkyField.NO_CARVE) carve = false;                // rising outwards
+                if (c != SkyField.NO_CARVE) prev = c;
+                if (f.deepCarve(x, z) != c) carve = false;
+            }
+        }
+        ok(carve, "round the dome the sea floor goes down to its foot and rises back over the slope, and is untouched beyond");
+        boolean neighbours = true;
+        for (int[] g : isl) for (int k = 0; k < 16; k++) {
+            double ang = k * Math.PI / 8;
+            for (double rr = 0; rr < g[2] * 1.4; rr += 12) {
+                int x = (int) (g[0] + rr * Math.cos(ang)), z = (int) (g[1] + rr * Math.sin(ang));
+                if (raw.at(x, z) < p.landThreshold) continue;
+                SkyField.Dome own = f.domeAt(x, z);
+                if (own == null && f.carveAt(x, z) != SkyField.NO_CARVE) neighbours = false;
+            }
+        }
+        ok(neighbours, "no other island's land is cut down by the slope round a dome");
         ok(f.domesTouching((int) (d.cx + d.r - 10), (int) d.cz, (int) (d.cx + d.r + 30), (int) d.cz + 40).size() == 1
             && f.domesTouching((int) (d.cx + d.r + 20), (int) d.cz, (int) (d.cx + d.r + 60), (int) d.cz + 40).isEmpty(), "the cells a dome reaches into are found, the next ones are not");
 

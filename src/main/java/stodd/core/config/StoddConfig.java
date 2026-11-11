@@ -202,6 +202,12 @@ public final class StoddConfig {
                         }
                         String why = accepts(st, e.getValue());
                         if (why != null) { notes.add(sp.name + ".toml: " + e.getKey() + " " + why + ", using the default " + Toml.format(st.def)); continue; }
+                        if (retired(e.getKey(), e.getValue())) {
+                            // the default of an earlier version, written there by that version: the new default instead
+                            notes.add(sp.name + ".toml: " + e.getKey() + " = " + Toml.format(e.getValue()) + " was the old default, using the new default " + Toml.format(st.def));
+                            needWrite = true;
+                            continue;
+                        }
                         user.put(e.getKey(), normalise(st, e.getValue()));
                     }
                     for (Setting st : schema.settings.values()) if (st.file.equals(sp.name) && !flat.containsKey(st.path)) needWrite = true;
@@ -219,6 +225,22 @@ public final class StoddConfig {
             }
             stamps.put(sp.name, Files.exists(f) ? lastModified(f) : -1);
         }
+    }
+
+    /** Defaults that a newer version changed: a file still holding one gets the new default (3.1.1: the sunken islands' new look). */
+    static final Map<String, double[]> RETIRED = new LinkedHashMap<>();
+    static {
+        RETIRED.put("deepIslands.coastDepth", new double[] { 16 });
+        RETIRED.put("deepIslands.waterAbove", new double[] { 10 });
+        RETIRED.put("deepIslands.margin", new double[] { 24 });
+        RETIRED.put("deepIslands.depthBelow", new double[] { 20 });
+    }
+
+    static boolean retired(String path, Object v) {
+        double[] old = RETIRED.get(path);
+        if (old == null || !(v instanceof Number)) return false;
+        for (double o : old) if (((Number) v).doubleValue() == o) return true;
+        return false;
     }
 
     /** Inline tables under a table path ("islandThemes.city = { chance = 0.2 }") count as that table's settings. */
@@ -557,11 +579,12 @@ public final class StoddConfig {
         // sunken islands
         p.deepChance = deepChance();
         p.deepEnabled = p.deepChance > 0;
-        p.deepWaterAbove = (int) Math.round(clampNote("deepIslands.waterAbove", num("deepIslands.waterAbove", 10), 4, 50));
-        p.deepCoast = (int) Math.round(clampNote("deepIslands.coastDepth", num("deepIslands.coastDepth", 16), -40, p.seaLevel - p.deepWaterAbove - 16));
+        p.deepWaterAbove = (int) Math.round(clampNote("deepIslands.waterAbove", num("deepIslands.waterAbove", 6), 4, 50));
+        p.deepCoast = (int) Math.round(clampNote("deepIslands.coastDepth", num("deepIslands.coastDepth", 24), -30, p.seaLevel - p.deepWaterAbove - 16));
         p.deepRelief = clampNote("deepIslands.relief", num("deepIslands.relief", 0.6), 0.1, 1.5);
-        p.deepMargin = (int) Math.round(clampNote("deepIslands.margin", num("deepIslands.margin", 24), 6, 200));
-        p.deepDown = (int) Math.round(clampNote("deepIslands.depthBelow", num("deepIslands.depthBelow", 20), 4, 60));
+        p.deepMargin = (int) Math.round(clampNote("deepIslands.margin", num("deepIslands.margin", 40), 6, 200));
+        p.deepDown = (int) Math.round(clampNote("deepIslands.depthBelow", num("deepIslands.depthBelow", 24), 20, 60));
+        p.deepRing = (int) Math.round(clampNote("deepIslands.slope", num("deepIslands.slope", 64), 0, 200));
         if (p.deepCoast - p.deepDown < -58) { p.deepDown = p.deepCoast + 58; notes.add("deepIslands.depthBelow reaches the lava at the bottom of the world, using " + p.deepDown); }
         // an island's land reaches about 1.35 x islandSize from its middle (the size of the spawn islands, preset or set)
         double isize = num("spawnIslands.islandSize", 0);
@@ -569,7 +592,7 @@ public final class StoddConfig {
             String pr = str("spawnIslands.preset", "default").toLowerCase(Locale.ROOT);
             isize = pr.equals("packed") ? 110 : pr.equals("large") ? 200 : pr.equals("grand") ? 300 : 140;
         }
-        p.deepReach = (int) Math.round(isize * 1.6 + p.deepMargin + 96);
+        p.deepReach = (int) Math.round(isize * 1.6 + p.deepMargin + 96 + p.deepRing);
         p.deepLighting = (int) Math.round(clampNote("deepIslands.lighting", num("deepIslands.lighting", 8), 0, 64));
         p.landThreshold = num("islandLandThreshold", -0.19);
         p.peakStep = Math.max(8, integer("islandPeakStep", 32));

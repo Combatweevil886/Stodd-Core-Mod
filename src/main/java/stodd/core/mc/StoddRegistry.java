@@ -42,7 +42,9 @@ public final class StoddRegistry {
             .mapColor(MapColor.WATER)
             .noCollission()
             .noOcclusion()
-            .forceSolidOn()                     // "solid" for water: it may not flow into it or wash it away
+            // not "solid": ships (Valkyrien Skies / Eureka) take a solid block's outline as its collision, and must sail through
+            // (water still cannot flow into it or wash it away: BubbleBlock refuses every liquid)
+            .forceSolidOff()
             .pushReaction(PushReaction.BLOCK)
             .sound(SoundType.GLASS)
             .lightLevel(s -> light)

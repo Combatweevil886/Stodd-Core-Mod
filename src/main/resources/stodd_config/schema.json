@@ -378,16 +378,16 @@
      "t": "key",
      "path": "deepIslands.coastDepth",
      "key": "coastDepth",
-     "def": 16,
+     "def": 24,
      "re": false,
-     "note": "height of the island's coast and of the dome's floor (the sea is at 63, so about 47 blocks down)",
+     "note": "height of the island's coast inside the dome and of the sea round it in there (the outer sea is at 63)",
      "pre": []
     },
     {
      "t": "key",
      "path": "deepIslands.waterAbove",
      "key": "waterAbove",
-     "def": 10,
+     "def": 6,
      "re": false,
      "note": "at least this much water over the top of the dome (at least 4: the dome never reaches the surface)",
      "pre": []
@@ -405,18 +405,27 @@
      "t": "key",
      "path": "deepIslands.margin",
      "key": "margin",
-     "def": 24,
+     "def": 40,
      "re": false,
-     "note": "room between the island's coast and the dome's wall",
+     "note": "room between the island's coast and the dome's wall: the shallow sea round the island in there",
      "pre": []
     },
     {
      "t": "key",
      "path": "deepIslands.depthBelow",
      "key": "depthBelow",
-     "def": 20,
+     "def": 24,
      "re": false,
-     "note": "how far the dome reaches into the ground under the island (it drains the caves down there too)",
+     "note": "how far the dome reaches under the inner sea (at least 20; the sea in there is at most 18 deep)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "deepIslands.slope",
+     "key": "slope",
+     "def": 64,
+     "re": false,
+     "note": "round the dome the sea floor is lowered to its foot and rises back over this many blocks (0 = no hollow)",
      "pre": []
     },
     {
@@ -425,7 +434,7 @@
      "key": "lighting",
      "def": 8,
      "re": false,
-     "note": "an invisible light every this many blocks over the island, as daylight does not reach that deep (0 = none: dark, mobs spawn)",
+     "note": "an invisible light every this many blocks over the island and its sea, as daylight does not reach that deep (0 = none: dark, mobs spawn)",
      "pre": []
     },
     {

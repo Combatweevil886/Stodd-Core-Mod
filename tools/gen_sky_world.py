@@ -101,9 +101,11 @@ files[DF + '/overworld/sky_islands.json'] = {'type': 'minecraft:squeeze', 'argum
     'when_out_of_range': -1.0}})}
 
 # ---------------------------------------------------------------- sunken islands under bubble domes (3.1)
-# Inside a dome the terrain is the sunken island only: its own terrain lowered to the dome's floor (deepIslands.coastDepth), its
-# hills kept under the roof, a flat floor round it; the sea floor there is left out. Outside a dome, the ground as before. The
-# water the sea fills the dome with is drained, and the wall built, by the dome structure (CellDomePiece).
+# Inside a dome the terrain is the sunken island only, as it would be on the ground: its own continentalness everywhere under the
+# dome (the island, its beaches and the shallow sea round it), lowered so its coast is at deepIslands.coastDepth, its hills kept
+# under the roof and the sea in there at most 18 blocks deep. Round the dome the sea floor is lowered to the dome's foot and rises
+# back over a slope (deep/carve), so the dome stands free on the sea floor. Outside, the ground as before. Above the inner sea the
+# water is drained, and the wall built, by the dome structure (CellDomePiece).
 files[DF + '/deep/mask.json'] = flat(sky('deep_mask'))
 files[DF + '/deep/inside.json'] = sky('dome')
 files[DF + '/deep/continents.json'] = flat(sky('deep_continents'))
@@ -111,6 +113,12 @@ files[DF + '/deep/lift.json'] = flat(sky('deep_lift'))
 files[DF + '/deep/relief.json'] = sky('deep_relief')
 files[DF + '/deep/ceiling.json'] = flat(sky('deep_ceiling'))
 files[DF + '/deep/apron.json'] = flat(sky('deep_apron'))
+files[DF + '/deep/carve.json'] = flat(sky('deep_carve'))
+files[DF + '/deep/climate.json'] = sky('deep_climate')
+# solid at most up to the carve (+ shift): 0.1 a block, like the other caps
+def carve_cap(shift):
+    return mul(0.1, add('stodd:deep/carve', add(float(shift), mul(-1.0, 'stodd:overworld/y'))))
+files[DF + '/overworld/ground_carved.json'] = {'type': 'minecraft:min', 'argument1': 'stodd:overworld/ground_density', 'argument2': carve_cap(0)}
 dtable = {'stodd:overworld/continents': 'stodd:deep/continents', 'minecraft:overworld/ridges': 'stodd:sky/ridges',
           'minecraft:overworld/ridges_folded': 'stodd:sky/ridges_folded'}
 for name in ('offset', 'factor', 'jaggedness'):
@@ -141,15 +149,30 @@ assert fd['type'] == 'minecraft:max' and fd['argument2'] == 'stodd:overworld/sky
 ground = fd['argument1']
 if isinstance(ground, dict) and ground.get('type') == 'minecraft:range_choice' and ground.get('input') == 'stodd:deep/mask':
     ground = ground['when_out_of_range']
-if ground == 'stodd:overworld/ground_density':
+if ground in ('stodd:overworld/ground_density', 'stodd:overworld/ground_carved'):
     ground = load(DF + '/overworld/ground_density.json')
 # the ground's own density (the world's terrain as before), named so it is written once and used twice
 files[DF + '/overworld/ground_density.json'] = ground
-ground = 'stodd:overworld/ground_density'
+ground = 'stodd:overworld/ground_carved'
 fd['argument1'] = {'type': 'minecraft:range_choice', 'input': 'stodd:deep/mask', 'min_inclusive': 0.0, 'max_exclusive': 2.0,
                    'when_in_range': {'type': 'minecraft:range_choice', 'input': 'stodd:deep/inside', 'min_inclusive': -1000000.0, 'max_exclusive': 1.0,
                                      'when_in_range': 'stodd:overworld/deep_islands', 'when_out_of_range': ground},
                    'when_out_of_range': ground}
+# the surface the aquifers and the surface rules go by: lowered with the sea floor (9 blocks deeper, so the sea inside a dome
+# and in the hollow round it is the open sea, one water level, and its floor still gets sand and gravel)
+init = ns['noise_router']['initial_density_without_jaggedness']
+if isinstance(init, dict) and init.get('type') == 'minecraft:min' and init.get('argument2') == carve_cap(-9):
+    init = init['argument1']
+ns['noise_router']['initial_density_without_jaggedness'] = {'type': 'minecraft:min', 'argument1': init, 'argument2': carve_cap(-9)}
+# the depth the biomes are chosen with: inside a dome the sunken island's own (no cave biomes in its open air); round it, the
+# lowered sea floor's
+depth = ns['noise_router']['depth']
+if isinstance(depth, dict) and depth.get('input') == 'stodd:deep/climate':
+    depth = depth['when_out_of_range']['argument1']
+ns['noise_router']['depth'] = {'type': 'minecraft:range_choice', 'input': 'stodd:deep/climate', 'min_inclusive': 0.0, 'max_exclusive': 2.0,
+                               'when_in_range': 'stodd:deep/depth',
+                               'when_out_of_range': {'type': 'minecraft:min', 'argument1': depth,
+                                                     'argument2': mul(0.0078125, add('stodd:deep/carve', mul(-1.0, 'stodd:overworld/y')))}}
 ns['noise_router']['continents'] = sky('climate_continents', 'stodd:overworld/continents')
 ns['noise_router']['ridges'] = sky('climate_ridges', 'minecraft:overworld/ridges')
 files['minecraft/worldgen/noise_settings/overworld.json'] = ns

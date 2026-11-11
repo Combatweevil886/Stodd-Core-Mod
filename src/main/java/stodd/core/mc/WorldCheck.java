@@ -105,7 +105,7 @@ public final class WorldCheck {
             int all = ground.size() + sky.size() + deep.size();
             out.add(new Line('o', "Sky islands: " + sky.size() + " of the " + all + " islands within 3.3 km of 0,0 are lifted into the sky (" + Math.round(tools.skyField.p.chance * 100)
                 + "% asked for, coasts at y " + (tools.skyField.p.height - tools.skyField.p.heightVariation) + "-" + (tools.skyField.p.height + tools.skyField.p.heightVariation) + "); "
-                + deep.size() + " are sunk under bubble domes (" + Math.round(tools.skyField.p.deepChance * 100) + "% asked for, floor at y " + tools.skyField.p.deepCoast + ", top at y " + tools.skyField.p.domeTop() + ")."));
+                + deep.size() + " are sunk under bubble domes (" + Math.round(tools.skyField.p.deepChance * 100) + "% asked for, coast and inner sea at y " + tools.skyField.p.deepCoast + ", top at y " + tools.skyField.p.domeTop() + ")."));
         }
         boolean cities = server.registryAccess().registryOrThrow(Registries.STRUCTURE_SET).containsKey(new ResourceLocation("stodd", "city_blocks"));
         out.add(new Line(cities ? 'o' : 'w', cities ? "Cities, dressed islands and sky-island landmarks are generated with the chunks (structure sets stodd:city_blocks, stodd:isle_blocks, stodd:sky_blocks)."

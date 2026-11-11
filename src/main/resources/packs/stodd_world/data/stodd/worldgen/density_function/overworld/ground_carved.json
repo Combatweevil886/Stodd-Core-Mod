@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:min",
+  "argument1": "stodd:overworld/ground_density",
+  "argument2": {
+    "type": "minecraft:mul",
+    "argument1": 0.1,
+    "argument2": {
+      "type": "minecraft:add",
+      "argument1": "stodd:deep/carve",
+      "argument2": {
+        "type": "minecraft:add",
+        "argument1": 0.0,
+        "argument2": {
+          "type": "minecraft:mul",
+          "argument1": -1.0,
+          "argument2": "stodd:overworld/y"
+        }
+      }
+    }
+  }
+}
