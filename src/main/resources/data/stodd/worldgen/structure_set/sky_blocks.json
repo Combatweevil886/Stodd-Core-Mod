@@ -1,0 +1,12 @@
+{
+  "structures": [
+    {
+      "structure": "stodd:sky_block",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "stodd_core:cell_grid",
+    "cell_chunks": 3
+  }
+}

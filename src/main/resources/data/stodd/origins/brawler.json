@@ -1,0 +1,28 @@
+{
+  "powers": [
+    "stodd:brawler/marker",
+    "stodd:brawler/health",
+    "stodd:brawler/slots",
+    "stodd:brawler/cyber",
+    "stodd:brawler/fists",
+    "stodd:brawler/iron_skin",
+    "stodd:brawler/poor_aim",
+    "stodd:brawler/no_fruit",
+    "stodd:brawler/no_magic",
+    "stodd:brawler/no_magic_block",
+    "stodd:brawler/info_0",
+    "stodd:brawler/info_1",
+    "stodd:brawler/info_2",
+    "stodd:brawler/info_3",
+    "stodd:brawler/info_4",
+    "stodd:brawler/info_5",
+    "stodd:brawler/info_6"
+  ],
+  "icon": {
+    "item": "minecraft:iron_ingot"
+  },
+  "order": 8,
+  "impact": 2,
+  "name": "Brawler",
+  "description": "A hand-to-hand fighter with the toughest body of any origin. Bare fists hit like a weapon and swing fast, and the Brawler can channel Cursed Energy through them or carry some chrome. Poor with arrows and guns. No Devil Fruit."
+}

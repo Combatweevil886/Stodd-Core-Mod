@@ -1,0 +1,10 @@
+{
+  "type": "origins:attribute",
+  "hidden": true,
+  "modifier": {
+    "attribute": "minecraft:generic.attack_speed",
+    "value": 0.2,
+    "operation": "multiply_base",
+    "name": "stodd brawler swing"
+  }
+}

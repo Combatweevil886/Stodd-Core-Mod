@@ -1,0 +1,26 @@
+{
+  "powers": [
+    "stodd:sorcerer/marker",
+    "stodd:sorcerer/health",
+    "stodd:sorcerer/slots",
+    "stodd:sorcerer/cyber",
+    "stodd:sorcerer/strength",
+    "stodd:sorcerer/no_fruit",
+    "stodd:sorcerer/no_magic",
+    "stodd:sorcerer/no_magic_block",
+    "stodd:sorcerer/no_chrome",
+    "stodd:sorcerer/info_0",
+    "stodd:sorcerer/info_1",
+    "stodd:sorcerer/info_2",
+    "stodd:sorcerer/info_3",
+    "stodd:sorcerer/info_4",
+    "stodd:sorcerer/info_5"
+  ],
+  "icon": {
+    "item": "minecraft:ender_eye"
+  },
+  "order": 4,
+  "impact": 3,
+  "name": "Sorcerer",
+  "description": "A wielder of Cursed Energy. Strong and durable, but their body rejects both Devil Fruits and cyberware."
+}

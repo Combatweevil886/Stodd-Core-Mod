@@ -1,0 +1,373 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "malum:aerial_spirit",
+      "required": false
+    },
+    {
+      "id": "malum:aqueous_spirit",
+      "required": false
+    },
+    {
+      "id": "malum:arcane_spirit",
+      "required": false
+    },
+    {
+      "id": "malum:belt_of_the_limitless",
+      "required": false
+    },
+    {
+      "id": "malum:belt_of_the_magebane",
+      "required": false
+    },
+    {
+      "id": "malum:belt_of_the_prospector",
+      "required": false
+    },
+    {
+      "id": "malum:belt_of_the_starved",
+      "required": false
+    },
+    {
+      "id": "malum:catalyst_lobber",
+      "required": false
+    },
+    {
+      "id": "malum:creative_scythe",
+      "required": false
+    },
+    {
+      "id": "malum:crude_scythe",
+      "required": false
+    },
+    {
+      "id": "malum:earthen_spirit",
+      "required": false
+    },
+    {
+      "id": "malum:edge_of_deliverance",
+      "required": false
+    },
+    {
+      "id": "malum:elaborate_brooch",
+      "required": false
+    },
+    {
+      "id": "malum:eldritch_spirit",
+      "required": false
+    },
+    {
+      "id": "malum:encyclopedia_arcana",
+      "required": false
+    },
+    {
+      "id": "malum:encyclopedia_esoterica",
+      "required": false
+    },
+    {
+      "id": "malum:erosion_scepter",
+      "required": false
+    },
+    {
+      "id": "malum:gilded_belt",
+      "required": false
+    },
+    {
+      "id": "malum:gilded_ring",
+      "required": false
+    },
+    {
+      "id": "malum:glass_brooch",
+      "required": false
+    },
+    {
+      "id": "malum:gluttonous_brooch",
+      "required": false
+    },
+    {
+      "id": "malum:infernal_spirit",
+      "required": false
+    },
+    {
+      "id": "malum:lamplighters_tongs",
+      "required": false
+    },
+    {
+      "id": "malum:malignant_stronghold_boots",
+      "required": false
+    },
+    {
+      "id": "malum:malignant_stronghold_chestplate",
+      "required": false
+    },
+    {
+      "id": "malum:malignant_stronghold_helmet",
+      "required": false
+    },
+    {
+      "id": "malum:malignant_stronghold_leggings",
+      "required": false
+    },
+    {
+      "id": "malum:mnemonic_hex_staff",
+      "required": false
+    },
+    {
+      "id": "malum:necklace_of_blissful_harmony",
+      "required": false
+    },
+    {
+      "id": "malum:necklace_of_the_hidden_blade",
+      "required": false
+    },
+    {
+      "id": "malum:necklace_of_the_mystic_mirror",
+      "required": false
+    },
+    {
+      "id": "malum:necklace_of_the_narrow_edge",
+      "required": false
+    },
+    {
+      "id": "malum:necklace_of_the_watcher",
+      "required": false
+    },
+    {
+      "id": "malum:necklace_of_tidal_affinity",
+      "required": false
+    },
+    {
+      "id": "malum:ornate_necklace",
+      "required": false
+    },
+    {
+      "id": "malum:ornate_ring",
+      "required": false
+    },
+    {
+      "id": "malum:poppet",
+      "required": false
+    },
+    {
+      "id": "malum:ring_of_alchemical_mastery",
+      "required": false
+    },
+    {
+      "id": "malum:ring_of_arcane_prowess",
+      "required": false
+    },
+    {
+      "id": "malum:ring_of_curative_talent",
+      "required": false
+    },
+    {
+      "id": "malum:ring_of_desperate_voracity",
+      "required": false
+    },
+    {
+      "id": "malum:ring_of_echoing_arcana",
+      "required": false
+    },
+    {
+      "id": "malum:ring_of_esoteric_spoils",
+      "required": false
+    },
+    {
+      "id": "malum:ring_of_growing_flesh",
+      "required": false
+    },
+    {
+      "id": "malum:ring_of_gruesome_concentration",
+      "required": false
+    },
+    {
+      "id": "malum:ring_of_manaweaving",
+      "required": false
+    },
+    {
+      "id": "malum:ring_of_the_demolitionist",
+      "required": false
+    },
+    {
+      "id": "malum:ring_of_the_endless_well",
+      "required": false
+    },
+    {
+      "id": "malum:ring_of_the_hoarder",
+      "required": false
+    },
+    {
+      "id": "malum:rune_of_aliment_cleansing",
+      "required": false
+    },
+    {
+      "id": "malum:rune_of_bolstering",
+      "required": false
+    },
+    {
+      "id": "malum:rune_of_culling",
+      "required": false
+    },
+    {
+      "id": "malum:rune_of_dexterity",
+      "required": false
+    },
+    {
+      "id": "malum:rune_of_fervor",
+      "required": false
+    },
+    {
+      "id": "malum:rune_of_haste",
+      "required": false
+    },
+    {
+      "id": "malum:rune_of_idle_restoration",
+      "required": false
+    },
+    {
+      "id": "malum:rune_of_igneous_solace",
+      "required": false
+    },
+    {
+      "id": "malum:rune_of_loyalty",
+      "required": false
+    },
+    {
+      "id": "malum:rune_of_motion",
+      "required": false
+    },
+    {
+      "id": "malum:rune_of_reactive_shielding",
+      "required": false
+    },
+    {
+      "id": "malum:rune_of_reinforcement",
+      "required": false
+    },
+    {
+      "id": "malum:rune_of_sacrificial_empowerment",
+      "required": false
+    },
+    {
+      "id": "malum:rune_of_spell_mastery",
+      "required": false
+    },
+    {
+      "id": "malum:rune_of_the_aether",
+      "required": false
+    },
+    {
+      "id": "malum:rune_of_the_arena",
+      "required": false
+    },
+    {
+      "id": "malum:rune_of_the_hells",
+      "required": false
+    },
+    {
+      "id": "malum:rune_of_the_heretic",
+      "required": false
+    },
+    {
+      "id": "malum:rune_of_the_seas",
+      "required": false
+    },
+    {
+      "id": "malum:rune_of_toughness",
+      "required": false
+    },
+    {
+      "id": "malum:rune_of_twinned_duration",
+      "required": false
+    },
+    {
+      "id": "malum:rune_of_unnatural_stamina",
+      "required": false
+    },
+    {
+      "id": "malum:rune_of_volatile_distortion",
+      "required": false
+    },
+    {
+      "id": "malum:rune_of_warding",
+      "required": false
+    },
+    {
+      "id": "malum:runic_brooch",
+      "required": false
+    },
+    {
+      "id": "malum:sacred_spirit",
+      "required": false
+    },
+    {
+      "id": "malum:soul_hunter_boots",
+      "required": false
+    },
+    {
+      "id": "malum:soul_hunter_cloak",
+      "required": false
+    },
+    {
+      "id": "malum:soul_hunter_leggings",
+      "required": false
+    },
+    {
+      "id": "malum:soul_hunter_robe",
+      "required": false
+    },
+    {
+      "id": "malum:soul_stained_steel_scythe",
+      "required": false
+    },
+    {
+      "id": "malum:spectral_lens",
+      "required": false
+    },
+    {
+      "id": "malum:spectral_optic",
+      "required": false
+    },
+    {
+      "id": "malum:spirit_pouch",
+      "required": false
+    },
+    {
+      "id": "malum:staff_of_the_auric_flame",
+      "required": false
+    },
+    {
+      "id": "malum:the_device",
+      "required": false
+    },
+    {
+      "id": "malum:the_vessel",
+      "required": false
+    },
+    {
+      "id": "malum:totemic_staff",
+      "required": false
+    },
+    {
+      "id": "malum:tyrving",
+      "required": false
+    },
+    {
+      "id": "malum:umbral_spirit",
+      "required": false
+    },
+    {
+      "id": "malum:void_tablet",
+      "required": false
+    },
+    {
+      "id": "malum:weight_of_worlds",
+      "required": false
+    },
+    {
+      "id": "malum:wicked_spirit",
+      "required": false
+    }
+  ]
+}

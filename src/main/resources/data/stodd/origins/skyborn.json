@@ -1,0 +1,27 @@
+{
+  "powers": [
+    "stodd:skyborn/marker",
+    "stodd:skyborn/health",
+    "stodd:skyborn/slots",
+    "stodd:skyborn/cyber",
+    "stodd:skyborn/swift",
+    "stodd:skyborn/no_fruit",
+    "stodd:skyborn/no_sorcery",
+    "stodd:skyborn/no_magic",
+    "stodd:skyborn/no_magic_block",
+    "stodd:skyborn/no_chrome",
+    "stodd:skyborn/info_0",
+    "stodd:skyborn/info_1",
+    "stodd:skyborn/info_2",
+    "stodd:skyborn/info_3",
+    "stodd:skyborn/info_4",
+    "stodd:skyborn/info_5"
+  ],
+  "icon": {
+    "item": "minecraft:feather"
+  },
+  "order": 9,
+  "impact": 2,
+  "name": "Skyborn",
+  "description": "Born among the clouds. Never takes fall damage, jumps higher, glides down slowly while sneaking and hits harder from a dive. No Devil Fruit, no Cursed Energy, no dark magic and no chrome: a Skyborn lives on gear, with 20 accessory slots."
+}

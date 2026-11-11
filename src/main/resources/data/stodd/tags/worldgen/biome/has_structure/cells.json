@@ -1,0 +1,50 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:is_overworld",
+    {
+      "id": "#forge:is_overworld",
+      "required": false
+    },
+    {
+      "id": "#c:in_overworld",
+      "required": false
+    },
+    {
+      "id": "stodd:crystal",
+      "required": false
+    },
+    {
+      "id": "stodd:ember",
+      "required": false
+    },
+    {
+      "id": "stodd:metropolis",
+      "required": false
+    },
+    {
+      "id": "stodd:neo_city",
+      "required": false
+    },
+    {
+      "id": "stodd:overgrown",
+      "required": false
+    },
+    {
+      "id": "stodd:sakura",
+      "required": false
+    },
+    {
+      "id": "stodd:skullcove",
+      "required": false
+    },
+    {
+      "id": "stodd:sky_meadow",
+      "required": false
+    },
+    {
+      "id": "stodd:tribal",
+      "required": false
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "type": "origins:simple",
+  "name": "Dive Strike",
+  "description": "Hits landed while falling deal 35% more damage, growing 1% per level."
+}

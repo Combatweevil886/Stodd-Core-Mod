@@ -1,0 +1,29 @@
+{
+  "type": "origins:action_on_callback",
+  "hidden": true,
+  "entity_action_gained": {
+    "type": "origins:and",
+    "actions": [
+      {
+        "type": "origins:execute_command",
+        "command": "execute unless entity @s[tag=stodd_kit] run tag @s add stodd_kit_pending"
+      },
+      {
+        "type": "origins:execute_command",
+        "command": "execute if entity @s[tag=stodd_kit_pending] run give @s project_edgerunner:basic_kiroshi_optics"
+      },
+      {
+        "type": "origins:execute_command",
+        "command": "execute if entity @s[tag=stodd_kit_pending] run give @s project_edgerunner:ripperdoc"
+      },
+      {
+        "type": "origins:execute_command",
+        "command": "execute if entity @s[tag=stodd_kit_pending] run tag @s add stodd_kit"
+      },
+      {
+        "type": "origins:execute_command",
+        "command": "tag @s remove stodd_kit_pending"
+      }
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "powers": [
+    "stodd:human/marker",
+    "stodd:human/health",
+    "stodd:human/slots",
+    "stodd:human/cyber",
+    "stodd:human/no_fruit",
+    "stodd:human/no_sorcery",
+    "stodd:human/no_magic",
+    "stodd:human/no_magic_block",
+    "stodd:human/info_0",
+    "stodd:human/info_1",
+    "stodd:human/info_2",
+    "stodd:human/info_3",
+    "stodd:human/info_4"
+  ],
+  "icon": {
+    "item": "minecraft:player_head"
+  },
+  "order": 0,
+  "impact": 1,
+  "name": "Standard Human",
+  "description": "An ordinary person with extraordinary pockets. The most accessory slots of any origin and a sturdy body, but no fruit, no cursed energy and only light chrome."
+}

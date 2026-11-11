@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "stodd:metropolis",
+    "stodd:neo_city",
+    "stodd:tribal",
+    "stodd:ember",
+    "stodd:sakura",
+    "stodd:overgrown",
+    "stodd:crystal",
+    "stodd:skullcove",
+    "stodd:sky_meadow"
+  ]
+}

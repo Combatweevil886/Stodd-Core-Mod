@@ -1,0 +1,5 @@
+{
+  "type": "origins:simple",
+  "name": "Spellpower",
+  "description": "Hits that are not a direct melee swing deal 20% more damage, and every level adds 1% to all your damage."
+}

@@ -1,0 +1,18 @@
+{
+  "replace": true,
+  "enabled": true,
+  "order": 0,
+  "origins": [
+    "stodd:human",
+    "stodd:devil_fruit_user",
+    "stodd:cyberware_user",
+    "stodd:swordsman",
+    "stodd:sorcerer",
+    "stodd:dark_magician",
+    "stodd:weakling",
+    "stodd:marksman",
+    "stodd:brawler",
+    "stodd:skyborn"
+  ],
+  "allow_random": false
+}

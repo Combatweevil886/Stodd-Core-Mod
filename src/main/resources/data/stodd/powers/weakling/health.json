@@ -1,0 +1,12 @@
+{
+  "type": "origins:attribute",
+  "name": "-6 Health",
+  "description": "Starts with 6 less health than normal: 7 hearts.",
+  "update_health": true,
+  "modifier": {
+    "attribute": "minecraft:generic.max_health",
+    "value": -6,
+    "operation": "addition",
+    "name": "stodd weakling health"
+  }
+}

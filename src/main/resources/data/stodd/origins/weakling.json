@@ -1,0 +1,25 @@
+{
+  "powers": [
+    "stodd:weakling/marker",
+    "stodd:weakling/health",
+    "stodd:weakling/slots",
+    "stodd:weakling/cyber",
+    "stodd:weakling/no_fruit",
+    "stodd:weakling/no_sorcery",
+    "stodd:weakling/no_magic",
+    "stodd:weakling/no_magic_block",
+    "stodd:weakling/info_0",
+    "stodd:weakling/info_1",
+    "stodd:weakling/info_2",
+    "stodd:weakling/info_3",
+    "stodd:weakling/info_4",
+    "stodd:weakling/info_5"
+  ],
+  "icon": {
+    "item": "minecraft:stick"
+  },
+  "order": 6,
+  "impact": 1,
+  "name": "Weakling",
+  "description": "Starts as the weakest of all, with 7 hearts and a single ring slot, but has the highest ceiling: a personal level cap of 35, a new accessory slot every 5 levels until a human's pockets are matched, and the strongest late game. No Devil Fruit and no special power at all: just chrome, Haki and sheer growth."
+}

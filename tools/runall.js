@@ -1,0 +1,8 @@
+const H = require('./harness.js')
+require('./tests.js')
+require('./tests2.js')
+require('./tests3.js')
+require('./tests4.js')
+require('./tests5.js')
+require('./tests6.js')
+H.summary()

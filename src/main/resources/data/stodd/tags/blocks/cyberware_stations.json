@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "project_edgerunner:ripperdoc",
+      "required": false
+    }
+  ]
+}

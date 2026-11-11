@@ -1,0 +1,10 @@
+{
+  "type": "origins:attribute",
+  "hidden": true,
+  "modifier": {
+    "attribute": "minecraft:generic.movement_speed",
+    "value": 0.08,
+    "operation": "multiply_base",
+    "name": "stodd skyborn speed"
+  }
+}

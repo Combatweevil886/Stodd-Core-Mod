@@ -1,0 +1,2621 @@
+{
+ "version": 3,
+ "landThreshold": -0.19,
+ "peakStep": 32,
+ "oceanTheme": "one_piece",
+ "themes": [
+  {
+   "id": "one_piece",
+   "name": "One Piece",
+   "color": "gold",
+   "weight": 24,
+   "chance": 0,
+   "hidden": false,
+   "active": true,
+   "minOriginDistance": null
+  },
+  {
+   "id": "jujutsu",
+   "name": "Jujutsu",
+   "color": "dark_purple",
+   "weight": 18,
+   "chance": 0,
+   "hidden": false,
+   "active": true,
+   "minOriginDistance": null
+  },
+  {
+   "id": "cyberpunk",
+   "name": "Night City",
+   "color": "aqua",
+   "weight": 18,
+   "chance": 0,
+   "hidden": false,
+   "active": true,
+   "minOriginDistance": null
+  },
+  {
+   "id": "arcane",
+   "name": "Arcane",
+   "color": "blue",
+   "weight": 10,
+   "chance": 0,
+   "hidden": false,
+   "active": true,
+   "minOriginDistance": null
+  },
+  {
+   "id": "wild",
+   "name": "Wild",
+   "color": "green",
+   "weight": 22,
+   "chance": 0,
+   "hidden": false,
+   "active": true,
+   "minOriginDistance": null
+  },
+  {
+   "id": "city",
+   "name": "City",
+   "color": "gray",
+   "weight": 0,
+   "chance": 0.125,
+   "hidden": false,
+   "active": true,
+   "minOriginDistance": null
+  },
+  {
+   "id": "city_future",
+   "name": "Neo City",
+   "color": "aqua",
+   "weight": 0,
+   "chance": 0.05,
+   "hidden": false,
+   "active": true,
+   "minOriginDistance": 900
+  },
+  {
+   "id": "city_primitive",
+   "name": "Tribal Town",
+   "color": "gold",
+   "weight": 0,
+   "chance": 0.04,
+   "hidden": false,
+   "active": true,
+   "minOriginDistance": 700
+  },
+  {
+   "id": "ember",
+   "name": "Ember Isle",
+   "color": "red",
+   "weight": 0,
+   "chance": 0.04,
+   "hidden": false,
+   "active": true,
+   "minOriginDistance": 600
+  },
+  {
+   "id": "sakura",
+   "name": "Sakura Isle",
+   "color": "light_purple",
+   "weight": 0,
+   "chance": 0.04,
+   "hidden": false,
+   "active": true,
+   "minOriginDistance": 600
+  },
+  {
+   "id": "ruins",
+   "name": "Overgrown Ruins",
+   "color": "dark_green",
+   "weight": 0,
+   "chance": 0.04,
+   "hidden": false,
+   "active": true,
+   "minOriginDistance": 600
+  },
+  {
+   "id": "crystal",
+   "name": "Crystal Isle",
+   "color": "dark_purple",
+   "weight": 0,
+   "chance": 0.04,
+   "hidden": false,
+   "active": true,
+   "minOriginDistance": 600
+  },
+  {
+   "id": "skull",
+   "name": "Skull Cove",
+   "color": "white",
+   "weight": 0,
+   "chance": 0.04,
+   "hidden": false,
+   "active": true,
+   "minOriginDistance": 600
+  }
+ ],
+ "bands": [
+  {
+   "id": "city",
+   "lo": 0,
+   "hi": 0.125,
+   "minOriginDistance": null,
+   "on": true
+  },
+  {
+   "id": "city_future",
+   "lo": 0.125,
+   "hi": 0.175,
+   "minOriginDistance": 900,
+   "on": true
+  },
+  {
+   "id": "city_primitive",
+   "lo": 0.175,
+   "hi": 0.215,
+   "minOriginDistance": 700,
+   "on": true
+  },
+  {
+   "id": "ember",
+   "lo": 0.215,
+   "hi": 0.255,
+   "minOriginDistance": 600,
+   "on": true
+  },
+  {
+   "id": "sakura",
+   "lo": 0.255,
+   "hi": 0.295,
+   "minOriginDistance": 600,
+   "on": true
+  },
+  {
+   "id": "ruins",
+   "lo": 0.295,
+   "hi": 0.33499999999999996,
+   "minOriginDistance": 600,
+   "on": true
+  },
+  {
+   "id": "crystal",
+   "lo": 0.33499999999999996,
+   "hi": 0.37499999999999994,
+   "minOriginDistance": 600,
+   "on": true
+  },
+  {
+   "id": "skull",
+   "lo": 0.37499999999999994,
+   "hi": 0.4149999999999999,
+   "minOriginDistance": 600,
+   "on": true
+  }
+ ],
+ "names": {
+  "one_piece": [
+   "Isle",
+   "Atoll",
+   "Reef",
+   "Harbor",
+   "Cove",
+   "Key"
+  ],
+  "jujutsu": [
+   "Domain",
+   "Shrine",
+   "Barrier",
+   "Veil",
+   "Precinct",
+   "Grounds"
+  ],
+  "cyberpunk": [
+   "Sprawl",
+   "Grid",
+   "District",
+   "Arcology",
+   "Block",
+   "Zone"
+  ],
+  "arcane": [
+   "Grove",
+   "Hollow",
+   "Sanctum",
+   "Spire",
+   "Cairn",
+   "Altar"
+  ],
+  "wild": [
+   "Wilds",
+   "Holm",
+   "Skerry",
+   "Thicket",
+   "Highland",
+   "Wilderness"
+  ],
+  "city": [
+   "City",
+   "Metropolis",
+   "Downtown",
+   "Skyline",
+   "Megacity",
+   "Borough"
+  ],
+  "city_future": [
+   "Nexus",
+   "Arcology",
+   "Helix",
+   "Orbital",
+   "Prime",
+   "Vector"
+  ],
+  "city_primitive": [
+   "Camp",
+   "Hollow",
+   "Moot",
+   "Kraal",
+   "Tribe",
+   "Hearth"
+  ],
+  "ember": [
+   "Caldera",
+   "Cinder",
+   "Forge",
+   "Pyre",
+   "Ashfall",
+   "Magma"
+  ],
+  "sakura": [
+   "Blossom",
+   "Grove",
+   "Hanami",
+   "Petal",
+   "Shrine",
+   "Garden"
+  ],
+  "ruins": [
+   "Ruins",
+   "Temple",
+   "Overgrowth",
+   "Lost Court",
+   "Vault",
+   "Citadel"
+  ],
+  "crystal": [
+   "Spires",
+   "Geode",
+   "Prism",
+   "Lode",
+   "Shard",
+   "Cluster"
+  ],
+  "skull": [
+   "Cove",
+   "Bay",
+   "Wreck",
+   "Skull Rock",
+   "Gallows",
+   "Deadwater"
+  ],
+  "sky": [
+   "Drift",
+   "Perch",
+   "Aerie",
+   "Cloudhold",
+   "Float",
+   "Eyrie"
+  ]
+ },
+ "syllables": [
+  "ka",
+  "ro",
+  "mi",
+  "ze",
+  "tsu",
+  "na",
+  "vel",
+  "dor",
+  "shi",
+  "ra",
+  "ku",
+  "lo",
+  "bel",
+  "yu",
+  "gan",
+  "te",
+  "mor",
+  "ai"
+ ],
+ "city": {
+  "enabled": true,
+  "minOriginDistance": 900,
+  "cell": 48,
+  "radius": 300,
+  "landMargin": 0.04,
+  "baseMin": 66,
+  "baseMax": 78,
+  "sampleStep": 28,
+  "foundationMax": 40,
+  "floorMin": -58,
+  "cutCap": 148,
+  "biomeBelow": 8,
+  "biomeAbove": 104,
+  "styles": {
+   "city": {
+    "plazas": [
+     "plaza"
+    ],
+    "plazaHeights": {
+     "plaza": 8
+    },
+    "plazaHeight": 8,
+    "foundation": "minecraft:stone_bricks",
+    "biome": "stodd:metropolis",
+    "templates": [
+     {
+      "id": "tower_glass",
+      "kind": "tower",
+      "weight": 6,
+      "height": 89
+     },
+     {
+      "id": "tower_neon",
+      "kind": "tower",
+      "weight": 6,
+      "height": 84
+     },
+     {
+      "id": "tower_brutal",
+      "kind": "tower",
+      "weight": 4,
+      "height": 69
+     },
+     {
+      "id": "tower_deco",
+      "kind": "tower",
+      "weight": 4,
+      "height": 79
+     },
+     {
+      "id": "quad_a",
+      "kind": "quad",
+      "weight": 7,
+      "height": 54
+     },
+     {
+      "id": "quad_b",
+      "kind": "quad",
+      "weight": 7,
+      "height": 49
+     },
+     {
+      "id": "quad_c",
+      "kind": "quad",
+      "weight": 6,
+      "height": 59
+     },
+     {
+      "id": "rows_a",
+      "kind": "rows",
+      "weight": 6,
+      "height": 44
+     },
+     {
+      "id": "rows_b",
+      "kind": "rows",
+      "weight": 6,
+      "height": 44
+     },
+     {
+      "id": "shops",
+      "kind": "shops",
+      "weight": 8,
+      "height": 17
+     },
+     {
+      "id": "park_a",
+      "kind": "park",
+      "weight": 5,
+      "height": 10
+     },
+     {
+      "id": "park_b",
+      "kind": "park",
+      "weight": 5,
+      "height": 10
+     },
+     {
+      "id": "industrial",
+      "kind": "industrial",
+      "weight": 5,
+      "height": 22
+     },
+     {
+      "id": "market",
+      "kind": "market",
+      "weight": 5,
+      "height": 8
+     },
+     {
+      "id": "tower_white",
+      "kind": "tower",
+      "weight": 5,
+      "height": 94
+     },
+     {
+      "id": "tower_red",
+      "kind": "tower",
+      "weight": 4,
+      "height": 74
+     },
+     {
+      "id": "tower_brick",
+      "kind": "tower",
+      "weight": 4,
+      "height": 64
+     },
+     {
+      "id": "tower_glass_b",
+      "kind": "tower",
+      "weight": 5,
+      "height": 104
+     },
+     {
+      "id": "tower_neon_b",
+      "kind": "tower",
+      "weight": 5,
+      "height": 94
+     },
+     {
+      "id": "tower_brutal_b",
+      "kind": "tower",
+      "weight": 3,
+      "height": 84
+     },
+     {
+      "id": "tower_deco_b",
+      "kind": "tower",
+      "weight": 4,
+      "height": 89
+     },
+     {
+      "id": "tower_white_b",
+      "kind": "tower",
+      "weight": 4,
+      "height": 74
+     },
+     {
+      "id": "quad_d",
+      "kind": "quad",
+      "weight": 6,
+      "height": 59
+     },
+     {
+      "id": "quad_e",
+      "kind": "quad",
+      "weight": 6,
+      "height": 44
+     },
+     {
+      "id": "quad_f",
+      "kind": "quad",
+      "weight": 5,
+      "height": 59
+     },
+     {
+      "id": "quad_g",
+      "kind": "quad",
+      "weight": 5,
+      "height": 69
+     },
+     {
+      "id": "quad_h",
+      "kind": "quad",
+      "weight": 6,
+      "height": 49
+     },
+     {
+      "id": "rows_c",
+      "kind": "rows",
+      "weight": 5,
+      "height": 54
+     },
+     {
+      "id": "rows_d",
+      "kind": "rows",
+      "weight": 5,
+      "height": 28
+     },
+     {
+      "id": "rows_e",
+      "kind": "rows",
+      "weight": 5,
+      "height": 49
+     },
+     {
+      "id": "rows_f",
+      "kind": "rows",
+      "weight": 5,
+      "height": 28
+     },
+     {
+      "id": "rows_g",
+      "kind": "rows",
+      "weight": 5,
+      "height": 44
+     },
+     {
+      "id": "shops_b",
+      "kind": "shops",
+      "weight": 6,
+      "height": 17
+     },
+     {
+      "id": "shops_c",
+      "kind": "shops",
+      "weight": 6,
+      "height": 17
+     },
+     {
+      "id": "shops_d",
+      "kind": "shops",
+      "weight": 5,
+      "height": 17
+     },
+     {
+      "id": "park_c",
+      "kind": "park",
+      "weight": 4,
+      "height": 10
+     },
+     {
+      "id": "park_d",
+      "kind": "park",
+      "weight": 4,
+      "height": 10
+     },
+     {
+      "id": "park_e",
+      "kind": "park",
+      "weight": 4,
+      "height": 10
+     },
+     {
+      "id": "industrial_b",
+      "kind": "industrial",
+      "weight": 4,
+      "height": 22
+     },
+     {
+      "id": "industrial_c",
+      "kind": "industrial",
+      "weight": 4,
+      "height": 22
+     },
+     {
+      "id": "market_b",
+      "kind": "market",
+      "weight": 4,
+      "height": 8
+     },
+     {
+      "id": "market_c",
+      "kind": "market",
+      "weight": 4,
+      "height": 8
+     }
+    ],
+    "zones": [
+     {
+      "upTo": 0.35,
+      "kind": {
+       "tower": 2.6,
+       "quad": 1.5,
+       "rows": 0.6,
+       "shops": 1.2,
+       "park": 0.6,
+       "industrial": 0.1,
+       "market": 1
+      }
+     },
+     {
+      "upTo": 0.7,
+      "kind": {
+       "tower": 1,
+       "quad": 1,
+       "rows": 1,
+       "shops": 1,
+       "park": 1,
+       "industrial": 1,
+       "market": 1
+      }
+     },
+     {
+      "upTo": 9.99,
+      "kind": {
+       "tower": 0.2,
+       "quad": 0.7,
+       "rows": 1.5,
+       "shops": 0.9,
+       "park": 1.3,
+       "industrial": 2.4,
+       "market": 1.2
+      }
+     }
+    ]
+   },
+   "city_future": {
+    "plazas": [
+     "nc_plaza",
+     "nc_plaza_b"
+    ],
+    "plazaHeights": {
+     "nc_plaza": 20,
+     "nc_plaza_b": 25
+    },
+    "plazaHeight": 8,
+    "foundation": "minecraft:light_gray_concrete",
+    "biome": "stodd:neo_city",
+    "templates": [
+     {
+      "id": "nc_spire_a",
+      "kind": "tower",
+      "weight": 7,
+      "height": 104
+     },
+     {
+      "id": "nc_spire_b",
+      "kind": "tower",
+      "weight": 6,
+      "height": 90
+     },
+     {
+      "id": "nc_ringtower",
+      "kind": "tower",
+      "weight": 6,
+      "height": 96
+     },
+     {
+      "id": "nc_terrace",
+      "kind": "hab",
+      "weight": 8,
+      "height": 51
+     },
+     {
+      "id": "nc_terrace_b",
+      "kind": "hab",
+      "weight": 6,
+      "height": 42
+     },
+     {
+      "id": "nc_dome",
+      "kind": "dome",
+      "weight": 6,
+      "height": 17
+     },
+     {
+      "id": "nc_reactor",
+      "kind": "industry",
+      "weight": 5,
+      "height": 44
+     },
+     {
+      "id": "nc_pads",
+      "kind": "pad",
+      "weight": 6,
+      "height": 15
+     },
+     {
+      "id": "nc_garden",
+      "kind": "park",
+      "weight": 6,
+      "height": 18
+     },
+     {
+      "id": "nc_transit",
+      "kind": "transit",
+      "weight": 5,
+      "height": 21
+     },
+     {
+      "id": "nc_campus",
+      "kind": "lowrise",
+      "weight": 8,
+      "height": 23
+     },
+     {
+      "id": "nc_arc",
+      "kind": "tower",
+      "weight": 5,
+      "height": 81
+     },
+     {
+      "id": "nc_stack",
+      "kind": "hab",
+      "weight": 6,
+      "height": 46
+     },
+     {
+      "id": "nc_nightmarket",
+      "kind": "market",
+      "weight": 6,
+      "height": 16
+     },
+     {
+      "id": "nc_arcology",
+      "kind": "tower",
+      "weight": 4,
+      "height": 76
+     },
+     {
+      "id": "nc_helix",
+      "kind": "tower",
+      "weight": 4,
+      "height": 110
+     },
+     {
+      "id": "nc_stadium",
+      "kind": "arena",
+      "weight": 3,
+      "height": 28
+     },
+     {
+      "id": "nc_cargo",
+      "kind": "industry",
+      "weight": 4,
+      "height": 24
+     },
+     {
+      "id": "nc_solar",
+      "kind": "energy",
+      "weight": 4,
+      "height": 31
+     },
+     {
+      "id": "nc_spire_a_sun",
+      "kind": "tower",
+      "weight": 4,
+      "height": 104
+     },
+     {
+      "id": "nc_spire_b_vio",
+      "kind": "tower",
+      "weight": 4,
+      "height": 90
+     },
+     {
+      "id": "nc_ringtower_ver",
+      "kind": "tower",
+      "weight": 4,
+      "height": 96
+     },
+     {
+      "id": "nc_terrace_sun",
+      "kind": "hab",
+      "weight": 5,
+      "height": 51
+     },
+     {
+      "id": "nc_terrace_b_rose",
+      "kind": "hab",
+      "weight": 4,
+      "height": 42
+     },
+     {
+      "id": "nc_dome_vio",
+      "kind": "dome",
+      "weight": 4,
+      "height": 17
+     },
+     {
+      "id": "nc_campus_sun",
+      "kind": "lowrise",
+      "weight": 5,
+      "height": 23
+     },
+     {
+      "id": "nc_campus_ver",
+      "kind": "lowrise",
+      "weight": 4,
+      "height": 23
+     },
+     {
+      "id": "nc_garden_vio",
+      "kind": "park",
+      "weight": 4,
+      "height": 18
+     },
+     {
+      "id": "nc_pads_sun",
+      "kind": "pad",
+      "weight": 4,
+      "height": 15
+     },
+     {
+      "id": "nc_reactor_vio",
+      "kind": "industry",
+      "weight": 3,
+      "height": 44
+     },
+     {
+      "id": "nc_transit_sun",
+      "kind": "transit",
+      "weight": 3,
+      "height": 21
+     },
+     {
+      "id": "nc_spire_a_ver",
+      "kind": "tower",
+      "weight": 3,
+      "height": 104
+     },
+     {
+      "id": "nc_terrace_ver",
+      "kind": "hab",
+      "weight": 4,
+      "height": 51
+     }
+    ],
+    "zones": [
+     {
+      "upTo": 0.35,
+      "kind": {
+       "tower": 2.6,
+       "hab": 1.2,
+       "dome": 1.5,
+       "industry": 0.1,
+       "pad": 0.4,
+       "park": 0.8,
+       "transit": 1.5,
+       "lowrise": 0.8,
+       "market": 1.2,
+       "arena": 0.5,
+       "energy": 0.1
+      }
+     },
+     {
+      "upTo": 0.7,
+      "kind": {
+       "tower": 1,
+       "hab": 1,
+       "dome": 1,
+       "industry": 1,
+       "pad": 1,
+       "park": 1,
+       "transit": 1,
+       "lowrise": 1,
+       "market": 1,
+       "arena": 1,
+       "energy": 1
+      }
+     },
+     {
+      "upTo": 9.99,
+      "kind": {
+       "tower": 0.3,
+       "hab": 1.4,
+       "dome": 0.8,
+       "industry": 2,
+       "pad": 1.8,
+       "park": 1.3,
+       "transit": 0.8,
+       "lowrise": 1.3,
+       "market": 0.7,
+       "arena": 1.2,
+       "energy": 2.4
+      }
+     }
+    ]
+   },
+   "city_primitive": {
+    "plazas": [
+     "tr_plaza",
+     "tr_plaza_b"
+    ],
+    "plazaHeights": {
+     "tr_plaza": 16,
+     "tr_plaza_b": 16
+    },
+    "plazaHeight": 8,
+    "foundation": "minecraft:stone",
+    "biome": "stodd:tribal",
+    "templates": [
+     {
+      "id": "tr_huts_a",
+      "kind": "huts",
+      "weight": 9,
+      "height": 12
+     },
+     {
+      "id": "tr_huts_b",
+      "kind": "huts",
+      "weight": 8,
+      "height": 13
+     },
+     {
+      "id": "tr_huts_c",
+      "kind": "huts",
+      "weight": 7,
+      "height": 13
+     },
+     {
+      "id": "tr_hall",
+      "kind": "hall",
+      "weight": 6,
+      "height": 12
+     },
+     {
+      "id": "tr_farm",
+      "kind": "farm",
+      "weight": 7,
+      "height": 6
+     },
+     {
+      "id": "tr_pens",
+      "kind": "pens",
+      "weight": 7,
+      "height": 6
+     },
+     {
+      "id": "tr_smithy",
+      "kind": "craft",
+      "weight": 5,
+      "height": 7
+     },
+     {
+      "id": "tr_shaman",
+      "kind": "sacred",
+      "weight": 4,
+      "height": 14
+     },
+     {
+      "id": "tr_market",
+      "kind": "market",
+      "weight": 6,
+      "height": 6
+     },
+     {
+      "id": "tr_watch",
+      "kind": "tower",
+      "weight": 4,
+      "height": 26
+     },
+     {
+      "id": "tr_grove",
+      "kind": "park",
+      "weight": 6,
+      "height": 13
+     },
+     {
+      "id": "tr_ringhuts",
+      "kind": "huts",
+      "weight": 7,
+      "height": 11
+     },
+     {
+      "id": "tr_burial",
+      "kind": "sacred",
+      "weight": 4,
+      "height": 11
+     },
+     {
+      "id": "tr_arena",
+      "kind": "arena",
+      "weight": 3,
+      "height": 10
+     },
+     {
+      "id": "tr_orchard",
+      "kind": "farm",
+      "weight": 6,
+      "height": 11
+     },
+     {
+      "id": "tr_drying",
+      "kind": "craft",
+      "weight": 5,
+      "height": 6
+     },
+     {
+      "id": "tr_bigfire",
+      "kind": "sacred",
+      "weight": 3,
+      "height": 11
+     },
+     {
+      "id": "tr_stonering",
+      "kind": "sacred",
+      "weight": 3,
+      "height": 9
+     },
+     {
+      "id": "tr_stable",
+      "kind": "pens",
+      "weight": 5,
+      "height": 6
+     },
+     {
+      "id": "tr_huts_a_jun",
+      "kind": "huts",
+      "weight": 7,
+      "height": 12
+     },
+     {
+      "id": "tr_huts_a_sav",
+      "kind": "huts",
+      "weight": 7,
+      "height": 12
+     },
+     {
+      "id": "tr_huts_a_dusk",
+      "kind": "huts",
+      "weight": 6,
+      "height": 12
+     },
+     {
+      "id": "tr_huts_b_jun",
+      "kind": "huts",
+      "weight": 6,
+      "height": 13
+     },
+     {
+      "id": "tr_huts_b_sav",
+      "kind": "huts",
+      "weight": 6,
+      "height": 13
+     },
+     {
+      "id": "tr_huts_c_jun",
+      "kind": "huts",
+      "weight": 6,
+      "height": 13
+     },
+     {
+      "id": "tr_huts_c_sav",
+      "kind": "huts",
+      "weight": 6,
+      "height": 13
+     },
+     {
+      "id": "tr_hall_jun",
+      "kind": "hall",
+      "weight": 5,
+      "height": 12
+     },
+     {
+      "id": "tr_hall_sav",
+      "kind": "hall",
+      "weight": 5,
+      "height": 12
+     },
+     {
+      "id": "tr_hall_dusk",
+      "kind": "hall",
+      "weight": 4,
+      "height": 12
+     },
+     {
+      "id": "tr_farm_jun",
+      "kind": "farm",
+      "weight": 4,
+      "height": 6
+     },
+     {
+      "id": "tr_farm_sav",
+      "kind": "farm",
+      "weight": 4,
+      "height": 6
+     },
+     {
+      "id": "tr_pens_jun",
+      "kind": "pens",
+      "weight": 4,
+      "height": 6
+     },
+     {
+      "id": "tr_pens_sav",
+      "kind": "pens",
+      "weight": 4,
+      "height": 6
+     },
+     {
+      "id": "tr_smithy_jun",
+      "kind": "craft",
+      "weight": 4,
+      "height": 7
+     },
+     {
+      "id": "tr_smithy_sav",
+      "kind": "craft",
+      "weight": 4,
+      "height": 7
+     },
+     {
+      "id": "tr_smithy_dusk",
+      "kind": "craft",
+      "weight": 3,
+      "height": 7
+     },
+     {
+      "id": "tr_market_jun",
+      "kind": "market",
+      "weight": 5,
+      "height": 6
+     },
+     {
+      "id": "tr_market_sav",
+      "kind": "market",
+      "weight": 5,
+      "height": 6
+     },
+     {
+      "id": "tr_market_dusk",
+      "kind": "market",
+      "weight": 4,
+      "height": 6
+     },
+     {
+      "id": "tr_watch_jun",
+      "kind": "tower",
+      "weight": 3,
+      "height": 26
+     },
+     {
+      "id": "tr_watch_sav",
+      "kind": "tower",
+      "weight": 3,
+      "height": 26
+     },
+     {
+      "id": "tr_watch_dusk",
+      "kind": "tower",
+      "weight": 2,
+      "height": 26
+     },
+     {
+      "id": "tr_grove_jun",
+      "kind": "park",
+      "weight": 4,
+      "height": 13
+     },
+     {
+      "id": "tr_grove_sav",
+      "kind": "park",
+      "weight": 4,
+      "height": 13
+     },
+     {
+      "id": "tr_shaman_jun",
+      "kind": "sacred",
+      "weight": 3,
+      "height": 14
+     },
+     {
+      "id": "tr_shaman_sav",
+      "kind": "sacred",
+      "weight": 3,
+      "height": 14
+     }
+    ],
+    "zones": [
+     {
+      "upTo": 0.35,
+      "kind": {
+       "huts": 2,
+       "hall": 1.5,
+       "farm": 0.1,
+       "pens": 0.1,
+       "craft": 1.2,
+       "sacred": 1.6,
+       "market": 2,
+       "tower": 0.3,
+       "park": 0.5,
+       "arena": 0.8
+      }
+     },
+     {
+      "upTo": 0.7,
+      "kind": {
+       "huts": 1,
+       "hall": 1,
+       "farm": 1,
+       "pens": 1,
+       "craft": 1,
+       "sacred": 1,
+       "market": 1,
+       "tower": 1,
+       "park": 1,
+       "arena": 1
+      }
+     },
+     {
+      "upTo": 9.99,
+      "kind": {
+       "huts": 0.8,
+       "hall": 0.5,
+       "farm": 2.4,
+       "pens": 2.2,
+       "craft": 0.8,
+       "sacred": 0.6,
+       "market": 0.3,
+       "tower": 1.8,
+       "park": 1.6,
+       "arena": 0.5
+      }
+     }
+    ]
+   }
+  }
+ },
+ "makeover": {
+  "enabled": true,
+  "cell": 48,
+  "radius": 330,
+  "landMargin": 0.06,
+  "cutCap": 148,
+  "biomeBelow": 12,
+  "biomeAbove": 60,
+  "landmarkDensity": 0.2,
+  "maxLandmarks": 40,
+  "foundationMax": 14,
+  "themes": {
+   "ember": {
+    "biome": "stodd:ember",
+    "foundation": "minecraft:blackstone",
+    "density": 1,
+    "paint": [
+     [
+      "minecraft:grass_block",
+      "minecraft:basalt"
+     ],
+     [
+      "minecraft:dirt",
+      "minecraft:blackstone"
+     ],
+     [
+      "minecraft:sand",
+      "minecraft:smooth_basalt"
+     ],
+     [
+      "#minecraft:leaves",
+      "minecraft:air"
+     ]
+    ],
+    "center": [
+     "ember_volcano",
+     "ember_caldera",
+     "ember_peak"
+    ],
+    "centerRot": -1,
+    "scatter": [
+     {
+      "id": "ember_vent",
+      "weight": 10
+     },
+     {
+      "id": "ember_forge",
+      "weight": 10
+     },
+     {
+      "id": "ember_spires",
+      "weight": 10
+     },
+     {
+      "id": "ember_henge",
+      "weight": 10
+     },
+     {
+      "id": "ember_lavalake",
+      "weight": 6
+     },
+     {
+      "id": "ember_tower",
+      "weight": 10
+     },
+     {
+      "id": "ember_vent_b",
+      "weight": 10
+     },
+     {
+      "id": "ember_spires_b",
+      "weight": 10
+     }
+    ]
+   },
+   "sakura": {
+    "biome": "stodd:sakura",
+    "foundation": "minecraft:stone_bricks",
+    "density": 1,
+    "paint": [
+     [
+      "#minecraft:leaves",
+      "minecraft:cherry_leaves[persistent=true]"
+     ],
+     [
+      "minecraft:grass_block",
+      "minecraft:moss_block"
+     ]
+    ],
+    "center": [
+     "sakura_shrine",
+     "sakura_garden"
+    ],
+    "centerRot": -1,
+    "scatter": [
+     {
+      "id": "sakura_torii",
+      "weight": 10
+     },
+     {
+      "id": "sakura_bigtree",
+      "weight": 10
+     },
+     {
+      "id": "sakura_teahouse",
+      "weight": 10
+     },
+     {
+      "id": "sakura_bamboo",
+      "weight": 10
+     },
+     {
+      "id": "sakura_zen",
+      "weight": 10
+     },
+     {
+      "id": "sakura_dojo",
+      "weight": 6
+     },
+     {
+      "id": "sakura_bridge",
+      "weight": 10
+     },
+     {
+      "id": "sakura_bigtree_b",
+      "weight": 10
+     }
+    ]
+   },
+   "ruins": {
+    "biome": "stodd:overgrown",
+    "foundation": "minecraft:mossy_stone_bricks",
+    "density": 1.1,
+    "paint": [
+     [
+      "minecraft:grass_block",
+      "minecraft:moss_block"
+     ],
+     [
+      "minecraft:sand",
+      "minecraft:mossy_cobblestone"
+     ]
+    ],
+    "center": [
+     "ruins_temple",
+     "ruins_rotunda"
+    ],
+    "centerRot": -1,
+    "scatter": [
+     {
+      "id": "ruins_arch",
+      "weight": 10
+     },
+     {
+      "id": "ruins_pillars",
+      "weight": 10
+     },
+     {
+      "id": "ruins_shrine",
+      "weight": 10
+     },
+     {
+      "id": "ruins_colonnade",
+      "weight": 6
+     },
+     {
+      "id": "ruins_well",
+      "weight": 10
+     },
+     {
+      "id": "ruins_statue",
+      "weight": 10
+     },
+     {
+      "id": "ruins_gate",
+      "weight": 10
+     },
+     {
+      "id": "ruins_arch_b",
+      "weight": 10
+     }
+    ]
+   },
+   "crystal": {
+    "biome": "stodd:crystal",
+    "foundation": "minecraft:smooth_basalt",
+    "density": 1,
+    "paint": [
+     [
+      "minecraft:grass_block",
+      "minecraft:calcite"
+     ],
+     [
+      "#minecraft:leaves",
+      "minecraft:flowering_azalea_leaves[persistent=true]"
+     ],
+     [
+      "minecraft:sand",
+      "minecraft:calcite"
+     ]
+    ],
+    "center": [
+     "crystal_heart",
+     "crystal_garden"
+    ],
+    "centerRot": -1,
+    "scatter": [
+     {
+      "id": "crystal_spire",
+      "weight": 10
+     },
+     {
+      "id": "crystal_geode",
+      "weight": 10
+     },
+     {
+      "id": "crystal_pool",
+      "weight": 10
+     },
+     {
+      "id": "crystal_arch",
+      "weight": 6
+     },
+     {
+      "id": "crystal_field",
+      "weight": 10
+     },
+     {
+      "id": "crystal_altar",
+      "weight": 10
+     },
+     {
+      "id": "crystal_geode_b",
+      "weight": 10
+     },
+     {
+      "id": "crystal_spire_b",
+      "weight": 10
+     }
+    ]
+   },
+   "skull": {
+    "biome": "stodd:skullcove",
+    "foundation": "minecraft:stone",
+    "density": 1,
+    "paint": [
+     [
+      "minecraft:grass_block",
+      "minecraft:coarse_dirt"
+     ],
+     [
+      "#minecraft:leaves",
+      "minecraft:air"
+     ]
+    ],
+    "center": [
+     "skull_fort",
+     "skull_harbour"
+    ],
+    "centerRot": -1,
+    "scatter": [
+     {
+      "id": "skull_wreck",
+      "weight": 6
+     },
+     {
+      "id": "skull_cave",
+      "weight": 10
+     },
+     {
+      "id": "skull_ribs",
+      "weight": 6
+     },
+     {
+      "id": "skull_gallows",
+      "weight": 10
+     },
+     {
+      "id": "skull_camp",
+      "weight": 6
+     },
+     {
+      "id": "skull_totems",
+      "weight": 10
+     },
+     {
+      "id": "skull_bones",
+      "weight": 10
+     },
+     {
+      "id": "skull_wreck_b",
+      "weight": 6
+     }
+    ]
+   }
+  },
+  "landmarks": {
+   "ember_volcano": {
+    "size": [
+     47,
+     30,
+     47
+    ],
+    "foot": 3
+   },
+   "ember_vent": {
+    "size": [
+     15,
+     9,
+     15
+    ],
+    "foot": 3
+   },
+   "ember_forge": {
+    "size": [
+     21,
+     13,
+     17
+    ],
+    "foot": 3
+   },
+   "ember_spires": {
+    "size": [
+     17,
+     13,
+     17
+    ],
+    "foot": 3
+   },
+   "sakura_shrine": {
+    "size": [
+     47,
+     38,
+     47
+    ],
+    "foot": 3
+   },
+   "sakura_torii": {
+    "size": [
+     17,
+     13,
+     13
+    ],
+    "foot": 3
+   },
+   "sakura_bigtree": {
+    "size": [
+     21,
+     23,
+     21
+    ],
+    "foot": 3
+   },
+   "sakura_teahouse": {
+    "size": [
+     21,
+     10,
+     19
+    ],
+    "foot": 3
+   },
+   "ruins_temple": {
+    "size": [
+     47,
+     24,
+     47
+    ],
+    "foot": 3
+   },
+   "ruins_arch": {
+    "size": [
+     15,
+     13,
+     9
+    ],
+    "foot": 3
+   },
+   "ruins_pillars": {
+    "size": [
+     17,
+     12,
+     17
+    ],
+    "foot": 3
+   },
+   "ruins_shrine": {
+    "size": [
+     15,
+     12,
+     15
+    ],
+    "foot": 3
+   },
+   "crystal_heart": {
+    "size": [
+     47,
+     30,
+     47
+    ],
+    "foot": 3
+   },
+   "crystal_spire": {
+    "size": [
+     15,
+     24,
+     15
+    ],
+    "foot": 3
+   },
+   "crystal_geode": {
+    "size": [
+     21,
+     12,
+     21
+    ],
+    "foot": 3
+   },
+   "crystal_pool": {
+    "size": [
+     19,
+     11,
+     19
+    ],
+    "foot": 3
+   },
+   "skull_fort": {
+    "size": [
+     47,
+     23,
+     47
+    ],
+    "foot": 3
+   },
+   "skull_wreck": {
+    "size": [
+     37,
+     20,
+     15
+    ],
+    "foot": 3
+   },
+   "skull_cave": {
+    "size": [
+     19,
+     12,
+     17
+    ],
+    "foot": 3
+   },
+   "skull_ribs": {
+    "size": [
+     25,
+     14,
+     13
+    ],
+    "foot": 3
+   },
+   "sky_ruin": {
+    "size": [
+     17,
+     12,
+     17
+    ],
+    "foot": 3
+   },
+   "sky_shrine": {
+    "size": [
+     15,
+     11,
+     15
+    ],
+    "foot": 3
+   },
+   "ember_henge": {
+    "size": [
+     21,
+     13,
+     21
+    ],
+    "foot": 3
+   },
+   "ember_lavalake": {
+    "size": [
+     27,
+     8,
+     23
+    ],
+    "foot": 3
+   },
+   "ember_tower": {
+    "size": [
+     15,
+     26,
+     15
+    ],
+    "foot": 3
+   },
+   "ember_vent_b": {
+    "size": [
+     15,
+     10,
+     15
+    ],
+    "foot": 3
+   },
+   "ember_spires_b": {
+    "size": [
+     17,
+     11,
+     17
+    ],
+    "foot": 3
+   },
+   "ember_caldera": {
+    "size": [
+     47,
+     20,
+     47
+    ],
+    "foot": 3
+   },
+   "ember_peak": {
+    "size": [
+     47,
+     38,
+     47
+    ],
+    "foot": 3
+   },
+   "sakura_bamboo": {
+    "size": [
+     19,
+     17,
+     19
+    ],
+    "foot": 3
+   },
+   "sakura_zen": {
+    "size": [
+     23,
+     9,
+     23
+    ],
+    "foot": 3
+   },
+   "sakura_dojo": {
+    "size": [
+     25,
+     14,
+     21
+    ],
+    "foot": 3
+   },
+   "sakura_bridge": {
+    "size": [
+     23,
+     10,
+     13
+    ],
+    "foot": 3
+   },
+   "sakura_bigtree_b": {
+    "size": [
+     21,
+     23,
+     21
+    ],
+    "foot": 3
+   },
+   "sakura_garden": {
+    "size": [
+     47,
+     38,
+     47
+    ],
+    "foot": 3
+   },
+   "ruins_colonnade": {
+    "size": [
+     31,
+     12,
+     13
+    ],
+    "foot": 3
+   },
+   "ruins_well": {
+    "size": [
+     17,
+     11,
+     17
+    ],
+    "foot": 3
+   },
+   "ruins_statue": {
+    "size": [
+     15,
+     13,
+     15
+    ],
+    "foot": 3
+   },
+   "ruins_gate": {
+    "size": [
+     17,
+     13,
+     7
+    ],
+    "foot": 3
+   },
+   "ruins_arch_b": {
+    "size": [
+     15,
+     13,
+     9
+    ],
+    "foot": 3
+   },
+   "ruins_rotunda": {
+    "size": [
+     47,
+     19,
+     47
+    ],
+    "foot": 3
+   },
+   "crystal_arch": {
+    "size": [
+     25,
+     20,
+     11
+    ],
+    "foot": 3
+   },
+   "crystal_field": {
+    "size": [
+     21,
+     18,
+     21
+    ],
+    "foot": 3
+   },
+   "crystal_altar": {
+    "size": [
+     19,
+     14,
+     19
+    ],
+    "foot": 3
+   },
+   "crystal_geode_b": {
+    "size": [
+     21,
+     12,
+     21
+    ],
+    "foot": 3
+   },
+   "crystal_spire_b": {
+    "size": [
+     15,
+     24,
+     15
+    ],
+    "foot": 3
+   },
+   "crystal_garden": {
+    "size": [
+     47,
+     43,
+     47
+    ],
+    "foot": 3
+   },
+   "skull_gallows": {
+    "size": [
+     17,
+     12,
+     15
+    ],
+    "foot": 3
+   },
+   "skull_camp": {
+    "size": [
+     27,
+     12,
+     23
+    ],
+    "foot": 3
+   },
+   "skull_totems": {
+    "size": [
+     21,
+     15,
+     21
+    ],
+    "foot": 3
+   },
+   "skull_bones": {
+    "size": [
+     19,
+     9,
+     19
+    ],
+    "foot": 3
+   },
+   "skull_wreck_b": {
+    "size": [
+     37,
+     20,
+     15
+    ],
+    "foot": 3
+   },
+   "skull_harbour": {
+    "size": [
+     47,
+     19,
+     47
+    ],
+    "foot": 3
+   },
+   "sky_obelisk": {
+    "size": [
+     11,
+     21,
+     11
+    ],
+    "foot": 3
+   },
+   "sky_hut": {
+    "size": [
+     13,
+     11,
+     13
+    ],
+    "foot": 3
+   }
+  },
+  "sky": {
+   "enabled": true,
+   "biome": "stodd:sky_meadow",
+   "biomeLow": 146,
+   "biomeHigh": 262,
+   "perCell": 5,
+   "density": 0.9,
+   "foundation": "minecraft:stone",
+   "styles": [
+    {
+     "name": "meadow",
+     "features": [
+      [
+       "minecraft:oak",
+       3
+      ],
+      [
+       "minecraft:birch",
+       2
+      ],
+      [
+       "minecraft:fancy_oak",
+       1
+      ],
+      [
+       "minecraft:flower_default",
+       5
+      ],
+      [
+       "minecraft:patch_grass",
+       6
+      ],
+      [
+       "minecraft:forest_rock",
+       1
+      ]
+     ]
+    },
+    {
+     "name": "blossom",
+     "features": [
+      [
+       "minecraft:cherry",
+       4
+      ],
+      [
+       "minecraft:flower_cherry",
+       5
+      ],
+      [
+       "minecraft:patch_grass",
+       4
+      ],
+      [
+       "minecraft:flower_flower_forest",
+       2
+      ]
+     ]
+    },
+    {
+     "name": "grove",
+     "features": [
+      [
+       "minecraft:azalea_tree",
+       3
+      ],
+      [
+       "minecraft:oak",
+       2
+      ],
+      [
+       "minecraft:patch_tall_grass",
+       3
+      ],
+      [
+       "minecraft:flower_default",
+       3
+      ],
+      [
+       "minecraft:forest_rock",
+       2
+      ]
+     ]
+    },
+    {
+     "name": "pines",
+     "features": [
+      [
+       "minecraft:spruce",
+       5
+      ],
+      [
+       "minecraft:patch_grass",
+       3
+      ],
+      [
+       "minecraft:forest_rock",
+       3
+      ],
+      [
+       "minecraft:flower_default",
+       1
+      ]
+     ]
+    }
+   ],
+   "scatter": [
+    {
+     "id": "sky_ruin",
+     "weight": 10
+    },
+    {
+     "id": "sky_shrine",
+     "weight": 10
+    },
+    {
+     "id": "sky_obelisk",
+     "weight": 10
+    },
+    {
+     "id": "sky_hut",
+     "weight": 10
+    }
+   ]
+  }
+ },
+ "origins": {
+  "list": [
+   "human",
+   "devil_fruit_user",
+   "cyberware_user",
+   "swordsman",
+   "sorcerer",
+   "dark_magician",
+   "weakling",
+   "marksman",
+   "brawler",
+   "skyborn"
+  ],
+  "names": {
+   "human": "Standard Human",
+   "devil_fruit_user": "Devil Fruit User",
+   "cyberware_user": "Cyberware User",
+   "swordsman": "Swordsman",
+   "sorcerer": "Sorcerer",
+   "dark_magician": "Dark Magician",
+   "weakling": "Weakling",
+   "marksman": "Marksman",
+   "brawler": "Brawler",
+   "skyborn": "Skyborn"
+  },
+  "rules": {
+   "human": {
+    "fruit": false,
+    "sorcery": false,
+    "magic": false,
+    "cyber": true
+   },
+   "devil_fruit_user": {
+    "fruit": true,
+    "sorcery": false,
+    "magic": false,
+    "cyber": true
+   },
+   "cyberware_user": {
+    "fruit": true,
+    "sorcery": false,
+    "magic": false,
+    "cyber": true
+   },
+   "swordsman": {
+    "fruit": "path",
+    "sorcery": "path",
+    "magic": false,
+    "cyber": true
+   },
+   "sorcerer": {
+    "fruit": false,
+    "sorcery": true,
+    "magic": false,
+    "cyber": false
+   },
+   "dark_magician": {
+    "fruit": true,
+    "sorcery": false,
+    "magic": true,
+    "cyber": false
+   },
+   "weakling": {
+    "fruit": false,
+    "sorcery": false,
+    "magic": false,
+    "cyber": true
+   },
+   "marksman": {
+    "fruit": "path",
+    "sorcery": "path",
+    "magic": false,
+    "cyber": true
+   },
+   "brawler": {
+    "fruit": false,
+    "sorcery": true,
+    "magic": false,
+    "cyber": true
+   },
+   "skyborn": {
+    "fruit": false,
+    "sorcery": false,
+    "magic": false,
+    "cyber": false
+   }
+  },
+  "systemNames": {
+   "fruit": "Devil Fruit",
+   "sorcery": "Cursed Energy",
+   "magic": "Dark Magic"
+  },
+  "detect": {
+   "fruit": {
+    "names": {
+     "src": "prime ?piece",
+     "i": true
+    },
+    "ids": {
+     "src": "(true_?prime|prime_?piece|^tpp$)",
+     "i": true
+    },
+    "items": {
+     "src": "(no_mi|nomi|fruit)",
+     "i": false
+    }
+   },
+   "magic": {
+    "names": {
+     "src": "^malum$",
+     "i": true
+    },
+    "ids": {
+     "src": "^malum$",
+     "i": true
+    },
+    "items": {
+     "src": "^(totemic_staff|mnemonic_hex_staff|staff_of_the_auric_flame|erosion_scepter|crude_scythe|soul_stained_steel_scythe|edge_of_deliverance|weight_of_worlds|tyrving|creative_scythe|catalyst_lobber|lamplighters_tongs|spirit_pouch|poppet|spectral_lens|spectral_optic|the_device|the_vessel|void_tablet|soul_hunter_(cloak|robe|leggings|boots)|malignant_stronghold_(helmet|chestplate|leggings|boots)|(sacred|wicked|arcane|eldritch|aerial|aqueous|earthen|infernal|umbral)_spirit|encyclopedia_(arcana|esoterica)|rune_of_[a-z_]+|ring_of_[a-z_]+|necklace_of_[a-z_]+|belt_of_[a-z_]+|gilded_(ring|belt)|ornate_(ring|necklace)|(runic|elaborate|glass|gluttonous)_brooch)$",
+     "i": false
+    },
+    "blocks": {
+     "src": "^(spirit_altar|runic_workbench|spirit_crucible|spirit_catalyzer|repair_pylon|runewood_totem_base|soulwood_totem_base|ritual_plinth|weavers_workbench|spirit_jar|mending_diffuser|impurity_stabilizer|shielding_apparatus|warping_engine|accelerating_inlay|void_conduit|void_depot|runewood_obelisk|brilliant_obelisk)$",
+     "i": false
+    }
+   }
+  },
+  "sorcery": {
+   "items": [],
+   "namespaces": {
+    "src": "^(jujutsucraft|jjk_addon|sorceryfight|jujutsucrafts):",
+    "i": false
+   },
+   "bookId": {
+    "src": "(book|tome|scroll|grimoire|manual|technique|skill_select|selection|reroll)",
+    "i": false
+   },
+   "bookName": {
+    "src": "(cursed technique|technique (book|scroll|tome|selection)|(book|scroll|tome) of .*technique|skill selection)",
+    "i": true
+   },
+   "itemPattern": {
+    "src": "^(jujutsucraft|jjk_addon|jujutsucrafts|sorceryfight):[a-z0-9_]*(technique|skill_selection|selection_book|skill_book|sukuna_finger|sorcerer_shard|reroll)[a-z0-9_]*$",
+    "i": false
+   }
+  },
+  "ripperdocBlocks": [
+   "project_edgerunner:ripperdoc"
+  ],
+  "ripperdocEntity": {
+   "src": "ripperdoc",
+   "i": false
+  },
+  "slotIds": [
+   "charm",
+   "hands",
+   "ring",
+   "necklace",
+   "head",
+   "back",
+   "belt",
+   "body",
+   "bracelet",
+   "feet",
+   "curio"
+  ],
+  "slots": {
+   "human": {
+    "charm": 7,
+    "hands": 4,
+    "ring": 4,
+    "necklace": 2,
+    "head": 1,
+    "back": 1,
+    "belt": 1,
+    "body": 1,
+    "bracelet": 1,
+    "feet": 1,
+    "curio": 1
+   },
+   "swordsman": {
+    "charm": 5,
+    "hands": 4,
+    "ring": 4,
+    "necklace": 1,
+    "head": 1,
+    "back": 1,
+    "belt": 1,
+    "body": 1,
+    "bracelet": 1,
+    "feet": 1,
+    "curio": 1
+   },
+   "sorcerer": {
+    "charm": 4,
+    "hands": 2,
+    "ring": 2,
+    "necklace": 1,
+    "head": 1,
+    "back": 1,
+    "belt": 1,
+    "body": 1,
+    "bracelet": 0,
+    "feet": 1,
+    "curio": 0
+   },
+   "devil_fruit_user": {
+    "charm": 4,
+    "hands": 2,
+    "ring": 2,
+    "necklace": 1,
+    "head": 1,
+    "back": 0,
+    "belt": 1,
+    "body": 1,
+    "bracelet": 0,
+    "feet": 1,
+    "curio": 0
+   },
+   "cyberware_user": {
+    "charm": 3,
+    "hands": 2,
+    "ring": 2,
+    "necklace": 0,
+    "head": 1,
+    "back": 1,
+    "belt": 1,
+    "body": 1,
+    "bracelet": 0,
+    "feet": 1,
+    "curio": 0
+   },
+   "dark_magician": {
+    "charm": 4,
+    "hands": 2,
+    "ring": 4,
+    "necklace": 2,
+    "head": 1,
+    "back": 1,
+    "belt": 1,
+    "body": 1,
+    "bracelet": 0,
+    "feet": 1,
+    "curio": 1
+   },
+   "marksman": {
+    "charm": 4,
+    "hands": 3,
+    "ring": 3,
+    "necklace": 1,
+    "head": 1,
+    "back": 1,
+    "belt": 1,
+    "body": 1,
+    "bracelet": 1,
+    "feet": 1,
+    "curio": 1
+   },
+   "weakling": {
+    "charm": 0,
+    "hands": 0,
+    "ring": 1,
+    "necklace": 0,
+    "head": 0,
+    "back": 0,
+    "belt": 0,
+    "body": 0,
+    "bracelet": 0,
+    "feet": 0,
+    "curio": 0
+   },
+   "brawler": {
+    "charm": 3,
+    "hands": 4,
+    "ring": 2,
+    "necklace": 1,
+    "head": 1,
+    "back": 0,
+    "belt": 1,
+    "body": 1,
+    "bracelet": 2,
+    "feet": 1,
+    "curio": 0
+   },
+   "skyborn": {
+    "charm": 4,
+    "hands": 3,
+    "ring": 3,
+    "necklace": 2,
+    "head": 1,
+    "back": 2,
+    "belt": 1,
+    "body": 1,
+    "bracelet": 1,
+    "feet": 1,
+    "curio": 1
+   }
+  },
+  "slotsByMilestone": {
+   "weakling": [
+    {
+     "charm": 0,
+     "hands": 0,
+     "ring": 1,
+     "necklace": 0,
+     "head": 0,
+     "back": 0,
+     "belt": 0,
+     "body": 0,
+     "bracelet": 0,
+     "feet": 0,
+     "curio": 0
+    },
+    {
+     "charm": 1,
+     "hands": 1,
+     "ring": 2,
+     "necklace": 1,
+     "head": 1,
+     "back": 0,
+     "belt": 0,
+     "body": 0,
+     "bracelet": 0,
+     "feet": 0,
+     "curio": 0
+    },
+    {
+     "charm": 2,
+     "hands": 2,
+     "ring": 2,
+     "necklace": 1,
+     "head": 1,
+     "back": 0,
+     "belt": 0,
+     "body": 0,
+     "bracelet": 0,
+     "feet": 1,
+     "curio": 0
+    },
+    {
+     "charm": 3,
+     "hands": 2,
+     "ring": 3,
+     "necklace": 1,
+     "head": 1,
+     "back": 0,
+     "belt": 1,
+     "body": 0,
+     "bracelet": 0,
+     "feet": 1,
+     "curio": 0
+    },
+    {
+     "charm": 4,
+     "hands": 3,
+     "ring": 3,
+     "necklace": 2,
+     "head": 1,
+     "back": 0,
+     "belt": 1,
+     "body": 1,
+     "bracelet": 0,
+     "feet": 1,
+     "curio": 0
+    },
+    {
+     "charm": 5,
+     "hands": 3,
+     "ring": 4,
+     "necklace": 2,
+     "head": 1,
+     "back": 0,
+     "belt": 1,
+     "body": 1,
+     "bracelet": 1,
+     "feet": 1,
+     "curio": 0
+    },
+    {
+     "charm": 6,
+     "hands": 4,
+     "ring": 4,
+     "necklace": 2,
+     "head": 1,
+     "back": 1,
+     "belt": 1,
+     "body": 1,
+     "bracelet": 1,
+     "feet": 1,
+     "curio": 0
+    },
+    {
+     "charm": 7,
+     "hands": 4,
+     "ring": 4,
+     "necklace": 2,
+     "head": 1,
+     "back": 1,
+     "belt": 1,
+     "body": 1,
+     "bracelet": 1,
+     "feet": 1,
+     "curio": 1
+    }
+   ]
+  },
+  "slotMilestoneEvery": 5,
+  "cyberCapacity": {
+   "human": {
+    "base": 140,
+    "perLevel": 4
+   },
+   "devil_fruit_user": {
+    "base": 50,
+    "perLevel": 0
+   },
+   "swordsman": {
+    "base": 60,
+    "perLevel": 0
+   },
+   "cyberware_user": {
+    "base": 600,
+    "perLevel": 20
+   },
+   "sorcerer": {
+    "base": 0,
+    "perLevel": 0
+   },
+   "dark_magician": {
+    "base": 0,
+    "perLevel": 0
+   },
+   "marksman": {
+    "base": 220,
+    "perLevel": 6
+   },
+   "weakling": {
+    "base": 100,
+    "perLevel": 6
+   },
+   "brawler": {
+    "base": 180,
+    "perLevel": 5
+   },
+   "skyborn": {
+    "base": 0,
+    "perLevel": 0
+   }
+  },
+  "cyberCapacityCommands": [
+   "projectedgerunner cyberware capacity set {p} {v}",
+   "projectedgerunner cyberware capacity set {v} {p}"
+  ],
+  "jjcVariablesClass": "net.mcreator.jujutsucraft.network.JujutsucraftModVariables"
+ },
+ "sky": {
+  "enabled": true,
+  "minY": 200,
+  "probeY": 227,
+  "scanStep": 64,
+  "minRadius": 48
+ },
+ "logPose": {
+  "dwellTicks": 600,
+  "centerTicks": 60,
+  "centerRadius": 40,
+  "arriveRadius": 24,
+  "giveOnFirstJoin": true,
+  "maxRecorded": 96,
+  "searchRadii": [
+   800,
+   1500,
+   3000,
+   5000
+  ],
+  "skyMinY": 200,
+  "modes": [
+   {
+    "id": "next",
+    "name": "Next island",
+    "kind": "next",
+    "themes": []
+   },
+   {
+    "id": "nearest",
+    "name": "Nearest island",
+    "kind": "any",
+    "themes": []
+   },
+   {
+    "id": "city",
+    "name": "Nearest city",
+    "kind": "themes",
+    "themes": [
+     "city",
+     "city_future",
+     "city_primitive"
+    ]
+   },
+   {
+    "id": "sky",
+    "name": "Nearest sky island",
+    "kind": "sky",
+    "themes": []
+   }
+  ]
+ }
+}

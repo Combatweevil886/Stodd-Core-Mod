@@ -1,0 +1,25 @@
+{
+  "powers": [
+    "stodd:swordsman/marker",
+    "stodd:swordsman/health",
+    "stodd:swordsman/slots",
+    "stodd:swordsman/cyber",
+    "stodd:swordsman/speed",
+    "stodd:swordsman/sword_damage",
+    "stodd:swordsman/no_magic",
+    "stodd:swordsman/no_magic_block",
+    "stodd:swordsman/info_0",
+    "stodd:swordsman/info_1",
+    "stodd:swordsman/info_2",
+    "stodd:swordsman/info_3",
+    "stodd:swordsman/info_4",
+    "stodd:swordsman/info_5"
+  ],
+  "icon": {
+    "item": "minecraft:iron_sword"
+  },
+  "order": 3,
+  "impact": 2,
+  "name": "Swordsman",
+  "description": "A blade master. Faster on their feet and deadly with any sword. Can walk exactly ONE other path: a Devil Fruit or Cursed Energy. The first one you take locks the other."
+}

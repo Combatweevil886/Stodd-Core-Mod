@@ -1,0 +1,7 @@
+{
+  "type": "stodd_core:city_block",
+  "biomes": "#stodd:has_structure/cells",
+  "step": "top_layer_modification",
+  "terrain_adaptation": "none",
+  "spawn_overrides": {}
+}

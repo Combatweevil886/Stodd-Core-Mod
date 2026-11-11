@@ -1,0 +1,35 @@
+{
+  "performVersionCheck": true,
+  "origins": {
+    "origins:human": {
+      "enabled": false
+    },
+    "origins:merling": {
+      "enabled": false
+    },
+    "origins:arachnid": {
+      "enabled": false
+    },
+    "origins:avian": {
+      "enabled": false
+    },
+    "origins:blazeborn": {
+      "enabled": false
+    },
+    "origins:elytrian": {
+      "enabled": false
+    },
+    "origins:enderian": {
+      "enabled": false
+    },
+    "origins:feline": {
+      "enabled": false
+    },
+    "origins:phantom": {
+      "enabled": false
+    },
+    "origins:shulk": {
+      "enabled": false
+    }
+  }
+}

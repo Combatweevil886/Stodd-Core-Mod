@@ -1,0 +1,82 @@
+{
+  "has_precipitation": true,
+  "temperature": 0.5,
+  "downfall": 0.2,
+  "effects": {
+    "sky_color": 10127080,
+    "fog_color": 13483511,
+    "water_color": 8019194,
+    "water_fog_color": 2759283,
+    "grass_color": 11640025,
+    "foliage_color": 10715089,
+    "particle": {
+      "probability": 0.0025,
+      "options": {
+        "type": "minecraft:glow"
+      }
+    }
+  },
+  "spawners": {
+    "monster": [
+      {
+        "type": "minecraft:spider",
+        "weight": 100,
+        "minCount": 4,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:skeleton",
+        "weight": 80,
+        "minCount": 4,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:creeper",
+        "weight": 80,
+        "minCount": 4,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:enderman",
+        "weight": 30,
+        "minCount": 1,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:slime",
+        "weight": 40,
+        "minCount": 4,
+        "maxCount": 4
+      }
+    ],
+    "creature": [
+      {
+        "type": "minecraft:axolotl",
+        "weight": 2,
+        "minCount": 1,
+        "maxCount": 1
+      }
+    ],
+    "ambient": [],
+    "axolotls": [],
+    "underground_water_creature": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": []
+  },
+  "spawn_costs": {},
+  "carvers": {},
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    []
+  ]
+}

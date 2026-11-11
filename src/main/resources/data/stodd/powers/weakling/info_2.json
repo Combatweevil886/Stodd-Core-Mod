@@ -1,0 +1,5 @@
+{
+  "type": "origins:simple",
+  "name": "Late Bloomer",
+  "description": "Personal level cap of 35 instead of 20. Health, damage and armor grow faster the higher you go: weakest at the start, strongest at the end."
+}

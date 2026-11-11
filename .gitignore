@@ -1,0 +1,8 @@
+build/
+run/
+run-data/
+.gradle/
+out/
+stubs/
+*.iml
+.idea/

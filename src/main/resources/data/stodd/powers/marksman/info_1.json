@@ -1,0 +1,5 @@
+{
+  "type": "origins:simple",
+  "name": "Deadeye",
+  "description": "Arrows, bolts, thrown weapons and bullets deal 25% more damage, growing 1.2% per level."
+}

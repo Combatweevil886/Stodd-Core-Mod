@@ -1,0 +1,25 @@
+{
+  "powers": [
+    "stodd:marksman/marker",
+    "stodd:marksman/health",
+    "stodd:marksman/slots",
+    "stodd:marksman/cyber",
+    "stodd:marksman/speed",
+    "stodd:marksman/deadeye",
+    "stodd:marksman/no_magic",
+    "stodd:marksman/no_magic_block",
+    "stodd:marksman/info_0",
+    "stodd:marksman/info_1",
+    "stodd:marksman/info_2",
+    "stodd:marksman/info_3",
+    "stodd:marksman/info_4",
+    "stodd:marksman/info_5"
+  ],
+  "icon": {
+    "item": "minecraft:crossbow"
+  },
+  "order": 7,
+  "impact": 2,
+  "name": "Marksman",
+  "description": "A ranged specialist: deadly with bows, crossbows, thrown weapons and guns. Light chrome is fine. Can walk exactly ONE other path: a Devil Fruit or Cursed Energy. The first one you take locks the other."
+}

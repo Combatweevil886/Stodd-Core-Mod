@@ -1,0 +1,12 @@
+{
+  "type": "origins:attribute",
+  "name": "+25 Health",
+  "description": "Starts with 25 extra health (12.5 hearts).",
+  "update_health": true,
+  "modifier": {
+    "attribute": "minecraft:generic.max_health",
+    "value": 25,
+    "operation": "addition",
+    "name": "stodd brawler health"
+  }
+}

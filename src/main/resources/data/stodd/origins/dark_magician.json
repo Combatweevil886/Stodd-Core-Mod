@@ -1,0 +1,23 @@
+{
+  "powers": [
+    "stodd:dark_magician/marker",
+    "stodd:dark_magician/health",
+    "stodd:dark_magician/slots",
+    "stodd:dark_magician/cyber",
+    "stodd:dark_magician/no_sorcery",
+    "stodd:dark_magician/no_chrome",
+    "stodd:dark_magician/info_0",
+    "stodd:dark_magician/info_1",
+    "stodd:dark_magician/info_2",
+    "stodd:dark_magician/info_3",
+    "stodd:dark_magician/info_4",
+    "stodd:dark_magician/info_5"
+  ],
+  "icon": {
+    "item": "minecraft:enchanted_book"
+  },
+  "order": 5,
+  "impact": 3,
+  "name": "Dark Magician",
+  "description": "The only one who can wield the dark arts of Malum: spirit altars, staves, scythes and runes. Hits hardest with spells and abilities, and can still eat a Devil Fruit, but no chrome."
+}

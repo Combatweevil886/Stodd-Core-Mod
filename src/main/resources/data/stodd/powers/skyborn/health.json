@@ -1,0 +1,12 @@
+{
+  "type": "origins:attribute",
+  "name": "+5 Health",
+  "description": "Starts with 5 extra health (2.5 hearts).",
+  "update_health": true,
+  "modifier": {
+    "attribute": "minecraft:generic.max_health",
+    "value": 5,
+    "operation": "addition",
+    "name": "stodd skyborn health"
+  }
+}

@@ -1,0 +1,80 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="MIT"
+issueTrackerURL=""
+
+[[mods]]
+modId="stodd_core"
+version="3.0.0"
+displayName="STODD Core"
+authors="STODD team"
+description='''The one mod for the "mods 4 stodd" pack (Forge 1.20.1), and an add-on to its power-system mods:
+True Prime Piece (Devil Fruits), Jujutsu Craft (Cursed Energy), Malum (dark magic), Project: Edgerunner (chrome) and Curios.
+
+ - Ten origins with their exact Curios slots, health and power rules; the rules are enforced in Java on the events those mods use
+   (eating, right-clicking, altars and ripperdocs, magic weapons, curios), and the mods' own player data (stats, cursed technique,
+   grade, cyberware tolerance) is read and written live.
+ - The Survival Island world, guaranteed by a built-in data pack above every other mod, with sky islands over open ocean.
+ - City islands (modern, Neo City, tribal), five dressed island themes and the sky-island dressing are real world-generation
+   structures: generated with the chunks, nothing is built in front of the player.
+ - The Log Pose: an item whose needle points at the next island (or the nearest, a city, a sky island).
+ - Levels, power caps, mastery, level links, waystones, ore tiers and the Downgrade Template run as KubeJS scripts that this mod
+   installs and keeps up to date.'''
+
+[[dependencies.stodd_core]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47.4,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.stodd_core]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1,1.20.2)"
+    ordering="NONE"
+    side="BOTH"
+# Constructed before KubeJS (the start-up script must be in place when it loads) and before Survival Island (which reads
+# config/survivalisland.json, written from config/stodd_islands.properties, when it starts); after Origins and Curios.
+[[dependencies.stodd_core]]
+    modId="kubejs"
+    mandatory=false
+    versionRange="[0,)"
+    ordering="BEFORE"
+    side="BOTH"
+[[dependencies.stodd_core]]
+    modId="survivalisland"
+    mandatory=false
+    versionRange="[0,)"
+    ordering="BEFORE"
+    side="BOTH"
+[[dependencies.stodd_core]]
+    modId="curios"
+    mandatory=false
+    versionRange="[0,)"
+    ordering="AFTER"
+    side="BOTH"
+# The power-system mods this is an add-on to (all optional: a missing one simply switches its part off)
+[[dependencies.stodd_core]]
+    modId="malum"
+    mandatory=false
+    versionRange="[0,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.stodd_core]]
+    modId="jujutsucraft"
+    mandatory=false
+    versionRange="[0,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.stodd_core]]
+    modId="project_edgerunner"
+    mandatory=false
+    versionRange="[0,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.stodd_core]]
+    modId="waystones"
+    mandatory=false
+    versionRange="[0,)"
+    ordering="NONE"
+    side="BOTH"

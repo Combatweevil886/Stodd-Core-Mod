@@ -1,0 +1,207 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minecraft:item/compass_16",
+    "layer1": "stodd_core:item/log_pose_glass"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "stodd_core:angle": 0.0
+      },
+      "model": "stodd_core:item/log_pose_16"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.015625
+      },
+      "model": "stodd_core:item/log_pose_17"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.046875
+      },
+      "model": "stodd_core:item/log_pose_18"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.078125
+      },
+      "model": "stodd_core:item/log_pose_19"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.109375
+      },
+      "model": "stodd_core:item/log_pose_20"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.140625
+      },
+      "model": "stodd_core:item/log_pose_21"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.171875
+      },
+      "model": "stodd_core:item/log_pose_22"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.203125
+      },
+      "model": "stodd_core:item/log_pose_23"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.234375
+      },
+      "model": "stodd_core:item/log_pose_24"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.265625
+      },
+      "model": "stodd_core:item/log_pose_25"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.296875
+      },
+      "model": "stodd_core:item/log_pose_26"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.328125
+      },
+      "model": "stodd_core:item/log_pose_27"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.359375
+      },
+      "model": "stodd_core:item/log_pose_28"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.390625
+      },
+      "model": "stodd_core:item/log_pose_29"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.421875
+      },
+      "model": "stodd_core:item/log_pose_30"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.453125
+      },
+      "model": "stodd_core:item/log_pose_31"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.484375
+      },
+      "model": "stodd_core:item/log_pose_00"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.515625
+      },
+      "model": "stodd_core:item/log_pose_01"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.546875
+      },
+      "model": "stodd_core:item/log_pose_02"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.578125
+      },
+      "model": "stodd_core:item/log_pose_03"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.609375
+      },
+      "model": "stodd_core:item/log_pose_04"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.640625
+      },
+      "model": "stodd_core:item/log_pose_05"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.671875
+      },
+      "model": "stodd_core:item/log_pose_06"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.703125
+      },
+      "model": "stodd_core:item/log_pose_07"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.734375
+      },
+      "model": "stodd_core:item/log_pose_08"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.765625
+      },
+      "model": "stodd_core:item/log_pose_09"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.796875
+      },
+      "model": "stodd_core:item/log_pose_10"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.828125
+      },
+      "model": "stodd_core:item/log_pose_11"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.859375
+      },
+      "model": "stodd_core:item/log_pose_12"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.890625
+      },
+      "model": "stodd_core:item/log_pose_13"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.921875
+      },
+      "model": "stodd_core:item/log_pose_14"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.953125
+      },
+      "model": "stodd_core:item/log_pose_15"
+    },
+    {
+      "predicate": {
+        "stodd_core:angle": 0.984375
+      },
+      "model": "stodd_core:item/log_pose_16"
+    }
+  ]
+}

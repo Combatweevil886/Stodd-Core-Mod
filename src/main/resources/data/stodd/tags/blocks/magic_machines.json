@@ -1,0 +1,61 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "malum:brilliant_obelisk",
+      "required": false
+    },
+    {
+      "id": "malum:repair_pylon",
+      "required": false
+    },
+    {
+      "id": "malum:ritual_plinth",
+      "required": false
+    },
+    {
+      "id": "malum:runewood_obelisk",
+      "required": false
+    },
+    {
+      "id": "malum:runewood_totem_base",
+      "required": false
+    },
+    {
+      "id": "malum:runic_workbench",
+      "required": false
+    },
+    {
+      "id": "malum:soulwood_totem_base",
+      "required": false
+    },
+    {
+      "id": "malum:spirit_altar",
+      "required": false
+    },
+    {
+      "id": "malum:spirit_catalyzer",
+      "required": false
+    },
+    {
+      "id": "malum:spirit_crucible",
+      "required": false
+    },
+    {
+      "id": "malum:spirit_jar",
+      "required": false
+    },
+    {
+      "id": "malum:void_conduit",
+      "required": false
+    },
+    {
+      "id": "malum:void_depot",
+      "required": false
+    },
+    {
+      "id": "malum:weavers_workbench",
+      "required": false
+    }
+  ]
+}

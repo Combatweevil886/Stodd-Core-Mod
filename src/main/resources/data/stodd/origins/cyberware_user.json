@@ -1,0 +1,24 @@
+{
+  "powers": [
+    "stodd:cyberware_user/marker",
+    "stodd:cyberware_user/health",
+    "stodd:cyberware_user/slots",
+    "stodd:cyberware_user/cyber",
+    "stodd:cyberware_user/no_sorcery",
+    "stodd:cyberware_user/no_magic",
+    "stodd:cyberware_user/no_magic_block",
+    "stodd:cyberware_user/kit",
+    "stodd:cyberware_user/info_0",
+    "stodd:cyberware_user/info_1",
+    "stodd:cyberware_user/info_2",
+    "stodd:cyberware_user/info_3",
+    "stodd:cyberware_user/info_4"
+  ],
+  "icon": {
+    "item": "minecraft:observer"
+  },
+  "order": 2,
+  "impact": 2,
+  "name": "Cyberware User",
+  "description": "More machine than man. Ships with Kiroshi Optics and the highest cyberware tolerance in the world, but the fewest accessory slots. Can still eat a Devil Fruit."
+}

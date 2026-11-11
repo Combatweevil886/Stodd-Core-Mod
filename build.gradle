@@ -1,0 +1,98 @@
+// STODD Core: ForgeGradle 7, following Forge's own "obfuscation" MDK example for 1.20.1 (github.com/MinecraftForge/MDKExamples).
+// Minecraft 1.20.1 runs with SRG names in production, so the jar is compiled against Mojang's names and then renamed to SRG by
+// Forge's Renamer: build/libs/stodd_core-<version>.jar is the one that goes into mods/ (the -unobfuscated one is for development).
+//
+//   ./gradlew build          compile and rename: build/libs/stodd_core-<version>.jar
+//   ./gradlew stoddTests     the logic tests against the scripts' reference values (needs Node)
+//   ./gradlew runClient      a development client with the mod (and only Forge)
+plugins {
+    id 'java'
+    id 'idea'
+    id 'eclipse'
+    id 'net.minecraftforge.gradle' version '[7.0.29,8.0)'
+    id 'net.minecraftforge.renamer' version '1.1.2'
+}
+
+version = mod_version
+group = mod_group_id
+base.archivesName = mod_id
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+minecraft {
+    mappings channel: 'official', version: minecraft_version
+
+    runs {
+        configureEach {
+            workingDir.convention layout.projectDirectory.dir('run')
+        }
+        register('client')
+        register('server') {
+            args '--nogui'
+        }
+    }
+}
+
+repositories {
+    minecraft.mavenizer(it)
+    maven fg.forgeMaven
+    maven fg.minecraftLibsMaven
+}
+
+dependencies {
+    implementation minecraft.dependency("net.minecraftforge:forge:$minecraft_version-$forge_version")
+    // Everything belonging to the power-system mods (True Prime Piece, Jujutsu Craft, Malum, Project: Edgerunner, Curios, Origins)
+    // is reached at run time (stodd.core.addon), so none of them is needed to build this mod.
+}
+
+renamer.mappings.from minecraft.dependency.toSrgFile
+
+tasks.named('jar', Jar) {
+    manifest {
+        attributes([
+            'Specification-Title'   : mod_id,
+            'Specification-Vendor'  : 'STODD',
+            'Specification-Version' : '1',
+            'Implementation-Title'  : 'STODD Core',
+            'Implementation-Version': project.version,
+            'Implementation-Vendor' : 'STODD',
+            'Automatic-Module-Name' : 'stodd_core'
+        ])
+    }
+    archiveClassifier = 'unobfuscated'
+}
+
+// the jar for mods/: classes renamed to SRG
+renamer.classes(tasks.named('jar', Jar)) {
+    archiveClassifier = ''
+}
+
+tasks.named('assemble') { dependsOn 'renameJar' }
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs += ['-Xlint:all,-processing,-serial']
+}
+
+// The island, city, dressed-island, origin-rule and Log Pose logic (stodd.core.gen) needs nothing but the JDK; these run it against
+// reference values produced by the KubeJS scripts themselves (tools/gen_vectors.js, needs Node).
+def vectors = layout.buildDirectory.file('stodd/vectors.json')
+tasks.register('stoddVectors', Exec) {
+    inputs.dir 'tools'
+    inputs.dir 'src/main/resources/embedded/kubejs/server_scripts/stodd'
+    outputs.file vectors
+    commandLine 'node', 'tools/gen_vectors.js', 'src/main/resources/embedded/kubejs/server_scripts/stodd', vectors.get().asFile.path
+    doFirst { vectors.get().asFile.parentFile.mkdirs() }
+}
+['GenTest', 'GenTest2'].each { t ->
+    tasks.register("stodd$t", JavaExec) {
+        dependsOn 'stoddVectors', 'testClasses'
+        classpath = sourceSets.test.runtimeClasspath
+        mainClass = "stodd.core.$t"
+        args vectors.get().asFile.path
+    }
+}
+// not part of `build`, so building on a PC does not need Node; the CI workflow runs it
+tasks.register('stoddTests') { dependsOn 'stoddGenTest', 'stoddGenTest2' }
+
+idea.module { downloadJavadoc = downloadSources = true }

@@ -1,0 +1,8 @@
+{
+  "pack": {
+    "description": "STODD Core data",
+    "pack_format": 15,
+    "forge:server_data_pack_format": 15,
+    "forge:resource_pack_format": 15
+  }
+}

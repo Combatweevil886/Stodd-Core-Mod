@@ -1,0 +1,12 @@
+{
+  "type": "origins:attribute",
+  "name": "+10 Health",
+  "description": "Starts with 10 extra health (5 hearts).",
+  "update_health": true,
+  "modifier": {
+    "attribute": "minecraft:generic.max_health",
+    "value": 10,
+    "operation": "addition",
+    "name": "stodd human health"
+  }
+}

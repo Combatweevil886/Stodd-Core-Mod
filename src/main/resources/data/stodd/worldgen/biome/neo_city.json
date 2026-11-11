@@ -1,0 +1,75 @@
+{
+  "has_precipitation": true,
+  "temperature": 0.8,
+  "downfall": 0.3,
+  "effects": {
+    "sky_color": 8369896,
+    "fog_color": 12904181,
+    "water_color": 4171734,
+    "water_fog_color": 675699,
+    "grass_color": 8378024,
+    "foliage_color": 6277018,
+    "particle": {
+      "probability": 0.0012,
+      "options": {
+        "type": "minecraft:end_rod"
+      }
+    }
+  },
+  "spawners": {
+    "monster": [
+      {
+        "type": "minecraft:zombie",
+        "weight": 60,
+        "minCount": 4,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:skeleton",
+        "weight": 60,
+        "minCount": 4,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:creeper",
+        "weight": 40,
+        "minCount": 4,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:pillager",
+        "weight": 8,
+        "minCount": 1,
+        "maxCount": 2
+      },
+      {
+        "type": "minecraft:witch",
+        "weight": 3,
+        "minCount": 1,
+        "maxCount": 1
+      }
+    ],
+    "creature": [],
+    "ambient": [],
+    "axolotls": [],
+    "underground_water_creature": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": []
+  },
+  "spawn_costs": {},
+  "carvers": {},
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    []
+  ]
+}

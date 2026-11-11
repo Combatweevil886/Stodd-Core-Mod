@@ -1,0 +1,25 @@
+{
+  "powers": [
+    "stodd:devil_fruit_user/marker",
+    "stodd:devil_fruit_user/health",
+    "stodd:devil_fruit_user/slots",
+    "stodd:devil_fruit_user/cyber",
+    "stodd:devil_fruit_user/dmg",
+    "stodd:devil_fruit_user/no_sorcery",
+    "stodd:devil_fruit_user/no_magic",
+    "stodd:devil_fruit_user/no_magic_block",
+    "stodd:devil_fruit_user/info_0",
+    "stodd:devil_fruit_user/info_1",
+    "stodd:devil_fruit_user/info_2",
+    "stodd:devil_fruit_user/info_3",
+    "stodd:devil_fruit_user/info_4",
+    "stodd:devil_fruit_user/info_5"
+  ],
+  "icon": {
+    "item": "minecraft:apple"
+  },
+  "order": 1,
+  "impact": 2,
+  "name": "Devil Fruit User",
+  "description": "Born to eat a Devil Fruit. Hits harder and takes more punishment than a normal person, at the cost of accessory space and almost no tolerance for chrome."
+}

@@ -1,0 +1,75 @@
+{
+  "has_precipitation": false,
+  "temperature": 1.6,
+  "downfall": 0.0,
+  "effects": {
+    "sky_color": 7222054,
+    "fog_color": 4858392,
+    "water_color": 5913134,
+    "water_fog_color": 2758674,
+    "grass_color": 4866102,
+    "foliage_color": 4143151,
+    "particle": {
+      "probability": 0.012,
+      "options": {
+        "type": "minecraft:ash"
+      }
+    }
+  },
+  "spawners": {
+    "monster": [
+      {
+        "type": "minecraft:magma_cube",
+        "weight": 40,
+        "minCount": 1,
+        "maxCount": 3
+      },
+      {
+        "type": "minecraft:skeleton",
+        "weight": 60,
+        "minCount": 2,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:zombified_piglin",
+        "weight": 30,
+        "minCount": 2,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:blaze",
+        "weight": 4,
+        "minCount": 1,
+        "maxCount": 1
+      },
+      {
+        "type": "minecraft:creeper",
+        "weight": 40,
+        "minCount": 4,
+        "maxCount": 4
+      }
+    ],
+    "creature": [],
+    "ambient": [],
+    "axolotls": [],
+    "underground_water_creature": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": []
+  },
+  "spawn_costs": {},
+  "carvers": {},
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    []
+  ]
+}

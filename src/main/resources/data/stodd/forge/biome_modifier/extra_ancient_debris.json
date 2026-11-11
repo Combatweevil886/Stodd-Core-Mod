@@ -1,0 +1,9 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#minecraft:is_nether",
+  "features": [
+    "stodd:extra_ancient_debris_large",
+    "stodd:extra_ancient_debris_small"
+  ],
+  "step": "underground_decoration"
+}

@@ -1,0 +1,43 @@
+# Builds the STODD Core jar on every push (and by hand: Actions > Build STODD Core > Run workflow).
+# The finished jar is attached to the run as the artifact "stodd_core"; pushing a tag v<version> also makes a release with it.
+name: Build STODD Core
+on:
+  push:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Script tests (KubeJS scripts against a mock world)
+        run: |
+          node tools/lint.js src/main/resources/embedded/kubejs/server_scripts/stodd src/main/resources/embedded/kubejs/startup_scripts/stodd_startup.js
+          node tools/runall.js src/main/resources/embedded/kubejs/server_scripts/stodd
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build the mod (ForgeGradle downloads Minecraft and Forge 1.20.1 the first time)
+        run: ./gradlew build stoddTests --stacktrace
+      - name: Collect the jar
+        run: |
+          mkdir dist
+          find build -name 'stodd_core-*.jar' ! -name '*-unobfuscated.jar' ! -name '*-sources.jar' -exec cp {} dist/ \;
+          ls -l dist
+          test -n "$(ls dist)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: stodd_core
+          path: dist/*.jar
+      - name: Release on a version tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.jar

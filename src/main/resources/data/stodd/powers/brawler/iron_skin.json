@@ -1,0 +1,10 @@
+{
+  "type": "origins:attribute",
+  "hidden": true,
+  "modifier": {
+    "attribute": "minecraft:generic.armor",
+    "value": 2,
+    "operation": "addition",
+    "name": "stodd brawler skin"
+  }
+}
