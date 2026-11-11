@@ -1,0 +1,5119 @@
+{
+ "version": 1,
+ "made": "tools/gen_config.js from 00_config.js",
+ "files": [
+  {
+   "name": "world",
+   "title": "the island world",
+   "intro": [
+    "The island world: the spawn islands and their spacing, the sky islands (normal islands lifted into the sky), how often an",
+    "island is a city or a dressed island, island themes and names, waystones, the Log Pose and /stodd locate.",
+    "World generation settings apply to worlds created afterwards (spawnIslands needs a game restart first); the rest after /reload."
+   ],
+   "items": [
+    {
+     "t": "key",
+     "path": "islandSyllables",
+     "key": "islandSyllables",
+     "def": [
+      "ka",
+      "ro",
+      "mi",
+      "ze",
+      "tsu",
+      "na",
+      "vel",
+      "dor",
+      "shi",
+      "ra",
+      "ku",
+      "lo",
+      "bel",
+      "yu",
+      "gan",
+      "te",
+      "mor",
+      "ai"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "oceanTheme",
+     "key": "oceanTheme",
+     "def": "one_piece",
+     "re": false,
+     "note": "",
+     "pre": [
+      "Ocean counts as One Piece water (Sea Kings, marine ships), nothing else."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "islandLandThreshold",
+     "key": "islandLandThreshold",
+     "def": -0.19,
+     "re": false,
+     "note": "continentalness above this is land/coast",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandPeakStep",
+     "key": "islandPeakStep",
+     "def": 32,
+     "re": false,
+     "note": "hill-climb step (blocks) used to find an island's centre; it is refined down to 8",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandMergeRadius",
+     "key": "islandMergeRadius",
+     "def": 170,
+     "re": false,
+     "note": "two hill-tops closer than this are the same island",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandLinkRadius",
+     "key": "islandLinkRadius",
+     "def": 460,
+     "re": false,
+     "note": "...or this close AND joined by land",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandScanStep",
+     "key": "islandScanStep",
+     "def": 48,
+     "re": false,
+     "note": "sample spacing when looking for island centres (islands are 280+ blocks across)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemeCell",
+     "key": "islandThemeCell",
+     "def": 1400,
+     "re": false,
+     "note": "only used when the world has no noise router (flat worlds): coarse themed regions",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "spawnIslands",
+     "pre": [
+      "---- SPAWN ISLANDS (the island world itself)",
+      "The island world comes from Survival Island; STODD Core writes its config/survivalisland.json from these on every start.",
+      "Changes need a game restart, and only chunks generated afterwards follow them: use a NEW world after changing the spacing.",
+      "preset sets islandSize / islandSeparation:",
+      "packed (110 / 520)  snug (140 / 560)  default (140 / 680)  wide (140 / 900)  remote (140 / 1200)  lonely (140 / 1700)",
+      "large (200 / 800)  grand (300 / 1300)"
+     ]
+    },
+    {
+     "t": "key",
+     "path": "spawnIslands.preset",
+     "key": "preset",
+     "def": "default",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "spawnIslands.islandSize",
+     "key": "islandSize",
+     "def": 0,
+     "re": false,
+     "note": "radius of an island's land, in blocks (0 = from the preset)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "spawnIslands.islandSeparation",
+     "key": "islandSeparation",
+     "def": 0,
+     "re": false,
+     "note": "distance from one island's middle to the next (0 = from the preset); at least 2.5 x islandSize",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "spawnIslands.underwaterFalloff",
+     "key": "underwaterFalloff",
+     "def": 9,
+     "re": false,
+     "note": "how far the sea floor keeps rising towards an island, in island radii (1-30): lower = deeper water closer in",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "spawnIslands.coastA",
+     "key": "coastA",
+     "def": {
+      "min": -0.5,
+      "max": 0.9
+     },
+     "re": false,
+     "note": "continentalness range of an island, end A (min below 0, max above 0; higher max = more mountains)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "spawnIslands.coastB",
+     "key": "coastB",
+     "def": {
+      "min": -1,
+      "max": 1.4
+     },
+     "re": false,
+     "note": "...and end B (islands vary between A and B)",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "skyIslands",
+     "pre": [
+      "---- SKY ISLANDS (world generation)",
+      "A sky island is one of the normal islands, on the normal spacing, lifted into the sky: the same outline, the same kind of",
+      "terrain (hills, cliffs, beaches round the rim), the same biomes with their trees, grass and mobs, just up in the air with an",
+      "underside hanging below it. Where it would have stood there is a shallow sea. The island at the world spawn is never lifted.",
+      "Changes apply to worlds created afterwards (and to new chunks of an existing world, which would not match the old ones)."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "skyIslands.enabled",
+     "key": "enabled",
+     "def": true,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "skyIslands.rarity",
+     "key": "rarity",
+     "def": "normal",
+     "re": false,
+     "note": "",
+     "pre": [
+      "share of the islands that are lifted:  none (0)  very_rare (5%)  rare (10%)  normal (18%)  common (30%)  very_common (45%)"
+     ]
+    },
+    {
+     "t": "key",
+     "path": "skyIslands.chance",
+     "key": "chance",
+     "def": -1,
+     "re": false,
+     "note": "exact share instead of the rarity, 0 to 1 (-1 = use rarity)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "skyIslands.height",
+     "key": "height",
+     "def": 190,
+     "re": false,
+     "note": "height of a sky island's coast (its beaches); hills rise above it",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "skyIslands.heightVariation",
+     "key": "heightVariation",
+     "def": 12,
+     "re": false,
+     "note": "each island sits up to this much higher or lower",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "skyIslands.thickness",
+     "key": "thickness",
+     "def": 48,
+     "re": false,
+     "note": "how far the underside hangs below the coast in the middle of an average island (bigger islands hang deeper; it always stays well above the sea)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "skyIslands.spikes",
+     "key": "spikes",
+     "def": 10,
+     "re": false,
+     "note": "extra length of the rocky spikes under the island",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "skyIslands.relief",
+     "key": "relief",
+     "def": 0.85,
+     "re": false,
+     "note": "how tall the hills are compared with the same island on the ground (1 = the same, 0.5 = half)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "skyIslands.maxHeight",
+     "key": "maxHeight",
+     "def": 316,
+     "re": false,
+     "note": "nothing of a sky island is higher than this (the world ends at 320)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "skyIslands.minSpawnDistance",
+     "key": "minSpawnDistance",
+     "def": 700,
+     "re": false,
+     "note": "islands whose middle is closer than this to 0,0 always stay on the ground",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "skyIslands.minRadius",
+     "key": "minRadius",
+     "def": 40,
+     "re": false,
+     "note": "smaller islands always stay on the ground",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "skyIslands.biome",
+     "key": "biome",
+     "def": "natural",
+     "re": false,
+     "note": "natural = the biomes the island would have had on the ground; or one biome id for every sky island (e.g. 'stodd:sky_meadow')",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "skyIslands.landmarks",
+     "key": "landmarks",
+     "def": true,
+     "re": false,
+     "note": "the odd sky ruin / shrine from the landmark lists",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "skyIslands.landmarkDensity",
+     "key": "landmarkDensity",
+     "def": 0.9,
+     "re": false,
+     "note": "how many of them (1 = as many as a dressed island)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "skyIslands.extraPlants",
+     "key": "extraPlants",
+     "def": 0,
+     "re": false,
+     "note": "extra trees / flowers / rocks per 48 x 48 cell, on top of the biome's own (the old sky-meadow dressing used 5)",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "city",
+     "pre": [
+      "---- CITY ISLANDS (49_city.js)",
+      "Three kinds of city island: a grid of 48 x 48 block city blocks over the whole island, from a central plaza (where the",
+      "island's waystone stands) outwards over land only; the middle gets the showpieces, the outskirts farms / warehouses / pads.",
+      "STODD Core generates them with the chunks; the pace settings (budgetMs, step..., trigger...) only matter for land that was",
+      "generated before it was installed.",
+      "city            modern metropolis (Metropolis biome)       - 14 block types",
+      "city_future     NEO CITY: spires, domes, maglev, hab stacks - 33 block types, several colour schemes",
+      "city_primitive  TRIBAL TOWN: huts, longhouses, totems       - 38 block types, three wood / wall styles",
+      "The lists of block templates, their weights and the zone multipliers are in 01_content.js (generated by the structure",
+      "generators, so edit them there or re-run the generators); everything else is here."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "city.enabled",
+     "key": "enabled",
+     "def": true,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "city.rarity",
+     "key": "rarity",
+     "def": "normal",
+     "re": false,
+     "note": "",
+     "pre": [
+      "how often an island is a city (each of the three kinds):  none  very_rare (x0.25)  rare (x0.5)  normal  common (x1.75)  very_common (x2.5)",
+      "or a number (1.5 = one and a half times as often). The exact share of each kind is its `chance` under [islandThemes.<kind>]."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "city.minOriginDistance",
+     "key": "minOriginDistance",
+     "def": 900,
+     "re": false,
+     "note": "islands closer than this to 0,0 are never cities, so the first island you meet is an ordinary one",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "city.cell",
+     "key": "cell",
+     "def": 48,
+     "re": false,
+     "note": "the templates are 48 x 48; do not change this unless you redraw the templates",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "city.radius",
+     "key": "radius",
+     "def": 300,
+     "re": false,
+     "note": "city blocks are built up to this far from the island's centre (the island's own coast cuts it earlier)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "city.landMargin",
+     "key": "landMargin",
+     "def": 0.04,
+     "re": false,
+     "note": "a block is built only if its centre and four corners are this far above the shore line (continentalness)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "city.baseMin",
+     "key": "baseMin",
+     "def": 66,
+     "re": false,
+     "note": "street level is the typical ground height of the island, held between these",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "city.baseMax",
+     "key": "baseMax",
+     "def": 78,
+     "re": false,
+     "note": "street level is the typical ground height of the island, held between these",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "city.sampleStep",
+     "key": "sampleStep",
+     "def": 28,
+     "re": false,
+     "note": "spacing of the ground-height samples used to pick the street level",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "city.foundationMax",
+     "key": "foundationMax",
+     "def": 40,
+     "re": false,
+     "note": "the slab under a block reaches down at most this far (so the coast is a sea wall)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "city.floorMin",
+     "key": "floorMin",
+     "def": -58,
+     "re": false,
+     "note": "never fill below this",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "city.generate",
+     "key": "generate",
+     "def": true,
+     "re": false,
+     "note": "build a city block as soon as all its chunks have been GENERATED (like a structure), long before a player walks in",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "city.approachFallback",
+     "key": "approachFallback",
+     "def": true,
+     "re": false,
+     "note": "...and also, for land that was generated earlier, when a player comes within triggerRadius of the island's centre",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "city.budgetMs",
+     "key": "budgetMs",
+     "def": 8,
+     "re": false,
+     "note": "at most this many milliseconds of commands per server tick while building (0 = the old pace below)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "city.chunksPerTick",
+     "key": "chunksPerTick",
+     "def": 24,
+     "re": false,
+     "note": "newly generated chunks examined per tick",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "city.queueMax",
+     "key": "queueMax",
+     "def": 4000,
+     "re": false,
+     "note": "newly generated chunks remembered while waiting to be examined",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "city.lean",
+     "key": "lean",
+     "def": true,
+     "re": false,
+     "note": "clear only down to the real surface and found only where the ground is lower (fewer, smaller /fill commands)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "city.triggerRadius",
+     "key": "triggerRadius",
+     "def": 200,
+     "re": false,
+     "note": "approach fallback: building starts when a player is this close to the island's centre",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "city.stepEvery",
+     "key": "stepEvery",
+     "def": 2,
+     "re": false,
+     "note": "old pace (budgetMs 0): one /fill, /place or /fillbiome command every this many ticks (a city block takes 6-15 of them)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "city.stepsPerTick",
+     "key": "stepsPerTick",
+     "def": 1,
+     "re": false,
+     "note": "...and this many at a time",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "city.cutCap",
+     "key": "cutCap",
+     "def": 148,
+     "re": false,
+     "note": "clearing for a city block never reaches above this height",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "city.scanEvery",
+     "key": "scanEvery",
+     "def": 40,
+     "re": false,
+     "note": "ticks between checks for a city island near each player",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "city.maxRingsAhead",
+     "key": "maxRingsAhead",
+     "def": 99,
+     "re": false,
+     "note": "how many city blocks out from the plaza may be queued at a time (99 = whole island)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "city.biomeBelow",
+     "key": "biomeBelow",
+     "def": 8,
+     "re": false,
+     "note": "the style's biome is applied from this far under street level...",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "city.biomeAbove",
+     "key": "biomeAbove",
+     "def": 104,
+     "re": false,
+     "note": "...to this far above it",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "city.maxTemplateFailures",
+     "key": "maxTemplateFailures",
+     "def": 3,
+     "re": false,
+     "note": "a template that fails to place this many times is dropped from the draw",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "makeover",
+     "pre": [
+      "---- DRESSED ISLANDS (52_makeover.js)",
+      "Five themes that are not cities are dressed up the same slow way: Ember Isle (volcano), Sakura Isle (shrine garden),",
+      "Overgrown Ruins (jungle temple), Crystal Isle (amethyst spires) and Skull Cove (a giant skull and a pirate camp). Each island",
+      "gets (1) its ground repainted with `paint`, (2) its own biome, (3) a centrepiece landmark around the waystone and",
+      "(4) a scatter of smaller landmarks, chosen from a big list so no two islands look alike. STODD Core generates them with the",
+      "chunks; the pace settings (triggerRadius, step...) only matter for land generated before it was installed. (Sky islands:",
+      "see skyIslands.)"
+     ]
+    },
+    {
+     "t": "key",
+     "path": "makeover.enabled",
+     "key": "enabled",
+     "def": true,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.rarity",
+     "key": "rarity",
+     "def": "normal",
+     "re": false,
+     "note": "",
+     "pre": [
+      "how often an island is dressed (Ember, Sakura, Ruins, Crystal, Skull Cove): the same words or a number as city.rarity"
+     ]
+    },
+    {
+     "t": "key",
+     "path": "makeover.cell",
+     "key": "cell",
+     "def": 48,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.radius",
+     "key": "radius",
+     "def": 330,
+     "re": false,
+     "note": "dressed up to this far from the island's centre (the coast cuts it earlier)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.landMargin",
+     "key": "landMargin",
+     "def": 0.06,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.triggerRadius",
+     "key": "triggerRadius",
+     "def": 220,
+     "re": false,
+     "note": "dressing starts when a player is this close to the island's centre",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.stepEvery",
+     "key": "stepEvery",
+     "def": 2,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.stepsPerTick",
+     "key": "stepsPerTick",
+     "def": 2,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.scanEvery",
+     "key": "scanEvery",
+     "def": 40,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.cutCap",
+     "key": "cutCap",
+     "def": 148,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.biomeBelow",
+     "key": "biomeBelow",
+     "def": 12,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.biomeAbove",
+     "key": "biomeAbove",
+     "def": 60,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.landmarkDensity",
+     "key": "landmarkDensity",
+     "def": 0.2,
+     "re": false,
+     "note": "about this share of an island's 48 x 48 cells gets a landmark (never two side by side)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.maxLandmarks",
+     "key": "maxLandmarks",
+     "def": 40,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.maxTemplateFailures",
+     "key": "maxTemplateFailures",
+     "def": 3,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.foundationMax",
+     "key": "foundationMax",
+     "def": 14,
+     "re": false,
+     "note": "landmark foundations reach no further down than this",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "makeover.themes",
+     "pre": [
+      "per theme: biome, paint rules [from, to] (/fill ... replace), density multiplier. The landmark lists (center, scatter) are",
+      "added by 01_content.js."
+     ]
+    },
+    {
+     "t": "table",
+     "path": "makeover.themes.ember",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.themes.ember.biome",
+     "key": "biome",
+     "def": "stodd:ember",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.themes.ember.foundation",
+     "key": "foundation",
+     "def": "minecraft:blackstone",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.themes.ember.density",
+     "key": "density",
+     "def": 1,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.themes.ember.paint",
+     "key": "paint",
+     "def": [
+      [
+       "minecraft:grass_block",
+       "minecraft:basalt"
+      ],
+      [
+       "minecraft:dirt",
+       "minecraft:blackstone"
+      ],
+      [
+       "minecraft:sand",
+       "minecraft:smooth_basalt"
+      ],
+      [
+       "#minecraft:leaves",
+       "minecraft:air"
+      ]
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "makeover.themes.sakura",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.themes.sakura.biome",
+     "key": "biome",
+     "def": "stodd:sakura",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.themes.sakura.foundation",
+     "key": "foundation",
+     "def": "minecraft:stone_bricks",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.themes.sakura.density",
+     "key": "density",
+     "def": 1,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.themes.sakura.paint",
+     "key": "paint",
+     "def": [
+      [
+       "#minecraft:leaves",
+       "minecraft:cherry_leaves[persistent=true]"
+      ],
+      [
+       "minecraft:grass_block",
+       "minecraft:moss_block"
+      ]
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "makeover.themes.ruins",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.themes.ruins.biome",
+     "key": "biome",
+     "def": "stodd:overgrown",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.themes.ruins.foundation",
+     "key": "foundation",
+     "def": "minecraft:mossy_stone_bricks",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.themes.ruins.density",
+     "key": "density",
+     "def": 1.1,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.themes.ruins.paint",
+     "key": "paint",
+     "def": [
+      [
+       "minecraft:grass_block",
+       "minecraft:moss_block"
+      ],
+      [
+       "minecraft:sand",
+       "minecraft:mossy_cobblestone"
+      ]
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "makeover.themes.crystal",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.themes.crystal.biome",
+     "key": "biome",
+     "def": "stodd:crystal",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.themes.crystal.foundation",
+     "key": "foundation",
+     "def": "minecraft:smooth_basalt",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.themes.crystal.density",
+     "key": "density",
+     "def": 1,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.themes.crystal.paint",
+     "key": "paint",
+     "def": [
+      [
+       "minecraft:grass_block",
+       "minecraft:calcite"
+      ],
+      [
+       "#minecraft:leaves",
+       "minecraft:flowering_azalea_leaves[persistent=true]"
+      ],
+      [
+       "minecraft:sand",
+       "minecraft:calcite"
+      ]
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "makeover.themes.skull",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.themes.skull.biome",
+     "key": "biome",
+     "def": "stodd:skullcove",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.themes.skull.foundation",
+     "key": "foundation",
+     "def": "minecraft:stone",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.themes.skull.density",
+     "key": "density",
+     "def": 1,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "makeover.themes.skull.paint",
+     "key": "paint",
+     "def": [
+      [
+       "minecraft:grass_block",
+       "minecraft:coarse_dirt"
+      ],
+      [
+       "#minecraft:leaves",
+       "minecraft:air"
+      ]
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "islandThemes.one_piece",
+     "pre": [
+      "---- ISLANDS",
+      "Each theme's mobs may ONLY spawn on islands of that theme. A theme is used only when its mod is actually installed",
+      "(found by `mods`, a regex on the mod's name or id; `namespaces` are extra entity namespaces to claim).",
+      "'wild' is always on and carries no power-system mobs, so it is the \"ordinary island\"."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.one_piece.name",
+     "key": "name",
+     "def": "One Piece",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.one_piece.color",
+     "key": "color",
+     "def": "gold",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.one_piece.weight",
+     "key": "weight",
+     "def": 24,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.one_piece.mods",
+     "key": "mods",
+     "def": "/prime ?piece|true_?prime/i",
+     "re": true,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.one_piece.namespaces",
+     "key": "namespaces",
+     "def": [
+      "ompworld"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "islandThemes.jujutsu",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.jujutsu.name",
+     "key": "name",
+     "def": "Jujutsu",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.jujutsu.color",
+     "key": "color",
+     "def": "dark_purple",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.jujutsu.weight",
+     "key": "weight",
+     "def": 18,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.jujutsu.mods",
+     "key": "mods",
+     "def": "/jujutsu|sorcery ?fight/i",
+     "re": true,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.jujutsu.namespaces",
+     "key": "namespaces",
+     "def": [
+      "jjk_addon",
+      "sorceryfight"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "islandThemes.cyberpunk",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.cyberpunk.name",
+     "key": "name",
+     "def": "Night City",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.cyberpunk.color",
+     "key": "color",
+     "def": "aqua",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.cyberpunk.weight",
+     "key": "weight",
+     "def": 18,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.cyberpunk.mods",
+     "key": "mods",
+     "def": "/edgerunner|night ?city|cyberpunk/i",
+     "re": true,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.cyberpunk.namespaces",
+     "key": "namespaces",
+     "def": [
+      "edgerunner_nightcity_mobs",
+      "cyberpunk_armor",
+      "nightcity",
+      "project_edgerunner",
+      "edgerunner_extras"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "islandThemes.arcane",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.arcane.name",
+     "key": "name",
+     "def": "Arcane",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.arcane.color",
+     "key": "color",
+     "def": "blue",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.arcane.weight",
+     "key": "weight",
+     "def": 10,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.arcane.mods",
+     "key": "mods",
+     "def": "/^malum/i",
+     "re": true,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.arcane.namespaces",
+     "key": "namespaces",
+     "def": [
+      "malum"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "islandThemes.wild",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.wild.name",
+     "key": "name",
+     "def": "Wild",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.wild.color",
+     "key": "color",
+     "def": "green",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.wild.weight",
+     "key": "weight",
+     "def": 22,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.wild.mods",
+     "key": "mods",
+     "def": null,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.wild.namespaces",
+     "key": "namespaces",
+     "def": [],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "islandThemes.city",
+     "pre": [
+      "Special themes: each owns a slice of one extra roll per island (city 0.000-0.125, Neo City 0.125-0.175, ...), `chance` is",
+      "the share of ALL islands. New themes are appended so existing worlds never reshuffle; islands that were already",
+      "registered keep the theme they had. Night City's mobs also walk the modern city's streets (hosts)."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.city.name",
+     "key": "name",
+     "def": "City",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.city.color",
+     "key": "color",
+     "def": "gray",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.city.chance",
+     "key": "chance",
+     "def": 0.125,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.city.mods",
+     "key": "mods",
+     "def": null,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.city.namespaces",
+     "key": "namespaces",
+     "def": [],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.city.hosts",
+     "key": "hosts",
+     "def": [
+      "cyberpunk"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "islandThemes.city_future",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.city_future.name",
+     "key": "name",
+     "def": "Neo City",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.city_future.color",
+     "key": "color",
+     "def": "aqua",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.city_future.chance",
+     "key": "chance",
+     "def": 0.05,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.city_future.mods",
+     "key": "mods",
+     "def": null,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.city_future.namespaces",
+     "key": "namespaces",
+     "def": [],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.city_future.hosts",
+     "key": "hosts",
+     "def": [
+      "cyberpunk"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.city_future.minOriginDistance",
+     "key": "minOriginDistance",
+     "def": 900,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "islandThemes.city_primitive",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.city_primitive.name",
+     "key": "name",
+     "def": "Tribal Town",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.city_primitive.color",
+     "key": "color",
+     "def": "gold",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.city_primitive.chance",
+     "key": "chance",
+     "def": 0.04,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.city_primitive.mods",
+     "key": "mods",
+     "def": null,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.city_primitive.namespaces",
+     "key": "namespaces",
+     "def": [],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.city_primitive.minOriginDistance",
+     "key": "minOriginDistance",
+     "def": 700,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "islandThemes.ember",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.ember.name",
+     "key": "name",
+     "def": "Ember Isle",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.ember.color",
+     "key": "color",
+     "def": "red",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.ember.chance",
+     "key": "chance",
+     "def": 0.04,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.ember.mods",
+     "key": "mods",
+     "def": null,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.ember.namespaces",
+     "key": "namespaces",
+     "def": [],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.ember.minOriginDistance",
+     "key": "minOriginDistance",
+     "def": 600,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "islandThemes.sakura",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.sakura.name",
+     "key": "name",
+     "def": "Sakura Isle",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.sakura.color",
+     "key": "color",
+     "def": "light_purple",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.sakura.chance",
+     "key": "chance",
+     "def": 0.04,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.sakura.mods",
+     "key": "mods",
+     "def": null,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.sakura.namespaces",
+     "key": "namespaces",
+     "def": [],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.sakura.minOriginDistance",
+     "key": "minOriginDistance",
+     "def": 600,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "islandThemes.ruins",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.ruins.name",
+     "key": "name",
+     "def": "Overgrown Ruins",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.ruins.color",
+     "key": "color",
+     "def": "dark_green",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.ruins.chance",
+     "key": "chance",
+     "def": 0.04,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.ruins.mods",
+     "key": "mods",
+     "def": null,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.ruins.namespaces",
+     "key": "namespaces",
+     "def": [],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.ruins.minOriginDistance",
+     "key": "minOriginDistance",
+     "def": 600,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "islandThemes.crystal",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.crystal.name",
+     "key": "name",
+     "def": "Crystal Isle",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.crystal.color",
+     "key": "color",
+     "def": "dark_purple",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.crystal.chance",
+     "key": "chance",
+     "def": 0.04,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.crystal.mods",
+     "key": "mods",
+     "def": null,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.crystal.namespaces",
+     "key": "namespaces",
+     "def": [],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.crystal.minOriginDistance",
+     "key": "minOriginDistance",
+     "def": 600,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "islandThemes.skull",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.skull.name",
+     "key": "name",
+     "def": "Skull Cove",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.skull.color",
+     "key": "color",
+     "def": "white",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.skull.chance",
+     "key": "chance",
+     "def": 0.04,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.skull.mods",
+     "key": "mods",
+     "def": null,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.skull.namespaces",
+     "key": "namespaces",
+     "def": [],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandThemes.skull.minOriginDistance",
+     "key": "minOriginDistance",
+     "def": 600,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "islandNames",
+     "pre": [
+      "Island names: a made-up word from these syllables plus a word that fits the theme (40_islands.js, and the Java Log Pose)."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "islandNames.one_piece",
+     "key": "one_piece",
+     "def": [
+      "Isle",
+      "Atoll",
+      "Reef",
+      "Harbor",
+      "Cove",
+      "Key"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandNames.jujutsu",
+     "key": "jujutsu",
+     "def": [
+      "Domain",
+      "Shrine",
+      "Barrier",
+      "Veil",
+      "Precinct",
+      "Grounds"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandNames.cyberpunk",
+     "key": "cyberpunk",
+     "def": [
+      "Sprawl",
+      "Grid",
+      "District",
+      "Arcology",
+      "Block",
+      "Zone"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandNames.arcane",
+     "key": "arcane",
+     "def": [
+      "Grove",
+      "Hollow",
+      "Sanctum",
+      "Spire",
+      "Cairn",
+      "Altar"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandNames.wild",
+     "key": "wild",
+     "def": [
+      "Wilds",
+      "Holm",
+      "Skerry",
+      "Thicket",
+      "Highland",
+      "Wilderness"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandNames.city",
+     "key": "city",
+     "def": [
+      "City",
+      "Metropolis",
+      "Downtown",
+      "Skyline",
+      "Megacity",
+      "Borough"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandNames.city_future",
+     "key": "city_future",
+     "def": [
+      "Nexus",
+      "Arcology",
+      "Helix",
+      "Orbital",
+      "Prime",
+      "Vector"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandNames.city_primitive",
+     "key": "city_primitive",
+     "def": [
+      "Camp",
+      "Hollow",
+      "Moot",
+      "Kraal",
+      "Tribe",
+      "Hearth"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandNames.ember",
+     "key": "ember",
+     "def": [
+      "Caldera",
+      "Cinder",
+      "Forge",
+      "Pyre",
+      "Ashfall",
+      "Magma"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandNames.sakura",
+     "key": "sakura",
+     "def": [
+      "Blossom",
+      "Grove",
+      "Hanami",
+      "Petal",
+      "Shrine",
+      "Garden"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandNames.ruins",
+     "key": "ruins",
+     "def": [
+      "Ruins",
+      "Temple",
+      "Overgrowth",
+      "Lost Court",
+      "Vault",
+      "Citadel"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandNames.crystal",
+     "key": "crystal",
+     "def": [
+      "Spires",
+      "Geode",
+      "Prism",
+      "Lode",
+      "Shard",
+      "Cluster"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandNames.skull",
+     "key": "skull",
+     "def": [
+      "Cove",
+      "Bay",
+      "Wreck",
+      "Skull Rock",
+      "Gallows",
+      "Deadwater"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "islandNames.sky",
+     "key": "sky",
+     "def": [
+      "Drift",
+      "Perch",
+      "Aerie",
+      "Cloudhold",
+      "Float",
+      "Eyrie"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "waystones",
+     "pre": [
+      "---- ISLAND WAYSTONES (45_waystones.js)"
+     ]
+    },
+    {
+     "t": "key",
+     "path": "waystones.minPlayerDistance",
+     "key": "minPlayerDistance",
+     "def": 10,
+     "re": false,
+     "note": "never build the stone closer than this to any player",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "waystones.minSpawnDistance",
+     "key": "minSpawnDistance",
+     "def": 12,
+     "re": false,
+     "note": "...or to the world spawn point",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "waystones.arrivalTicks",
+     "key": "arrivalTicks",
+     "def": 400,
+     "re": false,
+     "note": "wait this long after a player joins before the first island waystone is placed",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "waystones.placeDistance",
+     "key": "placeDistance",
+     "def": 192,
+     "re": false,
+     "note": "the central waystone is built once a player is within this many blocks of the island's centre",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "waystones.centerSearch",
+     "key": "centerSearch",
+     "def": 60,
+     "re": false,
+     "note": "if the exact centre is a lake / cliff / forest, look for the nearest good ground within this radius",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "waystones.maxAttempts",
+     "key": "maxAttempts",
+     "def": 40,
+     "re": false,
+     "note": "placement tries per island per session",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "waystones.skyPlaceDistance",
+     "key": "skyPlaceDistance",
+     "def": 112,
+     "re": false,
+     "note": "a sky island's waystone is built when a player standing on it is this close to its centre",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "waystones.styleByTheme",
+     "pre": [
+      "block used for each island theme (any waystones:* worldgen feature id)"
+     ]
+    },
+    {
+     "t": "key",
+     "path": "waystones.styleByTheme.one_piece",
+     "key": "one_piece",
+     "def": "waystones:sandy_waystone",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "waystones.styleByTheme.jujutsu",
+     "key": "jujutsu",
+     "def": "waystones:blackstone_waystone",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "waystones.styleByTheme.cyberpunk",
+     "key": "cyberpunk",
+     "def": "waystones:deepslate_waystone",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "waystones.styleByTheme.arcane",
+     "key": "arcane",
+     "def": "waystones:waystone",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "waystones.styleByTheme.wild",
+     "key": "wild",
+     "def": "waystones:mossy_waystone",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "waystones.styleByTheme.city",
+     "key": "city",
+     "def": "waystones:deepslate_waystone",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "waystones.styleByTheme.sky",
+     "key": "sky",
+     "def": "waystones:waystone",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "waystones.styleByTheme.city_future",
+     "key": "city_future",
+     "def": "waystones:waystone",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "waystones.styleByTheme.city_primitive",
+     "key": "city_primitive",
+     "def": "waystones:sandy_waystone",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "waystones.styleByTheme.ember",
+     "key": "ember",
+     "def": "waystones:blackstone_waystone",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "waystones.styleByTheme.sakura",
+     "key": "sakura",
+     "def": "waystones:waystone",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "waystones.styleByTheme.ruins",
+     "key": "ruins",
+     "def": "waystones:mossy_waystone",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "waystones.styleByTheme.crystal",
+     "key": "crystal",
+     "def": "waystones:deepslate_waystone",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "waystones.styleByTheme.skull",
+     "key": "skull",
+     "def": "waystones:sandy_waystone",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "logPose",
+     "pre": [
+      "---- LOG POSE (48_logpose.js)",
+      "A compass that points at an island, like the One Piece Log Pose. Hold it to see the island's name, kind, direction and",
+      "distance. Right-click it to change what it looks for (next unrecorded island / nearest island / nearest city / sky island).",
+      "Walk to an island's middle (its waystone) and the pose records it within a few seconds; anywhere else on the island it",
+      "takes dwellTicks. A recorded island is skipped by the \"next island\" mode."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "logPose.dwellTicks",
+     "key": "dwellTicks",
+     "def": 600,
+     "re": false,
+     "note": "time to stand anywhere on an island before it is recorded (30 s)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "logPose.centerTicks",
+     "key": "centerTicks",
+     "def": 60,
+     "re": false,
+     "note": "...or standing near its middle (3 s)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "logPose.centerRadius",
+     "key": "centerRadius",
+     "def": 40,
+     "re": false,
+     "note": "\"near the middle\" = within this many blocks of the island's centre / waystone",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "logPose.arriveRadius",
+     "key": "arriveRadius",
+     "def": 24,
+     "re": false,
+     "note": "\"You have arrived\" message inside this distance of the target",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "logPose.giveOnFirstJoin",
+     "key": "giveOnFirstJoin",
+     "def": true,
+     "re": false,
+     "note": "every player gets one the first time they join",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "logPose.maxRecorded",
+     "key": "maxRecorded",
+     "def": 96,
+     "re": false,
+     "note": "how many recorded islands a player remembers (oldest are forgotten, so far-away islands become targets again)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "logPose.searchRadii",
+     "key": "searchRadii",
+     "def": [
+      800,
+      1500,
+      3000,
+      5000
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "logPose.scanBudget",
+     "key": "scanBudget",
+     "def": 4,
+     "re": false,
+     "note": "map cells (512 x 512 blocks) scanned per second per player while looking for islands",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "logPose.skyMinY",
+     "key": "skyMinY",
+     "def": 0,
+     "re": false,
+     "note": "in \"next island\" mode a player at or above this height (and not on a ground island) is \"up in the sky\" and is pointed at the next unrecorded SKY island; 0 = just under the sky islands' height",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "logPose.recipe",
+     "key": "recipe",
+     "def": [
+      "minecraft:compass",
+      "minecraft:amethyst_shard",
+      "minecraft:glass_pane"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "logPose.modes.next",
+     "pre": [
+      "right-click cycles these in order. kind: 'next' = nearest unrecorded, 'any' = nearest of all, 'themes' = nearest island of those themes, 'sky' = sky islands"
+     ]
+    },
+    {
+     "t": "key",
+     "path": "logPose.modes.next.name",
+     "key": "name",
+     "def": "Next island",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "logPose.modes.next.kind",
+     "key": "kind",
+     "def": "next",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "logPose.modes.nearest",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "logPose.modes.nearest.name",
+     "key": "name",
+     "def": "Nearest island",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "logPose.modes.nearest.kind",
+     "key": "kind",
+     "def": "any",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "logPose.modes.city",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "logPose.modes.city.name",
+     "key": "name",
+     "def": "Nearest city",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "logPose.modes.city.kind",
+     "key": "kind",
+     "def": "themes",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "logPose.modes.city.themes",
+     "key": "themes",
+     "def": [
+      "city",
+      "city_future",
+      "city_primitive"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "logPose.modes.sky",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "logPose.modes.sky.name",
+     "key": "name",
+     "def": "Nearest sky island",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "logPose.modes.sky.kind",
+     "key": "kind",
+     "def": "sky",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "locate",
+     "pre": [
+      "---- LOCATE (53_locate.js)",
+      "/stodd locate <city|neocity|tribal|sky|ember|sakura|ruins|crystal|skull|island|<theme>> [list|tp]",
+      "Finds the nearest matching island by reading the world's terrain function (nothing has to be explored first).",
+      "Meant for testing: set `everyone` to false to make it operator-only."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "locate.everyone",
+     "key": "everyone",
+     "def": true,
+     "re": false,
+     "note": "true = every player may use /stodd locate; false = operators only (/stodd locate ... tp is always operators only)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "locate.radii",
+     "key": "radii",
+     "def": [
+      1000,
+      2000,
+      4000,
+      8000
+     ],
+     "re": false,
+     "note": "search radius steps, in blocks",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "locate.cellsPerTick",
+     "key": "cellsPerTick",
+     "def": 3,
+     "re": false,
+     "note": "map cells (512 x 512 blocks) scanned per server tick while a search runs",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "locate.listCount",
+     "key": "listCount",
+     "def": 5,
+     "re": false,
+     "note": "how many results \"list\" shows",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "locate.tpHeight",
+     "key": "tpHeight",
+     "def": 262,
+     "re": false,
+     "note": "/stodd locate ... tp puts you this high with slow falling, so the chunks load before you land",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "locate.groups",
+     "pre": [
+      "names accepted after /stodd locate (each maps to island themes; 'sky' is special)"
+     ]
+    },
+    {
+     "t": "key",
+     "path": "locate.groups.city",
+     "key": "city",
+     "def": [
+      "city",
+      "city_future",
+      "city_primitive"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "locate.groups.modern",
+     "key": "modern",
+     "def": [
+      "city"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "locate.groups.neocity",
+     "key": "neocity",
+     "def": [
+      "city_future"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "locate.groups.future",
+     "key": "future",
+     "def": [
+      "city_future"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "locate.groups.tribal",
+     "key": "tribal",
+     "def": [
+      "city_primitive"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "locate.groups.primitive",
+     "key": "primitive",
+     "def": [
+      "city_primitive"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "locate.groups.ember",
+     "key": "ember",
+     "def": [
+      "ember"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "locate.groups.sakura",
+     "key": "sakura",
+     "def": [
+      "sakura"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "locate.groups.ruins",
+     "key": "ruins",
+     "def": [
+      "ruins"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "locate.groups.crystal",
+     "key": "crystal",
+     "def": [
+      "crystal"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "locate.groups.skull",
+     "key": "skull",
+     "def": [
+      "skull"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "locate.groups.onepiece",
+     "key": "onepiece",
+     "def": [
+      "one_piece"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "locate.groups.jujutsu",
+     "key": "jujutsu",
+     "def": [
+      "jujutsu"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "locate.groups.cyberpunk",
+     "key": "cyberpunk",
+     "def": [
+      "cyberpunk"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "locate.groups.arcane",
+     "key": "arcane",
+     "def": [
+      "arcane"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "locate.groups.wild",
+     "key": "wild",
+     "def": [
+      "wild"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "world",
+     "pre": [
+      "---- WORLD CHECK (54_world.js)",
+      "/stodd world measures what the world function really generates and says ISLANDS or NOT ISLANDS; the same report is written to the log at start-up."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "world.logOnStart",
+     "key": "logOnStart",
+     "def": true,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "world.gridHalf",
+     "key": "gridHalf",
+     "def": 12,
+     "re": false,
+     "note": "samples each way from 0,0 ...",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "world.gridStep",
+     "key": "gridStep",
+     "def": 128,
+     "re": false,
+     "note": "... this many blocks apart (12 x 128 = a 3 km square)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "world.maxLandFraction",
+     "key": "maxLandFraction",
+     "def": 0.4,
+     "re": false,
+     "note": "more land than this, or one landmass bigger than maxBlobCells samples: NOT ISLANDS",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "world.maxBlobCells",
+     "key": "maxBlobCells",
+     "def": 80,
+     "re": false,
+     "note": "",
+     "pre": []
+    }
+   ]
+  },
+  {
+   "name": "origins",
+   "title": "origins and the power systems",
+   "intro": [
+    "The ten origins: their names, Curios slots, who may use which power system (Devil Fruits, Cursed Energy, Dark Magic,",
+    "cyberware), cyberware capacity, how each system's items are recognised, and the Jujutsu starter-kit purge. Apply with /reload."
+   ],
+   "items": [
+    {
+     "t": "key",
+     "path": "origins",
+     "key": "origins",
+     "def": [
+      "human",
+      "devil_fruit_user",
+      "cyberware_user",
+      "swordsman",
+      "sorcerer",
+      "dark_magician",
+      "weakling",
+      "marksman",
+      "brawler",
+      "skyborn"
+     ],
+     "re": false,
+     "note": "",
+     "pre": [
+      "---- ORIGINS",
+      "Order shown on the selection screen."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "systems",
+     "key": "systems",
+     "def": [
+      "fruit",
+      "sorcery",
+      "magic"
+     ],
+     "re": false,
+     "note": "",
+     "pre": [
+      "Power systems the scripts watch (item gate, sweeps). cyber is a block rule (Ripperdoc) and is handled separately."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "systemNames",
+     "key": "systemNames",
+     "def": {
+      "fruit": "Devil Fruit",
+      "sorcery": "Cursed Energy",
+      "magic": "Dark Magic"
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "slotsFromJar",
+     "key": "slotsFromJar",
+     "def": true,
+     "re": false,
+     "note": "",
+     "pre": [
+      "Exact Curios slot counts per origin (absolute totals, not deltas) at level 1.",
+      "Ranking by total: human 24 > swordsman 21 > skyborn 20 > marksman 18 = dark magician 18 > brawler 16 >",
+      "sorcerer 14 > devil fruit 13 > cyberware 12 > weakling 1 (grows to 24 at level 35, see slotsByMilestone)",
+      "The data jar owns the level-1 counts (powers stodd:<origin>/slots, run via /curios set).",
+      "Leave this true unless you remove the jar's slot powers; the scripts then only verify."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "slotIds",
+     "key": "slotIds",
+     "def": [
+      "charm",
+      "hands",
+      "ring",
+      "necklace",
+      "head",
+      "back",
+      "belt",
+      "body",
+      "bracelet",
+      "feet",
+      "curio"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "slotMilestoneEvery",
+     "key": "slotMilestoneEvery",
+     "def": 5,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "cyberCapacityCommands",
+     "key": "cyberCapacityCommands",
+     "def": [
+      "projectedgerunner cyberware capacity set {p} {v}",
+      "projectedgerunner cyberware capacity set {v} {p}"
+     ],
+     "re": false,
+     "note": "",
+     "pre": [
+      "Commands tried (silently) to set capacity. {p} = player name, {v} = value.",
+      "Project: Edgerunner 1.1.2 (the version in the pack) documents `/projectedgerunner cyberware capacity get|set|roll [target]`,",
+      "an operator command. The argument order of `set` is not documented, so both orders are tried; the wrong one",
+      "simply fails to parse. /stodd check shows whether the command exists and what the capacity reads back as."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "giveKiroshiItem",
+     "key": "giveKiroshiItem",
+     "def": false,
+     "re": false,
+     "note": "the jar's stodd:cyberware_user/kit power already gives the starter kit",
+     "pre": [
+      "Cyberware User starting kit (given once). If you find a direct install command, add it to",
+      "kiroshiInstallCommands and set giveKiroshiItem to false."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "cyberStarterKit",
+     "key": "cyberStarterKit",
+     "def": [
+      "project_edgerunner:basic_kiroshi_optics",
+      "project_edgerunner:ripperdoc"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "kiroshiInstallCommands",
+     "key": "kiroshiInstallCommands",
+     "def": [],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "skyborn",
+     "key": "skyborn",
+     "def": {
+      "jumpAmplifier": 0
+     },
+     "re": false,
+     "note": "",
+     "pre": [
+      "Skyborn movement perks (35_skyborn.js). jumpAmplifier 0 = Jump Boost I."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "sorceryItems",
+     "key": "sorceryItems",
+     "def": [],
+     "re": false,
+     "note": "",
+     "pre": [
+      "Items that grant a cursed technique (Jujutsu Craft)."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "sorceryNamespaces",
+     "key": "sorceryNamespaces",
+     "def": "/^(jujutsucraft|jjk_addon|sorceryfight|jujutsucrafts):/",
+     "re": true,
+     "note": "",
+     "pre": [
+      "The Cursed Technique book: any item in a Jujutsu mod's namespace whose id looks like a book / scroll / tome /",
+      "technique item, or whose displayed name says so.  Origins that cannot use Cursed Energy have these removed from",
+      "their inventory the moment they appear (login, pickup, crafting, a mod handing it out on spawn).",
+      "If your book is still not caught, hold it and type /stodd itemid, then add the id to sorceryItems."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "sorceryBookIdPattern",
+     "key": "sorceryBookIdPattern",
+     "def": "/(book|tome|scroll|grimoire|manual|technique|skill_select|selection|reroll)/",
+     "re": true,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "sorceryBookNamePattern",
+     "key": "sorceryBookNamePattern",
+     "def": "/(cursed technique|technique (book|scroll|tome|selection)|(book|scroll|tome) of .*technique|skill selection)/i",
+     "re": true,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "sorceryItemPattern",
+     "key": "sorceryItemPattern",
+     "def": "/^(jujutsucraft|jjk_addon|jujutsucrafts|sorceryfight):[a-z0-9_]*(technique|skill_selection|selection_book|skill_book|sukuna_finger|sorcerer_shard|reroll)[a-z0-9_]*$/",
+     "re": true,
+     "note": "",
+     "pre": [
+      "Jujutsu Craft's Skill Selection Book / Cursed Technique Changer and addon equivalents"
+     ]
+    },
+    {
+     "t": "key",
+     "path": "jjcVariablesClass",
+     "key": "jjcVariablesClass",
+     "def": "net.mcreator.jujutsucraft.network.JujutsucraftModVariables",
+     "re": false,
+     "note": "",
+     "pre": [
+      "Jujutsu Craft (MCreator) player variables. PlayerCurseTechnique 0 = non-sorcerer, -1 = Heavenly Restriction."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "holdSweepTicks",
+     "key": "holdSweepTicks",
+     "def": 100,
+     "re": false,
+     "note": "",
+     "pre": [
+      "How often (ticks) a player is checked for a power their origin may not hold.  0 turns the sweep off."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "ripperdocBlocks",
+     "key": "ripperdocBlocks",
+     "def": [
+      "project_edgerunner:ripperdoc"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "ripperdocEntityPattern",
+     "key": "ripperdocEntityPattern",
+     "def": "/ripperdoc/",
+     "re": true,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "originNames",
+     "pre": [
+      "Names shown in chat and on the selection screen's tooltips (also read by the Java side)."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "originNames.human",
+     "key": "human",
+     "def": "Standard Human",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "originNames.devil_fruit_user",
+     "key": "devil_fruit_user",
+     "def": "Devil Fruit User",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "originNames.cyberware_user",
+     "key": "cyberware_user",
+     "def": "Cyberware User",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "originNames.swordsman",
+     "key": "swordsman",
+     "def": "Swordsman",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "originNames.sorcerer",
+     "key": "sorcerer",
+     "def": "Sorcerer",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "originNames.dark_magician",
+     "key": "dark_magician",
+     "def": "Dark Magician",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "originNames.weakling",
+     "key": "weakling",
+     "def": "Weakling",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "originNames.marksman",
+     "key": "marksman",
+     "def": "Marksman",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "originNames.brawler",
+     "key": "brawler",
+     "def": "Brawler",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "originNames.skyborn",
+     "key": "skyborn",
+     "def": "Skyborn",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "rules",
+     "pre": [
+      "Who may use what.  true = yes, false = never, 'path' = only ONE of that origin's 'path' systems, chosen by first use.",
+      "Systems: fruit (True Prime Piece devil fruits), sorcery (Jujutsu Craft cursed energy), magic (Malum dark magic),",
+      "cyber (Edgerunner chrome)"
+     ]
+    },
+    {
+     "t": "key",
+     "path": "rules.human",
+     "key": "human",
+     "def": {
+      "fruit": false,
+      "sorcery": false,
+      "magic": false,
+      "cyber": true
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "rules.devil_fruit_user",
+     "key": "devil_fruit_user",
+     "def": {
+      "fruit": true,
+      "sorcery": false,
+      "magic": false,
+      "cyber": true
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "rules.cyberware_user",
+     "key": "cyberware_user",
+     "def": {
+      "fruit": true,
+      "sorcery": false,
+      "magic": false,
+      "cyber": true
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "rules.swordsman",
+     "key": "swordsman",
+     "def": {
+      "fruit": "path",
+      "sorcery": "path",
+      "magic": false,
+      "cyber": true
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "rules.sorcerer",
+     "key": "sorcerer",
+     "def": {
+      "fruit": false,
+      "sorcery": true,
+      "magic": false,
+      "cyber": false
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "rules.dark_magician",
+     "key": "dark_magician",
+     "def": {
+      "fruit": true,
+      "sorcery": false,
+      "magic": true,
+      "cyber": false
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "rules.weakling",
+     "key": "weakling",
+     "def": {
+      "fruit": false,
+      "sorcery": false,
+      "magic": false,
+      "cyber": true
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "rules.marksman",
+     "key": "marksman",
+     "def": {
+      "fruit": "path",
+      "sorcery": "path",
+      "magic": false,
+      "cyber": true
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "rules.brawler",
+     "key": "brawler",
+     "def": {
+      "fruit": false,
+      "sorcery": true,
+      "magic": false,
+      "cyber": true
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "rules.skyborn",
+     "key": "skyborn",
+     "def": {
+      "fruit": false,
+      "sorcery": false,
+      "magic": false,
+      "cyber": false
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "slots",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "slots.human",
+     "key": "human",
+     "def": {
+      "charm": 7,
+      "hands": 4,
+      "ring": 4,
+      "necklace": 2,
+      "head": 1,
+      "back": 1,
+      "belt": 1,
+      "body": 1,
+      "bracelet": 1,
+      "feet": 1,
+      "curio": 1
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "slots.swordsman",
+     "key": "swordsman",
+     "def": {
+      "charm": 5,
+      "hands": 4,
+      "ring": 4,
+      "necklace": 1,
+      "head": 1,
+      "back": 1,
+      "belt": 1,
+      "body": 1,
+      "bracelet": 1,
+      "feet": 1,
+      "curio": 1
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "slots.sorcerer",
+     "key": "sorcerer",
+     "def": {
+      "charm": 4,
+      "hands": 2,
+      "ring": 2,
+      "necklace": 1,
+      "head": 1,
+      "back": 1,
+      "belt": 1,
+      "body": 1,
+      "bracelet": 0,
+      "feet": 1,
+      "curio": 0
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "slots.devil_fruit_user",
+     "key": "devil_fruit_user",
+     "def": {
+      "charm": 4,
+      "hands": 2,
+      "ring": 2,
+      "necklace": 1,
+      "head": 1,
+      "back": 0,
+      "belt": 1,
+      "body": 1,
+      "bracelet": 0,
+      "feet": 1,
+      "curio": 0
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "slots.cyberware_user",
+     "key": "cyberware_user",
+     "def": {
+      "charm": 3,
+      "hands": 2,
+      "ring": 2,
+      "necklace": 0,
+      "head": 1,
+      "back": 1,
+      "belt": 1,
+      "body": 1,
+      "bracelet": 0,
+      "feet": 1,
+      "curio": 0
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "slots.dark_magician",
+     "key": "dark_magician",
+     "def": {
+      "charm": 4,
+      "hands": 2,
+      "ring": 4,
+      "necklace": 2,
+      "head": 1,
+      "back": 1,
+      "belt": 1,
+      "body": 1,
+      "bracelet": 0,
+      "feet": 1,
+      "curio": 1
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "slots.marksman",
+     "key": "marksman",
+     "def": {
+      "charm": 4,
+      "hands": 3,
+      "ring": 3,
+      "necklace": 1,
+      "head": 1,
+      "back": 1,
+      "belt": 1,
+      "body": 1,
+      "bracelet": 1,
+      "feet": 1,
+      "curio": 1
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "slots.weakling",
+     "key": "weakling",
+     "def": {
+      "charm": 0,
+      "hands": 0,
+      "ring": 1,
+      "necklace": 0,
+      "head": 0,
+      "back": 0,
+      "belt": 0,
+      "body": 0,
+      "bracelet": 0,
+      "feet": 0,
+      "curio": 0
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "slots.brawler",
+     "key": "brawler",
+     "def": {
+      "charm": 3,
+      "hands": 4,
+      "ring": 2,
+      "necklace": 1,
+      "head": 1,
+      "back": 0,
+      "belt": 1,
+      "body": 1,
+      "bracelet": 2,
+      "feet": 1,
+      "curio": 0
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "slots.skyborn",
+     "key": "skyborn",
+     "def": {
+      "charm": 4,
+      "hands": 3,
+      "ring": 3,
+      "necklace": 2,
+      "head": 1,
+      "back": 2,
+      "belt": 1,
+      "body": 1,
+      "bracelet": 1,
+      "feet": 1,
+      "curio": 1
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "slotsByMilestone",
+     "pre": [
+      "Origins whose slots grow with level. Index = floor(level / 5): a new row every 5 levels (5, 10 ... 35).",
+      "Row 7 (level 35) equals the Standard Human, so a fully grown Weakling is exactly as roomy as a human."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "slotsByMilestone.weakling",
+     "key": "weakling",
+     "def": [
+      {
+       "charm": 0,
+       "hands": 0,
+       "ring": 1,
+       "necklace": 0,
+       "head": 0,
+       "back": 0,
+       "belt": 0,
+       "body": 0,
+       "bracelet": 0,
+       "feet": 0,
+       "curio": 0
+      },
+      {
+       "charm": 1,
+       "hands": 1,
+       "ring": 2,
+       "necklace": 1,
+       "head": 1,
+       "back": 0,
+       "belt": 0,
+       "body": 0,
+       "bracelet": 0,
+       "feet": 0,
+       "curio": 0
+      },
+      {
+       "charm": 2,
+       "hands": 2,
+       "ring": 2,
+       "necklace": 1,
+       "head": 1,
+       "back": 0,
+       "belt": 0,
+       "body": 0,
+       "bracelet": 0,
+       "feet": 1,
+       "curio": 0
+      },
+      {
+       "charm": 3,
+       "hands": 2,
+       "ring": 3,
+       "necklace": 1,
+       "head": 1,
+       "back": 0,
+       "belt": 1,
+       "body": 0,
+       "bracelet": 0,
+       "feet": 1,
+       "curio": 0
+      },
+      {
+       "charm": 4,
+       "hands": 3,
+       "ring": 3,
+       "necklace": 2,
+       "head": 1,
+       "back": 0,
+       "belt": 1,
+       "body": 1,
+       "bracelet": 0,
+       "feet": 1,
+       "curio": 0
+      },
+      {
+       "charm": 5,
+       "hands": 3,
+       "ring": 4,
+       "necklace": 2,
+       "head": 1,
+       "back": 0,
+       "belt": 1,
+       "body": 1,
+       "bracelet": 1,
+       "feet": 1,
+       "curio": 0
+      },
+      {
+       "charm": 6,
+       "hands": 4,
+       "ring": 4,
+       "necklace": 2,
+       "head": 1,
+       "back": 1,
+       "belt": 1,
+       "body": 1,
+       "bracelet": 1,
+       "feet": 1,
+       "curio": 0
+      },
+      {
+       "charm": 7,
+       "hands": 4,
+       "ring": 4,
+       "necklace": 2,
+       "head": 1,
+       "back": 1,
+       "belt": 1,
+       "body": 1,
+       "bracelet": 1,
+       "feet": 1,
+       "curio": 1
+      }
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "cyberCapacity",
+     "pre": [
+      "Project: Edgerunner cyberware capacity (\"Max Load\"). Mod default rolls 160-320.",
+      "perLevel is added for each level above 1."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "cyberCapacity.human",
+     "key": "human",
+     "def": {
+      "base": 140,
+      "perLevel": 4
+     },
+     "re": false,
+     "note": "low threshold",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "cyberCapacity.devil_fruit_user",
+     "key": "devil_fruit_user",
+     "def": {
+      "base": 50,
+      "perLevel": 0
+     },
+     "re": false,
+     "note": "extremely low",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "cyberCapacity.swordsman",
+     "key": "swordsman",
+     "def": {
+      "base": 60,
+      "perLevel": 0
+     },
+     "re": false,
+     "note": "extremely low",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "cyberCapacity.cyberware_user",
+     "key": "cyberware_user",
+     "def": {
+      "base": 600,
+      "perLevel": 20
+     },
+     "re": false,
+     "note": "extremely high (980 at Lv20)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "cyberCapacity.sorcerer",
+     "key": "sorcerer",
+     "def": {
+      "base": 0,
+      "perLevel": 0
+     },
+     "re": false,
+     "note": "none, and ripperdocs refuse them",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "cyberCapacity.dark_magician",
+     "key": "dark_magician",
+     "def": {
+      "base": 0,
+      "perLevel": 0
+     },
+     "re": false,
+     "note": "none, and ripperdocs refuse them",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "cyberCapacity.marksman",
+     "key": "marksman",
+     "def": {
+      "base": 220,
+      "perLevel": 6
+     },
+     "re": false,
+     "note": "moderate: a gunslinger can take a few implants",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "cyberCapacity.weakling",
+     "key": "weakling",
+     "def": {
+      "base": 100,
+      "perLevel": 6
+     },
+     "re": false,
+     "note": "light at first, 304 at level 35",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "cyberCapacity.brawler",
+     "key": "brawler",
+     "def": {
+      "base": 180,
+      "perLevel": 5
+     },
+     "re": false,
+     "note": "street chrome: a few implants, 275 at Lv20",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "cyberCapacity.skyborn",
+     "key": "skyborn",
+     "def": {
+      "base": 0,
+      "perLevel": 0
+     },
+     "re": false,
+     "note": "none, and ripperdocs refuse them",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "detect",
+     "pre": [
+      "---- POWER-SYSTEM ITEMS",
+      "How each system's items are found.  Mods are located at load time by the name or id they report, so a renamed",
+      "jar still works; /stodd scan lists what was found.  An item is \"a fruit\" etc. when it lives in one of the",
+      "system's mods AND its path matches `items`."
+     ]
+    },
+    {
+     "t": "table",
+     "path": "detect.fruit",
+     "pre": [
+      "True Prime Piece (+ the Gears 4 & 5 addon). Replaces Mine Mine no Mi."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "detect.fruit.names",
+     "key": "names",
+     "def": "/prime ?piece/i",
+     "re": true,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "detect.fruit.ids",
+     "key": "ids",
+     "def": "/(true_?prime|prime_?piece|^tpp$)/i",
+     "re": true,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "detect.fruit.items",
+     "key": "items",
+     "def": "/(no_mi|nomi|fruit)/",
+     "re": true,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "detect.magic",
+     "pre": [
+      "Malum: ids come from the mod's own source (1.20.1 branch). Anything not matched stays usable by everyone",
+      "(ores, soul stained steel tools, building blocks)."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "detect.magic.names",
+     "key": "names",
+     "def": "/^malum$/i",
+     "re": true,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "detect.magic.ids",
+     "key": "ids",
+     "def": "/^malum$/i",
+     "re": true,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "detect.magic.items",
+     "key": "items",
+     "def": "/^(totemic_staff|mnemonic_hex_staff|staff_of_the_auric_flame|erosion_scepter|crude_scythe|soul_stained_steel_scythe|edge_of_deliverance|weight_of_worlds|tyrving|creative_scythe|catalyst_lobber|lamplighters_tongs|spirit_pouch|poppet|spectral_lens|spectral_optic|the_device|the_vessel|void_tablet|soul_hunter_(cloak|robe|leggings|boots)|malignant_stronghold_(helmet|chestplate|leggings|boots)|(sacred|wicked|arcane|eldritch|aerial|aqueous|earthen|infernal|umbral)_spirit|encyclopedia_(arcana|esoterica)|rune_of_[a-z_]+|ring_of_[a-z_]+|necklace_of_[a-z_]+|belt_of_[a-z_]+|gilded_(ring|belt)|ornate_(ring|necklace)|(runic|elaborate|glass|gluttonous)_brooch)$/",
+     "re": true,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "detect.magic.blocks",
+     "key": "blocks",
+     "def": "/^(spirit_altar|runic_workbench|spirit_crucible|spirit_catalyzer|repair_pylon|runewood_totem_base|soulwood_totem_base|ritual_plinth|weavers_workbench|spirit_jar|mending_diffuser|impurity_stabilizer|shielding_apparatus|warping_engine|accelerating_inlay|void_conduit|void_depot|runewood_obelisk|brilliant_obelisk)$/",
+     "re": true,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "hold",
+     "pre": [
+      "A power a player already HOLDS (it arrived some way other than an item the gate could stop, e.g. a fruit eaten",
+      "before the origin was chosen) is looked for in the player's mod capability data, which Forge saves under ForgeCaps.",
+      "holdKey = regex on the capability key (which mod's data), holdValue = regex on the serialized data that means \"has it\".",
+      "clearCommands = tried in order until one reports success; a line for a command the pack lacks fails harmlessly.",
+      "Both are unverified against the real mods: run /stodd scan, then correct them from its output."
+     ]
+    },
+    {
+     "t": "table",
+     "path": "hold.fruit",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "hold.fruit.holdKey",
+     "key": "holdKey",
+     "def": "/(prime|tpp)/i",
+     "re": true,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "hold.fruit.holdValue",
+     "key": "holdValue",
+     "def": "/([a-z0-9_]+_no_mi|\"[a-z_]*[Ff]ruit[A-Za-z]*\":\"[^\"]+\")/",
+     "re": true,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "hold.fruit.clearCommands",
+     "key": "clearCommands",
+     "def": [
+      "tpp removefruit {p}",
+      "execute as {p} run tpp removefruit",
+      "removedf {p}",
+      "execute as {p} run removedf self"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "jjk",
+     "pre": [
+      "---- JUJUTSU STARTER ITEMS (15_powers.js)",
+      "Jujutsu Craft hands every new player a random cursed technique and its starter items. Only origins whose rule is",
+      "sorcery:true (Sorcerer, Brawler) keep them. For everybody else the technique is reset and EVERYTHING that comes from a",
+      "Jujutsu mod (not just books) is removed from the inventory when the origin is chosen, and again for starterWindowTicks."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "jjk.purgeStarter",
+     "key": "purgeStarter",
+     "def": true,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "jjk.starterWindowTicks",
+     "key": "starterWindowTicks",
+     "def": 6000,
+     "re": false,
+     "note": "after choosing an origin, keep sweeping for this long (5 minutes) in case the mod hands items out late",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "jjk.sweepEveryTicks",
+     "key": "sweepEveryTicks",
+     "def": 20,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "jjk.purgeNamespaces",
+     "key": "purgeNamespaces",
+     "def": "/^(jujutsucraft|jjk_addon|sorceryfight|jujutsucrafts)$/",
+     "re": true,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "jjk.keep",
+     "key": "keep",
+     "def": "/(_ore|_block|_planks|_log|_stairs|_slab|_wall|_fence|_door|_button|_sapling|_leaves|raw_|_ingot|_nugget)$/",
+     "re": true,
+     "note": "",
+     "pre": [
+      "ids that are always allowed to stay even in those namespaces (ores / building blocks you may want to craft with)"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "progression",
+   "title": "levels, powers and balance",
+   "intro": [
+    "Levels and XP, per-origin growth and damage traits, the power cap, power mastery (what opens at which level), the level links",
+    "to True Prime Piece / Jujutsu Craft, boss scaling and the ore tiers. Apply with /reload."
+   ],
+   "items": [
+    {
+     "t": "key",
+     "path": "maxLevel",
+     "key": "maxLevel",
+     "def": 20,
+     "re": false,
+     "note": "everyone's cap unless originLevels below says otherwise",
+     "pre": [
+      "---- LEVELS"
+     ]
+    },
+    {
+     "t": "key",
+     "path": "xpBase",
+     "key": "xpBase",
+     "def": 100,
+     "re": false,
+     "note": "XP from level 1 -> 2",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "xpGrowth",
+     "key": "xpGrowth",
+     "def": 1.3,
+     "re": false,
+     "note": "each next level needs 30% more (exponential). Total 1->20 = ~48,400 XP",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "xpPerMobHealth",
+     "key": "xpPerMobHealth",
+     "def": 0.5,
+     "re": false,
+     "note": "kill XP = maxHealth * this",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "xpBossMultiplier",
+     "key": "xpBossMultiplier",
+     "def": 4,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "xpPassiveMultiplier",
+     "key": "xpPassiveMultiplier",
+     "def": 0.2,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "xpMaxPerKill",
+     "key": "xpMaxPerKill",
+     "def": 5000,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "xpBossShareRadius",
+     "key": "xpBossShareRadius",
+     "def": 64,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "xpOre",
+     "key": "xpOre",
+     "def": 3,
+     "re": false,
+     "note": "per ore block mined (#forge:ores)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "capAtLevel1",
+     "key": "capAtLevel1",
+     "def": 100,
+     "re": false,
+     "note": "",
+     "pre": [
+      "---- POWER CAP",
+      "Max damage a single hit from a player (or their pet/summon) can deal. Scales with level."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "capAtMaxLevel",
+     "key": "capAtMaxLevel",
+     "def": 500,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "perLevel",
+     "key": "perLevel",
+     "def": {
+      "health": 2,
+      "attack": 0.25
+     },
+     "re": false,
+     "note": "",
+     "pre": [
+      "Base growth for everyone, per level above 1"
+     ]
+    },
+    {
+     "t": "key",
+     "path": "bossMinHealth",
+     "key": "bossMinHealth",
+     "def": 250,
+     "re": false,
+     "note": "anything this tough (or tagged #forge:bosses) is a \"boss\"",
+     "pre": [
+      "---- BOSS SCALING"
+     ]
+    },
+    {
+     "t": "key",
+     "path": "bossScanRadius",
+     "key": "bossScanRadius",
+     "def": 96,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "bossHealthPerLevel",
+     "key": "bossHealthPerLevel",
+     "def": 0.15,
+     "re": false,
+     "note": "Lv20 boss = 3.85x health",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "bossDamagePerLevel",
+     "key": "bossDamagePerLevel",
+     "def": 0.06,
+     "re": false,
+     "note": "Lv20 boss = 2.14x damage",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "bossLevelInName",
+     "key": "bossLevelInName",
+     "def": true,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "bossMaxLevel",
+     "key": "bossMaxLevel",
+     "def": 35,
+     "re": false,
+     "note": "bosses follow the highest level any origin can reach",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "oreBonusChance",
+     "key": "oreBonusChance",
+     "def": 0.15,
+     "re": false,
+     "note": "",
+     "pre": [
+      "---- ORE / TIERS",
+      "+15% on high-value modded ores: each mined block has this chance to drop its loot one extra time.",
+      "(Ancient Debris gets a real +15% worldgen boost instead, see data/stodd/worldgen.)"
+     ]
+    },
+    {
+     "t": "key",
+     "path": "oreBonusBlocks",
+     "key": "oreBonusBlocks",
+     "def": "/^(terramity:(deepslate_|nether_|end_)iridium_ore|terramity:profaned_ore|terramity:daemonium_ore|terramity:cosmic_ore|terramity:(bedrock|decayed)_black_matter_ore|terramity:deepslate_dimlite_ore|terramity:gaianite_cluster_ore|antarchy:([a-z]+_)?(uranium|titanium)_ore|mekanism:(deepslate_)?(osmium|uranium)_ore|mythicupgrades:(deepslate_)?necoium_ore|alexscaves:radrock_uranium_ore)$/",
+     "re": true,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "terramityNetheriteOres",
+     "key": "terramityNetheriteOres",
+     "def": [
+      "terramity:deepslate_dimlite_ore",
+      "terramity:gaianite_cluster_ore",
+      "terramity:stellar_remnant",
+      "terramity:daemonium_ore",
+      "terramity:deepslate_iridium_ore",
+      "terramity:nether_iridium_ore",
+      "terramity:end_iridium_ore",
+      "terramity:brimslag",
+      "terramity:bedrock_black_matter_ore",
+      "terramity:decayed_black_matter_ore",
+      "terramity:profaned_ore",
+      "terramity:cosmic_ore"
+     ],
+     "re": false,
+     "note": "",
+     "pre": [
+      "Vanilla -> Terramity: Terramity's mid/late ores need at least a netherite-tier pickaxe."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "antarchyPickaxes",
+     "key": "antarchyPickaxes",
+     "def": [
+      "terramity:exodium_pickaxe",
+      "terramity:nyxium_pickaxe",
+      "terramity:reverium_pickaxe",
+      "antarchy:ultimate_pickaxe"
+     ],
+     "re": false,
+     "note": "",
+     "pre": [
+      "Terramity -> Antarchy: Antarchy uranium (and its other rare resources) need a Tier 3 Terramity pickaxe.",
+      "Exodium, Nyxium and Reverium are Terramity's three parallel top-tier pickaxes."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "antarchyGatedBlocks",
+     "key": "antarchyGatedBlocks",
+     "def": "/^antarchy:(([a-z]+_)?(uranium|titanium)_ore|raw_uranium_block|blood_crystal_cluster|budding_blood_crystal)$/",
+     "re": true,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "originLevels",
+     "pre": [
+      "Origins with their OWN level cap. Past level 20 the XP needed per level grows by overGrowth instead of xpGrowth",
+      "(1.30 per level would put level 35 out of reach: 5.8 million XP). Reaching 35 takes about 690,000 XP in total.",
+      "capAtMax = the power cap (max single hit) at that origin's final level; it rises in a straight line from capAtLevel1."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "originLevels.weakling",
+     "key": "weakling",
+     "def": {
+      "maxLevel": 35,
+      "overGrowth": 1.14,
+      "capAtMax": 750
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "mastery",
+     "pre": [
+      "Origin mastery growth, per level above 1.  A \"...Quad\" term is multiplied by (level - 1) squared, so it",
+      "grows slowly at first and fast later (the Weakling's way of being the weakest early and the strongest late)."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "mastery.human",
+     "key": "human",
+     "def": {
+      "health": 1,
+      "armor": 0.4,
+      "toughness": 0.2
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "mastery.devil_fruit_user",
+     "key": "devil_fruit_user",
+     "def": {
+      "health": 0.5
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "mastery.cyberware_user",
+     "key": "cyberware_user",
+     "def": {
+      "armor": 0.5,
+      "speedPct": 0.005
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "mastery.swordsman",
+     "key": "swordsman",
+     "def": {
+      "attackSpeedPct": 0.01,
+      "speedPct": 0.005
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "mastery.sorcerer",
+     "key": "sorcerer",
+     "def": {
+      "health": 0.5,
+      "attack": 0.15
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "mastery.dark_magician",
+     "key": "dark_magician",
+     "def": {
+      "health": 0.3,
+      "attack": 0.1
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "mastery.marksman",
+     "key": "marksman",
+     "def": {
+      "health": 0.4,
+      "speedPct": 0.002
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "mastery.weakling",
+     "key": "weakling",
+     "def": {
+      "armor": 0.3,
+      "toughness": 0.1,
+      "healthQuad": 0.06,
+      "attackQuad": 0.004
+     },
+     "re": false,
+     "note": "",
+     "pre": [
+      "14 HP at level 1 (7 hearts). Level 20: 74 HP (below a human's 87). Level 35: 151 HP and a 750 power cap."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "mastery.brawler",
+     "key": "brawler",
+     "def": {
+      "health": 0.8,
+      "armor": 0.3,
+      "attackSpeedPct": 0.004
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "mastery.skyborn",
+     "key": "skyborn",
+     "def": {
+      "health": 0.25,
+      "speedPct": 0.004
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "traits",
+     "pre": [
+      "Damage traits, applied in KubeJS so they cover ability damage too.",
+      "all/allPerLevel/allQuad = every hit the player causes        nonMelee = hits that are not a direct melee swing",
+      "sword/swordPerLevel     = main hand is a sword (the jar adds the flat +25% on top for the Swordsman)",
+      "projectile/projectilePerLevel = arrows, bolts, thrown weapons, bullets"
+     ]
+    },
+    {
+     "t": "key",
+     "path": "traits.devil_fruit_user",
+     "key": "devil_fruit_user",
+     "def": {
+      "nonMelee": 1.15,
+      "allPerLevel": 0.015
+     },
+     "re": false,
+     "note": "melee already gets +15% through an Origins attribute",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "traits.sorcerer",
+     "key": "sorcerer",
+     "def": {
+      "allPerLevel": 0.015
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "traits.swordsman",
+     "key": "swordsman",
+     "def": {
+      "swordPerLevel": 0.02
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "traits.dark_magician",
+     "key": "dark_magician",
+     "def": {
+      "nonMelee": 1.2,
+      "allPerLevel": 0.01
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "traits.marksman",
+     "key": "marksman",
+     "def": {
+      "projectilePerLevel": 0.012
+     },
+     "re": false,
+     "note": "the jar adds the flat +25%",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "traits.weakling",
+     "key": "weakling",
+     "def": {
+      "allQuad": 0.0006
+     },
+     "re": false,
+     "note": "+22% at level 20, +69% at level 35",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "traits.brawler",
+     "key": "brawler",
+     "def": {
+      "unarmedFlat": 4,
+      "unarmedFlatPerLevel": 0.35,
+      "unarmed": 1.2,
+      "allPerLevel": 0.008
+     },
+     "re": false,
+     "note": "",
+     "pre": [
+      "Empty-handed melee: + unarmedFlat (+ unarmedFlatPerLevel per level) damage first, then x unarmed. Bare fists do 1 damage,",
+      "so a multiplier alone would be meaningless. Lv1: (1+4)*1.2 = 6, Lv20: about 17 with the per-level bonus."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "traits.skyborn",
+     "key": "skyborn",
+     "def": {
+      "dive": 1.35,
+      "divePerLevel": 0.01,
+      "diveMinFall": 2.5
+     },
+     "re": false,
+     "note": "",
+     "pre": [
+      "Hits made while falling more than diveMinFall blocks: x dive (+ divePerLevel per level)"
+     ]
+    },
+    {
+     "t": "table",
+     "path": "powerMastery",
+     "pre": [
+      "---- POWER MASTERY (22_mastery.js)",
+      "The level is the key to every power system. Each system a player HAS opens in five stages, at levels 1 / 5 / 10 / 15 / 20:",
+      "Haki          every origin",
+      "Devil Fruit   origins whose rule is true, or a 'path' origin that chose it   (same for Cursed Energy and Dark Magic)",
+      "LEVEL 20 = EVERYTHING IS OPEN, for every origin, the Weakling included (its levels 21-35 only add stats, slots and the power cap).",
+      "Mastery only ever grants. Nothing is taken away, and a power a mod already gave you stays.",
+      "",
+      "What a stage does:",
+      "* Haki is built in (the `haki` block below): Observation (dodge), Armament (hardening + armour piercing), Conqueror's (aura).",
+      "* Every system can also open things in its own mod through `unlock`: advancements (found by name at run time), commands",
+      "and, for Jujutsu Craft, player variables. Those patterns are best guesses: an operator runs /stodd mastery scan to see the",
+      "advancement ids the installed mods really have and corrects the patterns here."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.enabled",
+     "key": "enabled",
+     "def": true,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.stageLevels",
+     "key": "stageLevels",
+     "def": [
+      1,
+      5,
+      10,
+      15,
+      20
+     ],
+     "re": false,
+     "note": "level at which stage 0..4 opens; the last one is the full level",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.stageNames",
+     "key": "stageNames",
+     "def": [
+      "Dormant",
+      "Awakened",
+      "Honed",
+      "Refined",
+      "Mastered"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.catchUpTicks",
+     "key": "catchUpTicks",
+     "def": 200,
+     "re": false,
+     "note": "every 10 s each player is checked once, so nobody stays behind their level",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.announce",
+     "key": "announce",
+     "def": true,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "powerMastery.systems",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.systems.haki",
+     "key": "haki",
+     "def": {
+      "name": "Haki",
+      "color": "red",
+      "who": "all"
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.systems.fruit",
+     "key": "fruit",
+     "def": {
+      "name": "Devil Fruit",
+      "color": "light_purple",
+      "who": "rule"
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.systems.sorcery",
+     "key": "sorcery",
+     "def": {
+      "name": "Cursed Energy",
+      "color": "dark_purple",
+      "who": "rule"
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.systems.magic",
+     "key": "magic",
+     "def": {
+      "name": "Dark Magic",
+      "color": "dark_aqua",
+      "who": "rule"
+     },
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "powerMastery.haki",
+     "pre": [
+      "Native Haki. Each strength scales in equal steps from `fromStage` (a quarter of the maximum at Awakened) to the maximum at Mastered."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.haki.native",
+     "key": "native",
+     "def": true,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.haki.observation",
+     "key": "observation",
+     "def": {
+      "fromStage": 1,
+      "dodgeMax": 0.12
+     },
+     "re": false,
+     "note": "chance to slip a hit from a creature: 3 / 6 / 9 / 12 %",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.haki.armament",
+     "key": "armament",
+     "def": {
+      "fromStage": 2,
+      "reductionMax": 0.12,
+      "pierceMax": 0.3
+     },
+     "re": false,
+     "note": "hits from creatures hurt 12 % less at most; melee hits add 0.30 x the target's armour (capped at 20) at most",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.haki.conqueror",
+     "key": "conqueror",
+     "def": {
+      "fromStage": 4,
+      "radius": 10,
+      "healthShare": 0.5,
+      "effectTicks": 80,
+      "everyTicks": 40,
+      "maxTargets": 24
+     },
+     "re": false,
+     "note": "hostile non-boss mobs within `radius` whose max health is at most `healthShare` of yours are weakened and slowed",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "powerMastery.unlock",
+     "pre": [
+      "Opens things in the power systems' own mods. stage = the stage at which the entry opens (0..4).",
+      "advancements: { stage, match }   every advancement in `namespaces` whose path matches is granted to the player",
+      "commands:     { stage, run }     run once as the server, {p} = the player's name",
+      "variables:    { stage, name, atLeast }   Jujutsu Craft player variable raised to at least this value (never lowered)"
+     ]
+    },
+    {
+     "t": "table",
+     "path": "powerMastery.unlock.sorcery",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.unlock.sorcery.namespaces",
+     "key": "namespaces",
+     "def": "/^(jujutsucraft|jjk_addon|sorceryfight|jujutsucrafts)$/",
+     "re": true,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.unlock.sorcery.advancements",
+     "key": "advancements",
+     "def": [
+      {
+       "stage": 2,
+       "match": "/simple_?domain/"
+      },
+      {
+       "stage": 3,
+       "match": "/(reverse_?cursed|reverse_?technique|(^|[_\\/])rct([_\\/]|$))/"
+      },
+      {
+       "stage": 4,
+       "match": "/(domain_?expansion|black_?flash|maximum_?output)/"
+      }
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.unlock.sorcery.commands",
+     "key": "commands",
+     "def": [],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.unlock.sorcery.variables",
+     "key": "variables",
+     "def": [],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "powerMastery.unlock.fruit",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.unlock.fruit.namespaces",
+     "key": "namespaces",
+     "def": "/^(true_?prime_?piece|prime_?piece|tpp|ompworld|mineminenomi)$/",
+     "re": true,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.unlock.fruit.advancements",
+     "key": "advancements",
+     "def": [
+      {
+       "stage": 4,
+       "match": "/awaken/"
+      }
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.unlock.fruit.commands",
+     "key": "commands",
+     "def": [],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.unlock.fruit.variables",
+     "key": "variables",
+     "def": [],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "powerMastery.unlock.magic",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.unlock.magic.namespaces",
+     "key": "namespaces",
+     "def": "/^malum$/",
+     "re": true,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.unlock.magic.advancements",
+     "key": "advancements",
+     "def": [],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.unlock.magic.commands",
+     "key": "commands",
+     "def": [],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.unlock.magic.variables",
+     "key": "variables",
+     "def": [],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "powerMastery.unlock.haki",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.unlock.haki.namespaces",
+     "key": "namespaces",
+     "def": "/^(true_?prime_?piece|prime_?piece|tpp|ompworld|mineminenomi)$/",
+     "re": true,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.unlock.haki.advancements",
+     "key": "advancements",
+     "def": [
+      {
+       "stage": 1,
+       "match": "/(^|[_\\/])(ken|kenbunshoku|observation)([_\\/]|$)/"
+      },
+      {
+       "stage": 2,
+       "match": "/(^|[_\\/])(buso|busoshoku|armament)([_\\/]|$)/"
+      },
+      {
+       "stage": 4,
+       "match": "/(^|[_\\/])(hao|haoshoku|conqueror)([_\\/]|$)/"
+      }
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.unlock.haki.commands",
+     "key": "commands",
+     "def": [],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "powerMastery.unlock.haki.variables",
+     "key": "variables",
+     "def": [],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "levelLinks",
+     "pre": [
+      "---- LEVEL LINKS (24_links.js)",
+      "Ties the STODD level to the other mods' own progression so the two climb in tandem, in BOTH directions:",
+      "STODD level up  ->  True Prime Piece stat levels / Jujutsu Craft Fame (and so the grade) are raised to match",
+      "mod stat / Fame up  ->  the STODD level is raised to match",
+      "Neither side is ever lowered by the other, nothing is applied twice, and a mod that clamps a value is respected.",
+      "The mods' storage could not be read when this was written, so the names below are GUESSES that the script checks at run time:",
+      "/stodd link says per link whether it found its fields, and /stodd link scan (operator) lists what the mods really keep on",
+      "the player so the patterns can be corrected here.",
+      "type 'nbt'  a number inside the player's capability data (Forge saves it under ForgeCaps): capKey = regex on the capability",
+      "key, fields = one regex per value, matched against the tag name. Written with entity.mergeNbt (or writeCommands).",
+      "type 'jjc'  a Jujutsu Craft player variable (first variable whose name matches one of `fields`)",
+      "mode 'linear'  each STODD level is worth perLevel of the mod's value. The first time the script sees you it treats your",
+      "current STODD level and mod value as equal, and keeps them in step from then on.",
+      "mode 'table'   absolute values from `table` (the mod value at each STODD level; a level between two rows uses the lower row)",
+      "combine        with several fields: 'min' = the mod side only counts when ALL of them have risen (safe), 'max' = when ANY has",
+      "who            'all', or a power system (fruit / sorcery / magic): only origins that hold it"
+     ]
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.enabled",
+     "key": "enabled",
+     "def": true,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.everyTicks",
+     "key": "everyTicks",
+     "def": 100,
+     "re": false,
+     "note": "every 5 s each player is checked (and at once on every STODD level change)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.maxStep",
+     "key": "maxStep",
+     "def": 5,
+     "re": false,
+     "note": "the mod can raise your STODD level by at most this many levels per check",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.verifyWrites",
+     "key": "verifyWrites",
+     "def": true,
+     "re": false,
+     "note": "after writing, read the value back; 3 failed writes in a row turns that link read-only",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.announce",
+     "key": "announce",
+     "def": true,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "levelLinks.links",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "levelLinks.links.tppStats",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.tppStats.name",
+     "key": "name",
+     "def": "True Prime Piece stats",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.tppStats.who",
+     "key": "who",
+     "def": "all",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.tppStats.type",
+     "key": "type",
+     "def": "nbt",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.tppStats.capKey",
+     "key": "capKey",
+     "def": "/(true_?prime|prime_?piece|tpp)/i",
+     "re": true,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.tppStats.fields",
+     "key": "fields",
+     "def": [
+      "/^(agility|agi)$/i",
+      "/^(strength|str)$/i",
+      "/^(health|vitality|vit)$/i",
+      "/^(toughness|tough|defen[cs]e)$/i"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.tppStats.mode",
+     "key": "mode",
+     "def": "linear",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.tppStats.perLevel",
+     "key": "perLevel",
+     "def": 1,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.tppStats.combine",
+     "key": "combine",
+     "def": "min",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.tppStats.writeCommands",
+     "key": "writeCommands",
+     "def": [],
+     "re": false,
+     "note": "optional: commands run instead of mergeNbt, {p} = player, {field} = index, {v} = new value",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "levelLinks.links.jjcGrade",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.jjcGrade.name",
+     "key": "name",
+     "def": "Jujutsu grade",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.jjcGrade.who",
+     "key": "who",
+     "def": "sorcery",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.jjcGrade.type",
+     "key": "type",
+     "def": "jjc",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.jjcGrade.fields",
+     "key": "fields",
+     "def": [
+      "/^PlayerFame$/i",
+      "/^Fame$/i",
+      "/fame/i"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.jjcGrade.mode",
+     "key": "mode",
+     "def": "table",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.jjcGrade.combine",
+     "key": "combine",
+     "def": "min",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.jjcGrade.table",
+     "key": "table",
+     "def": [
+      {
+       "level": 1,
+       "value": 0
+      },
+      {
+       "level": 5,
+       "value": 1000
+      },
+      {
+       "level": 10,
+       "value": 5000
+      },
+      {
+       "level": 15,
+       "value": 20000
+      },
+      {
+       "level": 20,
+       "value": 50000
+      }
+     ],
+     "re": false,
+     "note": "",
+     "pre": [
+      "The Fame needed for each grade is not published; these are placeholders (Grade 4 -> Special Grade at STODD levels 1 / 5 / 10 / 15 / 20).",
+      "Correct them from what /stodd link scan shows for your Fame once you know the real thresholds."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.jjcGrade.labels",
+     "key": "labels",
+     "def": [
+      "Grade 4",
+      "Grade 3",
+      "Grade 2",
+      "Grade 1",
+      "Special Grade"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    }
+   ]
+  },
+  {
+   "name": "general",
+   "title": "general",
+   "intro": [
+    "Debug logging and crash guards. Apply with /reload."
+   ],
+   "items": [
+    {
+     "t": "key",
+     "path": "debug",
+     "key": "debug",
+     "def": false,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "blockedEntities",
+     "key": "blockedEntities",
+     "def": [
+      "royalvariations:spectral_anvil"
+     ],
+     "re": false,
+     "note": "",
+     "pre": [
+      "---- CRASH GUARDS (07_guards.js)",
+      "Entities that are removed the moment they are added to the world because they crash this pack's server.",
+      "royalvariations:spectral_anvil calls Entity.isInWall every tick, and Apoli's Connector mixin on isInWall",
+      "assumes every entity has the apoli:powers component (projectiles do not) -> \"Ticking entity\" crash."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "cullOnJoin",
+     "key": "cullOnJoin",
+     "def": true,
+     "re": false,
+     "note": "also remove themed hostile mobs spawned by mods' custom spawners",
+     "pre": []
+    }
+   ]
+  }
+ ]
+}

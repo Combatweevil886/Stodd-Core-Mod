@@ -19,6 +19,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Generated files are up to date (config schema from 00_config.js, sky-island world files)
+        run: |
+          node tools/gen_config.js
+          python3 tools/gen_sky_world.py
+          git diff --exit-code -- src/main/resources || (echo "run node tools/gen_config.js and python3 tools/gen_sky_world.py, then commit" && exit 1)
       - name: Script tests (KubeJS scripts against a mock world)
         run: |
           node tools/lint.js src/main/resources/embedded/kubejs/server_scripts/stodd src/main/resources/embedded/kubejs/startup_scripts/stodd_startup.js

@@ -21,17 +21,18 @@ import java.util.List;
  * "K<TAB>path" for a file that belongs to the owner (written only when missing, never replaced).
  * Whenever a file is replaced, the old one is kept next to it as "<name>.stodd-old".
  *
- * After the copy, {@link IslandConfig} turns config/stodd_islands.properties into config/survivalisland.json on every start, so the
- * island spacing is one small file the owner edits (Survival Island reads its json when it initialises, which is after this).
+ * After the copy the STODD config (config/stodd/*.toml, stodd.core.config.StoddConfig) is read, and written where settings are
+ * missing, and {@link IslandConfig} turns its [spawnIslands] into config/survivalisland.json (Survival Island reads its json when
+ * it initialises, which is after this).
  */
-final class Installer {
+public final class Installer {
     private static final String TAG = "[STODD Core] ";
     private static final String STAMP = "config/stodd_core.stamp";
 
     private Installer() { }
 
     /** Game folder: Forge's FMLPaths.GAMEDIR by reflection, else the working directory (what Survival Island itself uses). */
-    static Path gameDir() {
+    public static Path gameDir() {
         String forced = System.getProperty("stodd_core.gamedir");
         if (forced != null && !forced.isEmpty()) return Paths.get(forced).toAbsolutePath().normalize();
         try {
@@ -117,9 +118,16 @@ final class Installer {
             + kept + " edited config(s) kept" + (own > 0 ? ", " + own + " owner file(s) left alone" : "") + (failed > 0 ? ", " + failed + " FAILED" : "") + (newVersion && old.length() > 0 ? " (updated from " + old + ")" : ""));
         if (kept > 0) System.out.println(TAG + "kept configs that differ from the jar's; delete them (or config/stodd_core.stamp) to get the defaults back.");
         try {
+            stodd.core.config.StoddConfig cfg = stodd.core.config.StoddConfig.load(root);
+            System.out.println(TAG + "settings: " + cfg.dir() + " (" + String.join(", ", cfg.files()) + ".toml, " + cfg.settings().size() + " settings)");
+            for (String n : cfg.notes()) System.out.println(TAG + "config: " + n);
+        } catch (Throwable t) {
+            System.err.println(TAG + "could not read the config in config/stodd: " + t);
+        }
+        try {
             System.out.println(TAG + IslandConfig.sync(root));
         } catch (Throwable t) {
-            System.err.println(TAG + "could not apply config/stodd_islands.properties: " + t);
+            System.err.println(TAG + "could not apply the spawn-island settings: " + t);
         }
         warnAboutOldJars(root);
     }

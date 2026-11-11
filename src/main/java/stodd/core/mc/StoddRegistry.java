@@ -1,9 +1,11 @@
 package stodd.core.mc;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
 import net.minecraft.world.level.levelgen.structure.placement.StructurePlacementType;
@@ -14,14 +16,17 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import stodd.core.StoddCore;
 
-/** Everything STODD Core registers: three structure types, their pieces, the cell-grid placement and the Log Pose. */
+/** Everything STODD Core registers: the sky-island density function, three structure types, their pieces, the cell-grid placement and the Log Pose. */
 public final class StoddRegistry {
     private StoddRegistry() { }
 
     public static final DeferredRegister<StructureType<?>> STRUCTURE_TYPES = DeferredRegister.create(Registries.STRUCTURE_TYPE, StoddCore.MOD_ID);
     public static final DeferredRegister<StructurePieceType> PIECES = DeferredRegister.create(Registries.STRUCTURE_PIECE, StoddCore.MOD_ID);
     public static final DeferredRegister<StructurePlacementType<?>> PLACEMENTS = DeferredRegister.create(Registries.STRUCTURE_PLACEMENT, StoddCore.MOD_ID);
+    public static final DeferredRegister<Codec<? extends DensityFunction>> DENSITY_TYPES = DeferredRegister.create(Registries.DENSITY_FUNCTION_TYPE, StoddCore.MOD_ID);
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, StoddCore.MOD_ID);
+
+    public static final RegistryObject<Codec<? extends DensityFunction>> SKY_DENSITY = DENSITY_TYPES.register("sky", () -> SkyDensity.CODEC.codec());
 
     public static final RegistryObject<StructureType<CityStructure>> CITY = STRUCTURE_TYPES.register("city_block", () -> () -> CityStructure.CODEC);
     public static final RegistryObject<StructureType<IsleStructure>> ISLE = STRUCTURE_TYPES.register("isle_block", () -> () -> IsleStructure.CODEC);
@@ -39,6 +44,7 @@ public final class StoddRegistry {
     }
 
     public static void register(IEventBus modBus) {
+        DENSITY_TYPES.register(modBus);
         STRUCTURE_TYPES.register(modBus);
         PIECES.register(modBus);
         PLACEMENTS.register(modBus);

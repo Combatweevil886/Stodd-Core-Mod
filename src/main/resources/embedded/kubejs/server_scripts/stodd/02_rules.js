@@ -77,7 +77,7 @@
         landmarkDensity: num(mc.landmarkDensity, 0.15), maxLandmarks: mc.maxLandmarks || 40, foundationMax: mc.foundationMax || 14,
         themes: isles, landmarks: landmarks,
         sky: {
-          enabled: !!(sky.enabled && sk.biome), biome: sk.biome || 'stodd:sky_meadow', biomeLow: sk.biomeLow || 146, biomeHigh: sk.biomeHigh || 262,
+          enabled: !!(sky.enabled && sk.enabled !== false), biome: sk.biome || '', biomeLow: sk.biomeLow || 146, biomeHigh: sk.biomeHigh || 262,
           perCell: num(sk.perCell, 5), density: num(sk.density, 0.9), foundation: sk.foundation || 'minecraft:stone',
           styles: (sk.styles || []).map(s => ({ name: s.name, features: (s.features || []).map(f => [f[0], f[1]]) })),
           scatter: (sk.scatter || []).map(s => ({ id: s.id, weight: s.weight || 1 }))

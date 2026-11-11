@@ -92,10 +92,16 @@ tasks.register('stoddVectors', Exec) {
         args vectors.get().asFile.path
     }
 }
+// 3.1: the config files (TOML, the schema, editing, migration) and the lifted sky islands
+tasks.register('stoddGenTest3', JavaExec) {
+    dependsOn 'testClasses'
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'stodd.core.GenTest3'
+}
 // the tests are plain programs (no JUnit), run by the tasks above: Gradle's own test task has nothing to do
 tasks.named('test') { enabled = false }
 
 // not part of `build`, so building on a PC does not need Node; the CI workflow runs it
-tasks.register('stoddTests') { dependsOn 'stoddGenTest', 'stoddGenTest2' }
+tasks.register('stoddTests') { dependsOn 'stoddGenTest', 'stoddGenTest2', 'stoddGenTest3' }
 
 idea.module { downloadJavadoc = downloadSources = true }

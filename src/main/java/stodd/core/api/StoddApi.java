@@ -23,8 +23,8 @@ import stodd.core.mc.Worlds;
 public final class StoddApi {
     private StoddApi() { }
 
-    /** 3 = this API; the scripts check it before relying on anything here. */
-    public static int version() { return 3; }
+    /** 4 = this API (3.1: config files, lifted sky islands); the scripts check it before relying on anything here. */
+    public static int version() { return 4; }
 
     /** Hands the live world rules (02_rules.js, as JSON) to the generator; returns null on success, else the reason. */
     public static String configure(String json) {
@@ -35,6 +35,22 @@ public final class StoddApi {
         } catch (Throwable t) {
             return String.valueOf(t);
         }
+    }
+
+    /**
+     * Every setting of config/stodd/*.toml (read again first if a file changed) as one JSON object shaped like 00_config.js's
+     * settings; 00_config.js lays it over its defaults. null if the config cannot be read.
+     */
+    public static String configJson() {
+        try { return stodd.core.config.StoddConfig.refresh().scriptJson(); } catch (Throwable t) {
+            stodd.core.StoddCore.LOG.error("[STODD Core] the config could not be read, the scripts use their defaults", t);
+            return null;
+        }
+    }
+
+    /** The folder of the config files. */
+    public static String configDir() {
+        try { return String.valueOf(stodd.core.config.StoddConfig.get().dir()); } catch (Throwable t) { return "config/stodd"; }
     }
 
     /** true: cities, dressed islands and sky-island dressing are world generation (the scripts' builders stand down). */
@@ -60,10 +76,41 @@ public final class StoddApi {
         if (!(level instanceof ServerLevel)) return null;
         try {
             Worlds.Tools t = Worlds.of((ServerLevel) level);
-            if (t.sky == null || !(t.sky.sample(x, z) > 0)) return null;
+            if (t.sky == null || !t.sky.isLand(x, z)) return null;
             IslandFinder.Island i = t.sky.islandAt(x, z);
-            return i == null || i.radius < t.rules.skyMinRadius ? null : new int[] { i.cx, i.cz, i.radius };
+            return i == null || i.radius < t.skyMinRadius ? null : new int[] { i.cx, i.cz, i.radius };
         } catch (Throwable t) { return null; }
+    }
+
+    /**
+     * The sky islands that reach into the square x0..x0+size, z0..z0+size: one {cx, cz, radius} per island (the scripts' sky
+     * registry fills itself from this instead of probing the density at one height).
+     */
+    public static int[][] skyIslandsIn(Level level, int x0, int z0, int size) {
+        if (!(level instanceof ServerLevel)) return new int[0][];
+        try {
+            Worlds.Tools t = Worlds.of((ServerLevel) level);
+            if (t.sky == null) return new int[0][];
+            java.util.Map<String, int[]> out = new java.util.LinkedHashMap<>();
+            int step = 32;
+            for (int a = step / 2; a < size; a += step) for (int b = step / 2; b < size; b += step) {
+                int x = x0 + a, z = z0 + b;
+                if (!t.sky.isLand(x, z)) continue;
+                IslandFinder.Island i = t.sky.islandAt(x, z);
+                if (i == null || i.radius < t.skyMinRadius) continue;
+                out.putIfAbsent(i.key(), new int[] { i.cx, i.cz, i.radius });
+            }
+            return out.values().toArray(new int[0][]);
+        } catch (Throwable t) { return new int[0][]; }
+    }
+
+    /** The height at or above which a player over a sky island is on it (0: this world has no sky islands). */
+    public static int skyMinY(Level level) {
+        if (!(level instanceof ServerLevel)) return 0;
+        try {
+            Worlds.Tools t = Worlds.of((ServerLevel) level);
+            return t.sky == null ? 0 : t.skyMinY;
+        } catch (Throwable t) { return 0; }
     }
 
     /** The theme id the generator gives the island centred on (cx, cz). */

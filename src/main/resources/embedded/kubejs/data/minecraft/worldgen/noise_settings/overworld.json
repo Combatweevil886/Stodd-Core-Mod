@@ -24,7 +24,13 @@
       "xz_scale": 1.0,
       "y_scale": 0.5
     },
-    "continents": "stodd:overworld/continents",
+    "continents": {
+      "type": "stodd_core:sky",
+      "mode": "climate_continents",
+      "raw": "stodd:overworld/continents_raw",
+      "noise": "stodd:sky_detail",
+      "argument": "stodd:overworld/continents"
+    },
     "depth": "stodd:overworld/depth",
     "erosion": "minecraft:overworld/erosion",
     "final_density": {
@@ -248,7 +254,13 @@
       "xz_scale": 1.0,
       "y_scale": 1.0
     },
-    "ridges": "minecraft:overworld/ridges",
+    "ridges": {
+      "type": "stodd_core:sky",
+      "mode": "climate_ridges",
+      "raw": "stodd:overworld/continents_raw",
+      "noise": "stodd:sky_detail",
+      "argument": "minecraft:overworld/ridges"
+    },
     "temperature": "stodd:climate/temperature",
     "vegetation": "stodd:climate/humidity",
     "vein_gap": {

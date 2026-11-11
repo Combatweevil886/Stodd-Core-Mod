@@ -1,0 +1,6 @@
+{
+  "type": "stodd_core:sky",
+  "mode": "relief",
+  "raw": "stodd:overworld/continents_raw",
+  "noise": "stodd:sky_detail"
+}

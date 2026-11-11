@@ -17,7 +17,10 @@ import stodd.core.mc.WorldPack;
  * STODD Core: the one mod for the "mods 4 stodd" pack.
  *
  *  - World generation in Java: city islands, dressed islands and the dressing of sky islands are real structures, generated with
- *    the chunks (mc.CityStructure / mc.IsleStructure, placed by mc.CellGridPlacement).
+ *    the chunks (mc.CityStructure / mc.IsleStructure, placed by mc.CellGridPlacement); sky islands are normal islands lifted into
+ *    the sky by the world's density functions (gen.SkyField, mc.SkyDensity).
+ *  - Every setting is in config/stodd/*.toml (config.StoddConfig), editable in the files, with /stodd config, or in the game's
+ *    Mods list (client.ConfigScreen).
  *  - The island world itself: the world files ship in a built-in data pack placed above every other mod (mc.WorldPack), so no
  *    other mod or leftover jar can replace the Survival Island terrain; mc.WorldCheck says at start-up whether the overworld really
  *    is islands.
@@ -49,6 +52,12 @@ public final class StoddCore {
         MinecraftForge.EVENT_BUS.addListener(LogPose::onLoggedIn);
         MinecraftForge.EVENT_BUS.addListener(LogPose::onLoggedOut);
         OriginGate.install();
-        LOG.info("[STODD Core] {} loaded: island world pack, world-generated cities / dressed islands / sky-island dressing, Log Pose item", Installer.version());
+        MinecraftForge.EVENT_BUS.addListener((net.minecraftforge.event.server.ServerAboutToStartEvent e) -> {
+            // a world created now uses the files as they are now (the sky islands are set up when its noise is wired)
+            stodd.core.config.StoddConfig c = stodd.core.config.StoddConfig.refresh();
+            for (String n : c.notes()) LOG.warn("[STODD Core] config: {}", n);
+        });
+        if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.CLIENT) stodd.core.client.ClientSetup.init();
+        LOG.info("[STODD Core] {} loaded: island world pack, lifted sky islands, world-generated cities / dressed islands, Log Pose item, settings in config/stodd", Installer.version());
     }
 }

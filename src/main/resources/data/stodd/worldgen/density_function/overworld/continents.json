@@ -1,6 +1,9 @@
 {
   "type": "minecraft:flat_cache",
   "argument": {
-    "type": "survivalisland:islandcont"
+    "type": "stodd_core:sky",
+    "mode": "ground",
+    "raw": "stodd:overworld/continents_raw",
+    "noise": "stodd:sky_detail"
   }
 }

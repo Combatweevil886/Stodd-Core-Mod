@@ -21,7 +21,8 @@ import java.util.Optional;
 /**
  * stodd:isle_block (kind "ground") - one 48 x 48 cell of a dressed island (Ember, Sakura, Overgrown Ruins, Crystal, Skull Cove):
  * the surface repainted by the theme's rules, the theme's biome and, on some cells, a landmark (the big centrepiece in the middle).
- * stodd:sky_block (kind "sky") - one cell of a floating sky island: the sky biome, trees / flowers / boulders and the odd ruin.
+ * stodd:sky_block (kind "sky") - one cell of a lifted sky island: the odd ruin and, when the config asks for them, a fixed biome
+ * and extra trees / flowers / boulders (by default a sky island keeps the biomes and plants it would have had on the ground).
  * Both are generated with their chunks; IslePlanner decides the layout once per island.
  */
 public final class IsleStructure extends Structure {
@@ -50,23 +51,23 @@ public final class IsleStructure extends Structure {
         Heights h = (x, z) -> ctx.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG, ctx.heightAccessor(), ctx.randomState());
         if ("sky".equals(kind)) {
             if (tools.sky == null || !rules.skyDress) return Optional.empty();
-            if (!(tools.sky.sample(mx, mz) > 0)) {
+            if (!tools.sky.isLand(mx, mz)) {
                 // a cell whose middle is open air may still be the edge of an island: look at its corners
                 boolean any = false;
-                for (int a = 4; a < cell && !any; a += cell - 9) for (int b = 4; b < cell && !any; b += cell - 9) any = tools.sky.sample(x0 + a, z0 + b) > 0;
+                for (int a = 4; a < cell && !any; a += cell - 9) for (int b = 4; b < cell && !any; b += cell - 9) any = tools.sky.isLand(x0 + a, z0 + b);
                 if (!any) return Optional.empty();
             }
             IslandFinder.Island isl = tools.sky.islandAt(mx, mz);
             if (isl == null) {
                 for (int a = 4; a < cell && isl == null; a += cell - 9) for (int b = 4; b < cell && isl == null; b += cell - 9)
-                    if (tools.sky.sample(x0 + a, z0 + b) > 0) isl = tools.sky.islandAt(x0 + a, z0 + b);
+                    if (tools.sky.isLand(x0 + a, z0 + b)) isl = tools.sky.islandAt(x0 + a, z0 + b);
             }
             if (isl == null) return Optional.empty();
-            IslePlanner.Plan plan = tools.isles.sky(tools.sky, isl, seed);
+            IslePlanner.Plan plan = tools.isles.sky(tools.sky, isl, seed, tools.skyMinRadius);
             if (plan == null) return Optional.empty();
             IslePlanner.Cell c = plan.cellAt(x0, z0);
             if (c == null) return Optional.empty();
-            return Optional.of(stub(ctx, rules, c, true, null, rules.skyFoundation, rules.skyBiome, rules.skyBiomeLow, rules.skyBiomeHigh, h, plan, mx, mz));
+            return Optional.of(stub(ctx, rules, tools, c, true, null, rules.skyFoundation, rules.skyBiome, rules.skyBiomeLow, rules.skyBiomeHigh, h, plan, mx, mz));
         }
         if (!rules.isleEnabled || rules.isles.isEmpty()) return Optional.empty();
         if (tools.ground.sample(mx, mz) < rules.landThreshold) return Optional.empty();
@@ -78,23 +79,23 @@ public final class IsleStructure extends Structure {
         if (plan == null) return Optional.empty();
         IslePlanner.Cell c = plan.cellAt(x0, z0);
         if (c == null) return Optional.empty();
-        return Optional.of(stub(ctx, rules, c, false, th, th.foundation, th.biome, 0, 0, h, plan, mx, mz));
+        return Optional.of(stub(ctx, rules, tools, c, false, th, th.foundation, th.biome, 0, 0, h, plan, mx, mz));
     }
 
     interface Heights { int at(int x, int z); }
 
-    private GenerationStub stub(GenerationContext ctx, WorldRules rules, IslePlanner.Cell c, boolean sky, WorldRules.IsleTheme th, String foundation,
+    private GenerationStub stub(GenerationContext ctx, WorldRules rules, Worlds.Tools tools, IslePlanner.Cell c, boolean sky, WorldRules.IsleTheme th, String foundation,
                                 String biome, int bioLo, int bioHi, Heights h, IslePlanner.Plan plan, int mx, int mz) {
         int cell = rules.cell;
         // how high the ground is in this cell (3 x 3 samples; columns of a sky island overhead are left out on the ground)
         int lo = Integer.MAX_VALUE, hi = Integer.MIN_VALUE;
         for (int a = 0; a < 3; a++) for (int b = 0; b < 3; b++) {
             int y = h.at(c.x + 1 + a * 23, c.z + 1 + b * 23);
-            if (!sky && y > 190) continue;
-            if (sky && y < 140) continue;
+            if (!sky && y >= tools.skyMinY) continue;
+            if (sky && y < tools.skyMinY) continue;
             lo = Math.min(lo, y); hi = Math.max(hi, y);
         }
-        if (lo > hi) { lo = sky ? rules.skyMinY : 64; hi = lo; }
+        if (lo > hi) { lo = sky ? tools.skyMinY + 24 : 64; hi = lo; }
         if (!sky) { bioLo = lo - rules.isleBiomeBelow; bioHi = hi + rules.isleBiomeAbove; }
         // the landmark (if any)
         int fx = 0, fz = 0, fw = 0, fd = 0, y0 = 0, clr = 0, top = 0, fLo = 0;
@@ -131,7 +132,7 @@ public final class IsleStructure extends Structure {
         if (sky && !c.features.isEmpty() && plan.skyStyle != null) {
             List<String> ids = new ArrayList<>();
             for (WorldRules.Weighted w : plan.skyStyle.features) ids.add(w.id);
-            feats = new CellFeaturePiece(c.x, c.z, cell, rules.skyMinY, 318, new ArrayList<>(c.features), ids);
+            feats = new CellFeaturePiece(c.x, c.z, cell, tools.skyMinY, 318, new ArrayList<>(c.features), ids);
         } else feats = null;
         return new GenerationStub(new BlockPos(mx, Math.max(lo, ctx.heightAccessor().getMinBuildHeight() + 1), mz), builder -> {
             builder.addPiece(ground);

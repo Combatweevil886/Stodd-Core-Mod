@@ -73,8 +73,10 @@ public final class IslePlanner {
     }
 
     /** The plan of a sky island (the probe field says where the island is solid), or null when sky islands are not dressed. */
-    public Plan sky(IslandFinder probe, IslandFinder.Island isl, int seed) {
-        if (!rules.skyDress || !rules.skyEnabled || isl.radius < rules.skyMinRadius) return null;
+    public Plan sky(IslandFinder probe, IslandFinder.Island isl, int seed) { return sky(probe, isl, seed, rules.skyMinRadius); }
+
+    public Plan sky(IslandFinder probe, IslandFinder.Island isl, int seed, int minRadius) {
+        if (!rules.skyDress || !rules.skyEnabled || isl.radius < minRadius) return null;
         String k = "s" + seed + ":" + isl.key();
         Plan p = plans.get(k);
         if (p != null) return p;
@@ -134,7 +136,7 @@ public final class IslePlanner {
             double d = Math.hypot(mx - isl.cx, mz - isl.cz);
             if (!(i == 0 && j == 0)) {
                 if (d > rad) continue;
-                if (!(probe.sample(mx, mz) > 0)) continue;
+                if (!probe.inner(mx, mz)) continue;
                 if (!isl.contains(mx, mz)) continue;
             }
             cells.add(new Cell(i, j, x, z, d));
@@ -153,7 +155,7 @@ public final class IslePlanner {
                     if (Math.abs(x - isl.cx) < 7 && Math.abs(z - isl.cz) < 7) continue;
                     Mark m = c.mark;
                     if (m != null && x >= m.fx - 2 && x <= m.fx + m.fw + 2 && z >= m.fz - 2 && z <= m.fz + m.fd + 2) continue;
-                    if (!(probe.sample(x, z) > 0) || !(probe.sample(x + 3, z) > 0) || !(probe.sample(x - 3, z) > 0) || !(probe.sample(x, z + 3) > 0) || !(probe.sample(x, z - 3) > 0)) continue;
+                    if (!probe.inner(x, z) || !probe.inner(x + 3, z) || !probe.inner(x - 3, z) || !probe.inner(x, z + 3) || !probe.inner(x, z - 3)) continue;
                     double r = (h2(x, z, 0x3d4e5f61, seed) % 100000) / 100000.0 * total;
                     int pick = 0;
                     for (int q = 0; q < style.features.size(); q++) { r -= style.features.get(q).weight; if (r < 0) { pick = q; break; } }
@@ -183,11 +185,11 @@ public final class IslePlanner {
     private static boolean onSky(IslandFinder probe, Mark m) {
         for (int a = 0; a < 3; a++) for (int b = 0; b < 3; b++) {
             int x = m.fx + (m.fw - 1) * a / 2, z = m.fz + (m.fd - 1) * b / 2;
-            if (!(probe.sample(x, z) > 0)) return false;
+            if (!probe.inner(x, z)) return false;
         }
         int g = 3;
         int[][] ex = { { m.fx - g, m.fz - g }, { m.fx + m.fw - 1 + g, m.fz - g }, { m.fx - g, m.fz + m.fd - 1 + g }, { m.fx + m.fw - 1 + g, m.fz + m.fd - 1 + g } };
-        for (int[] e : ex) if (!(probe.sample(e[0], e[1]) > 0)) return false;
+        for (int[] e : ex) if (!probe.inner(e[0], e[1])) return false;
         return true;
     }
 

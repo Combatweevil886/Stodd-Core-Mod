@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:add",
+  "argument1": {
+    "type": "minecraft:y_clamped_gradient",
+    "from_value": 1.5,
+    "from_y": -64,
+    "to_value": -1.5,
+    "to_y": 320
+  },
+  "argument2": {
+    "type": "minecraft:add",
+    "argument1": "stodd:sky/lift",
+    "argument2": {
+      "type": "minecraft:add",
+      "argument1": -0.50375,
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": "stodd:sky/relief",
+        "argument2": {
+          "type": "minecraft:add",
+          "argument1": 0.50375,
+          "argument2": "stodd:sky/offset"
+        }
+      }
+    }
+  }
+}

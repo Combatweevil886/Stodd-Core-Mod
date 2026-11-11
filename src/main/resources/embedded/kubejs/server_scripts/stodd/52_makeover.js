@@ -59,7 +59,8 @@
   let FOUND_MAX = MC.foundationMax || 14      // a landmark's foundation never reaches further down than this (a pillar into the sea looks silly)
   let MAX_FAILS = MC.maxTemplateFailures || 3
   let SKY = MC.sky || {}
-  let SKY_ON = !!(C.sky && C.sky.enabled) && SKY.biome != null
+  // 3.1: SKY.biome '' = the island keeps its natural biomes (only landmarks / extra plants are added)
+  let SKY_ON = !!(C.sky && C.sky.enabled) && SKY.biome != null && SKY.enabled !== false
   let LM = MC.landmarks || {}
   let THEMES = MC.themes || {}
   let IN = 'execute in minecraft:overworld run '
@@ -353,7 +354,7 @@
     let x2 = cell.x + CELL - 1, z2 = cell.z + CELL - 1
     let probe = S.skyProbe(level)
     if (probe == null) return steps
-    slabCmds('fillbiome', cell.x, cell.z, x2, z2, SKY.biomeLow || 146, SKY.biomeHigh || 262, SKY.biome).forEach(c => steps.push({ k: 'biome', cmd: c }))
+    if (SKY.biome) slabCmds('fillbiome', cell.x, cell.z, x2, z2, SKY.biomeLow || 146, SKY.biomeHigh || 262, SKY.biome).forEach(c => steps.push({ k: 'biome', cmd: c }))
     if (cell.lm) landmarkSteps(level, pl, cell, steps)
     // trees, flowers, boulders: a few spots per cell, only where the island is solid, never close to the middle (the waystone)
     let feats = (pl.style && pl.style.features) || []

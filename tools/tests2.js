@@ -150,7 +150,9 @@ section('island dressing: missing / failing templates')
 section('island dressing: sky islands')
 {
   const SKYI = [{ x: -700, z: 300, r: 110 }, { x: 515, z: 517, r: 90 }, { x: 1500, z: 1500, r: 140 }, { x: 2002, z: -902, r: 60 }]
-  const W = mkWorld({ ground: groundGrid(), sky: SKYI }), B = boot(W), S = B.S, level = W.level
+  // 3.1 keeps a sky island's natural biomes and plants; the old sky-meadow dressing is skyIslands.biome / extraPlants
+  const meadow = C => { C.makeover.sky.biome = 'stodd:sky_meadow'; C.makeover.sky.perCell = 5 }
+  const W = mkWorld({ ground: groundGrid(), sky: SKYI }), B = boot(W, meadow), S = B.S, level = W.level
   const MK = S.cfg.makeover
   const viol = []
   guardCmds(W, viol)
@@ -180,7 +182,7 @@ section('island dressing: sky islands')
   const cuts = W.cmds.filter(c => /fill .* minecraft:air$/.test(c) && !/replace/.test(c))
   ok(cuts.length === 0 || cuts.some(c => { const m = /fill (-?\d+) (-?\d+) (-?\d+) (-?\d+) (-?\d+) (-?\d+)/.exec(c); return +m[2] >= 200 }), 'sky: landmark clearing happens up at the island, not at the usual ground cap')
   // a sky island too small for any landmark just gets biome + features
-  const W2 = mkWorld({ ground: groundGrid(), sky: [{ x: 2002, z: -902, r: 56 }] }), B2 = boot(W2), S2 = B2.S
+  const W2 = mkWorld({ ground: groundGrid(), sky: [{ x: 2002, z: -902, r: 56 }] }), B2 = boot(W2, meadow), S2 = B2.S
   W2.player(2002 + 40, 240, -902)
   const sk2 = S2.skyIslandHere(W2.level, 2002, 240, -902)
   ok(sk2 != null, 'small sky island found')

@@ -30,6 +30,9 @@
   let PLACE_DIST = WS.placeDistance || 192
   let SEARCH = WS.centerSearch || 60
   let SKY_Y = (C.sky && C.sky.minY) || 200       // at or above this height a waystone belongs to a sky island
+  // lifted sky islands (STODD Core 3.1) never hang over a ground island, so a ground island's stone may stand as high as its hills go
+  let LIFTED = !!(C.sky && C.sky.lifted)
+  let GROUND_CAP = LIFTED ? 318 : SKY_Y - 50
   let SKY_PLACE = WS.skyPlaceDistance || 112
   let AIR = /^minecraft:(air|cave_air|void_air)$/
   // Fallback list for modded plants when the block state cannot tell us it is replaceable
@@ -88,7 +91,7 @@
   // `ground` = true for a ground island: a sky island overhead (its top is the heightmap) is skipped, so the stone is
   // built on the real ground underneath.
   function surfaceY(level, x, z, ground) {
-    let cap = ground ? SKY_Y - 52 : 318
+    let cap = ground ? GROUND_CAP - 2 : 318
     try {
       if (HM != null) { let h = Number(level.getHeight(HM.MOTION_BLOCKING_NO_LEAVES, x, z)); if (h > -60 && h < (ground ? cap + 1 : 320)) return h }
     } catch (e) { }
@@ -160,7 +163,7 @@
     let list = knownWaystones(server)
     for (let i = 0; i < list.length; i++) {
       let dx = list[i][0] - x, dz = list[i][1] - z
-      if (sky != null && (list[i][2] >= SKY_Y) !== !!sky) continue
+      if (sky != null && !LIFTED && (list[i][2] >= SKY_Y) !== !!sky) continue
       if (dx * dx + dz * dz <= r * r) return list[i]
     }
     return null
@@ -197,7 +200,7 @@
         let gy = groundY(level, x, z, sy - 22)
         if (gy == null) continue
         // a sky island's stone must really stand on the sky island, a ground island's on the ground
-        if (isSky ? gy < SKY_Y : gy >= SKY_Y - 50) continue
+        if (isSky ? gy < SKY_Y : gy >= GROUND_CAP) continue
         let y = gy + 1
         if (!roomFor(level, x, y, z, pass === 0)) continue
         // clear soft plants where the two-block stone will stand

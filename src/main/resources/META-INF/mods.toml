@@ -5,7 +5,7 @@ issueTrackerURL=""
 
 [[mods]]
 modId="stodd_core"
-version="3.0.0"
+version="3.1.0"
 displayName="STODD Core"
 authors="STODD team"
 description='''The one mod for the "mods 4 stodd" pack (Forge 1.20.1), and an add-on to its power-system mods:
@@ -14,12 +14,14 @@ True Prime Piece (Devil Fruits), Jujutsu Craft (Cursed Energy), Malum (dark magi
  - Ten origins with their exact Curios slots, health and power rules; the rules are enforced in Java on the events those mods use
    (eating, right-clicking, altars and ripperdocs, magic weapons, curios), and the mods' own player data (stats, cursed technique,
    grade, cyberware tolerance) is read and written live.
- - The Survival Island world, guaranteed by a built-in data pack above every other mod, with sky islands over open ocean.
+ - The Survival Island world, guaranteed by a built-in data pack above every other mod. Sky islands are normal islands lifted
+   into the sky: same shape, terrain and biomes, on the normal island spacing.
  - City islands (modern, Neo City, tribal), five dressed island themes and the sky-island dressing are real world-generation
    structures: generated with the chunks, nothing is built in front of the player.
  - The Log Pose: an item whose needle points at the next island (or the nearest, a city, a sky island).
  - Levels, power caps, mastery, level links, waystones, ore tiers and the Downgrade Template run as KubeJS scripts that this mod
-   installs and keeps up to date.'''
+   installs and keeps up to date.
+ - Every setting is in config/stodd/*.toml: edit the files, use /stodd config, or press Config here.'''
 
 [[dependencies.stodd_core]]
     modId="forge"

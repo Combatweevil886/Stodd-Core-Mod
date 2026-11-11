@@ -30,11 +30,21 @@ public final class IslandIndex {
     }
 
     private final IslandFinder ground, sky;
-    private final int skyMinRadius;
+    private final int skyMinRadius, skyMinY;
     private final Map<Long, List<IslandFinder.Island>> groundCells = new ConcurrentHashMap<>(), skyCells = new ConcurrentHashMap<>();
 
     /** @param sky may be null (no sky islands in this world) */
-    public IslandIndex(IslandFinder ground, IslandFinder sky, int skyMinRadius) { this.ground = ground; this.sky = sky; this.skyMinRadius = skyMinRadius; }
+    public IslandIndex(IslandFinder ground, IslandFinder sky, int skyMinRadius) { this(ground, sky, skyMinRadius, 200); }
+
+    public IslandIndex(IslandFinder ground, IslandFinder sky, int skyMinRadius, int skyMinY) {
+        this.ground = ground; this.sky = sky; this.skyMinRadius = skyMinRadius; this.skyMinY = skyMinY;
+    }
+
+    /** smaller sky islands are left out */
+    public int skyMinRadius() { return skyMinRadius; }
+
+    /** a player at or above this height over a sky island is on it */
+    public int skyMinY() { return skyMinY; }
 
     public IslandFinder ground() { return ground; }
 

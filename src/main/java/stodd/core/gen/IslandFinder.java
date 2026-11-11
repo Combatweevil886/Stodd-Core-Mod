@@ -74,6 +74,12 @@ public final class IslandFinder {
 
     public boolean isLand(int x, int z) { return field.at(x, z) >= thr; }
 
+    /** How far above the land threshold a point must be to count as well inside the island (sky islands: off the beach). */
+    public volatile double innerMargin = 0;
+
+    /** true when (x, z) is land and at least innerMargin above the threshold */
+    public boolean inner(int x, int z) { return field.at(x, z) >= thr + innerMargin; }
+
     /** The scripts' climb (40_islands.js), unchanged: greedy steps that halve from `step` down to 8 blocks. */
     public int[] climb(int x, int z, int step) {
         int bx = x, bz = z;

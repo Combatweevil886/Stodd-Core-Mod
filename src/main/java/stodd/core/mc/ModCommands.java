@@ -29,6 +29,7 @@ import stodd.core.gen.WorldRules;
  *   /stodd addons                     the power-system mods STODD Core is an add-on to, found or not, and what it does with each
  *   /stodd addons scan [player]       (operators) every piece of mod data on a player: capability names, their numbers, and
  *                                     MCreator variables - what the level links and the purge can use
+ *   /stodd config ...                 the settings in config/stodd/*.toml (see ConfigCommands)
  */
 public final class ModCommands {
     private ModCommands() { }
@@ -71,6 +72,7 @@ public final class ModCommands {
                     .executes(c -> { scan(c.getSource(), c.getSource().getPlayerOrException()); return 1; })
                     .then(Commands.argument("player", EntityArgument.player())
                         .executes(c -> { scan(c.getSource(), EntityArgument.getPlayer(c, "player")); return 1; }))))
+            .then(ConfigCommands.tree())
             .then(Commands.literal("core")
                 .then(Commands.literal("world").requires(s -> s.hasPermission(2)).executes(c -> {
                     for (WorldCheck.Line l : WorldCheck.report(c.getSource().getServer())) {
@@ -137,16 +139,17 @@ public final class ModCommands {
         Worlds.Tools t = Worlds.of(level);
         int seed = Worlds.seed(level);
         int x = (int) Math.floor(pos.x), z = (int) Math.floor(pos.z);
-        if (pos.y >= t.rules.skyMinY && t.sky != null && t.sky.sample(x, z) > 0) {
+        if (t.sky != null && t.sky.isLand(x, z)) {
             IslandFinder.Island s = t.sky.islandAt(x, z);
-            if (s != null) {
-                IslePlanner.Plan p = t.isles.sky(t.sky, s, seed);
-                return "Sky island " + t.rules.skyName(s.cx, s.cz, seed) + ", centre " + s.cx + ", " + s.cz + ", about " + (2 * s.radius) + " blocks across"
-                    + (p == null ? "" : ", " + p.cells.size() + " cells, " + p.landmarks() + " landmarks (" + (p.skyStyle == null ? "-" : p.skyStyle.name) + ")") + ".";
+            if (s != null && (pos.y >= t.skyMinY || !t.ground.isLand(x, z))) {
+                IslePlanner.Plan p = t.isles.sky(t.sky, s, seed, t.skyMinRadius);
+                String lvl = t.skyField == null ? "" : ", coast at y " + (int) t.skyField.levelOf(s);
+                return "Sky island " + t.rules.skyName(s.cx, s.cz, seed) + " (a lifted island), centre " + s.cx + ", " + s.cz + ", about " + (2 * s.radius) + " blocks across" + lvl
+                    + (p == null ? "" : ", " + p.cells.size() + " cells, " + p.landmarks() + " landmarks" + (p.skyStyle == null ? "" : " (" + p.skyStyle.name + ")")) + ".";
             }
         }
         IslandFinder.Island isl = t.ground.islandAt(x, z);
-        if (isl == null) return "Open sea.";
+        if (isl == null) return t.sky != null && t.sky.isLand(x, z) ? "Open sea, under a sky island (look up)." : "Open sea.";
         WorldRules.Theme th = t.rules.themeAt(isl.cx, isl.cz, seed);
         StringBuilder b = new StringBuilder(t.rules.groundName(th, isl.cx, isl.cz, seed) + " (" + th.name + "), centre " + isl.cx + ", " + isl.cz);
         if (t.rules.cityStyleAt(isl.cx, isl.cz, seed) != null) {

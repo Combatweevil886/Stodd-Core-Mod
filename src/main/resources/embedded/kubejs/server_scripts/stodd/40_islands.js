@@ -272,8 +272,9 @@
   }
 
   // ---------------------------------------------------------------- floating sky islands
-  // They are part of the world's own density function (data/stodd/worldgen, see the README); this only FINDS them, by
-  // asking the world's final density function whether the probe plane (just under the island plane) is solid there.
+  // They are normal islands lifted into the sky by the world's own density functions (STODD Core's SkyField); this only FINDS
+  // them: the Java side lists them exactly (StoddApi.skyIslandsIn); without it, by asking the world's final density function
+  // whether the probe plane is solid there.
   // Found islands are saved next to the ground islands, so each keeps its centre, name, waystone and Log Pose entry.
   let SKY = C.sky || {}
   let SKY_MIN_Y = SKY.minY || 140
@@ -346,6 +347,18 @@
   // points is an island. Islands smaller than minRadius are floating rocks and do not count.
   function scanSkyCell(level, probe, r, ix, iz) {
     r.skyScanned.add(ix + ',' + iz)
+    // STODD Core 3.1: the Java side knows every lifted island exactly
+    if (S.API != null && Number(S.API.version()) >= 4) {
+      try {
+        let list = S.API.skyIslandsIn(level, ix * SCAN_CELL, iz * SCAN_CELL, SCAN_CELL)
+        for (let k = 0; k < list.length; k++) {
+          let sx = Number(list[k][0]), sz = Number(list[k][1]), sr = Number(list[k][2])
+          if (skySame(r, sx, sz, sr) == null) skyAdd(r, sx, sz, sr)
+        }
+        return
+      } catch (ex) { S.log('sky island list: ' + ex) }
+    }
+    if (probe == null) return
     let step = SKY.scanStep || 64
     let x0 = ix * SCAN_CELL - 160, z0 = iz * SCAN_CELL - 160
     let n = Math.floor((SCAN_CELL + 320) / step) + 1
@@ -394,7 +407,7 @@
     if (!SKY.enabled || y < SKY_MIN_Y) return null
     if (String(level.dimension).indexOf('minecraft:overworld') < 0) return null
     let probe = skyProbe(level)
-    if (probe == null) return null
+    if (probe == null && !(S.API != null && Number(S.API.version()) >= 4)) return null
     let r = regFor(level)
     let ix = Math.floor(x / SCAN_CELL), iz = Math.floor(z / SCAN_CELL)
     if (!r.skyScanned.has(ix + ',' + iz)) scanSkyCell(level, probe, r, ix, iz)

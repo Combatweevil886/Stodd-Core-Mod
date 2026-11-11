@@ -94,10 +94,11 @@ public final class LogPoseBrain {
 
     /** The island under a player: the sky island when up high over one, else the ground island (null over the sea). */
     public Info here(double x, double y, double z) {
-        boolean high = y >= rules.skyMinY;
+        boolean high = y >= index.skyMinY();
         if (high && index.sky() != null && rules.skyEnabled) {
-            IslandFinder.Island s = index.sky().islandAt((int) Math.floor(x), (int) Math.floor(z));
-            if (s != null && s.radius >= rules.skyMinRadius) return info(s, true);
+            int ix = (int) Math.floor(x), iz = (int) Math.floor(z);
+            IslandFinder.Island s = index.sky().isLand(ix, iz) ? index.sky().islandAt(ix, iz) : null;
+            if (s != null && s.radius >= index.skyMinRadius()) return info(s, true);
         }
         IslandFinder.Island g = index.ground().islandAt((int) Math.floor(x), (int) Math.floor(z));
         return g == null ? null : info(g, false);
@@ -113,7 +114,11 @@ public final class LogPoseBrain {
         WorldRules.Mode mode = modes.get(mi);
         o.modeName = mode.name;
         if (s.mode != mi) { s.mode = mi; s.target = null; s.tinfo = null; }
-        boolean up = rules.skyEnabled && y >= rules.lpSkyMinY;
+        // up in the sky: above the sky islands' height (logPose.skyMinY, 0 = from the sky-island settings) and not standing on high
+        // ground of a ground island
+        int upY = rules.lpSkyMinY > 0 ? rules.lpSkyMinY : index.skyMinY();
+        boolean up = rules.skyEnabled && index.sky() != null && y >= upY
+            && (index.sky().isLand((int) Math.floor(x), (int) Math.floor(z)) || !index.ground().isLand((int) Math.floor(x), (int) Math.floor(z)));
         if (up != s.up) { s.up = up; if (mode.kind.equals("next")) { s.target = null; s.tinfo = null; } }
         boolean wantSky = mode.kind.equals("sky") || (mode.kind.equals("next") && up);
         Info here = here(x, up ? y : 0, z);

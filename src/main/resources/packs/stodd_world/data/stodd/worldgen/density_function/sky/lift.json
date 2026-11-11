@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "stodd_core:sky",
+    "mode": "lift",
+    "raw": "stodd:overworld/continents_raw",
+    "noise": "stodd:sky_detail"
+  }
+}

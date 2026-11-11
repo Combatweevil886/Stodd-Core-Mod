@@ -282,7 +282,7 @@ public final class WorldRules {
         landmarks = Collections.unmodifiableMap(lm);
         Map<String, Object> sk = MiniJson.obj(mo.get("sky"));
         skyDress = MiniJson.bool(sk.get("enabled"), true);
-        skyBiome = MiniJson.str(sk.get("biome"), "stodd:sky_meadow");
+        skyBiome = MiniJson.str(sk.get("biome"), "");   // "" = the natural biomes (3.1)
         skyBiomeLow = (int) MiniJson.num(sk.get("biomeLow"), 146);
         skyBiomeHigh = (int) MiniJson.num(sk.get("biomeHigh"), 262);
         skyPerCell = (int) MiniJson.num(sk.get("perCell"), 5);
