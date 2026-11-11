@@ -65,18 +65,37 @@ public final class CityPlanner {
         String k = seed + ":" + isl.key();
         Plan p = plans.get(k);
         if (p != null) return p;
-        p = build(finder, isl, st, heights, seed);
+        p = build(finder, isl, st, heights, seed, rules.radius, rules.baseMin, rules.baseMax, 40, 190, null);
         if (plans.size() > 2000) plans.clear();
         Plan old = plans.putIfAbsent(k, p);
         return old != null ? old : p;
     }
 
-    private Plan build(IslandFinder f, IslandFinder.Island isl, WorldRules.Style st, Heights heights, int seed) {
-        int CELL = rules.cell, R = rules.radius;
+    /** How tall a template may be on a cell (the room under a sunken island's dome), given the street level. */
+    public interface Roof { int room(int x0, int z0, int cell, int street); }
+
+    /**
+     * The village of a sunken island: the given style, cells within `radius` of the middle, the street held in [lo, hi], and on each
+     * cell only templates that fit under the roof (cells with no room for any are left empty). Computed once and remembered.
+     */
+    public Plan planDeep(IslandFinder finder, IslandFinder.Island isl, Heights heights, int seed, String styleId, int radius, int lo, int hi, Roof roof) {
+        WorldRules.Style st = rules.styles.get(styleId);
+        if (st == null) return null;
+        String k = "deep:" + seed + ":" + isl.key();
+        Plan p = plans.get(k);
+        if (p != null) return p;
+        p = build(finder, isl, st, heights, seed, radius, lo, hi, -64, 320, roof);
+        if (plans.size() > 2000) plans.clear();
+        Plan old = plans.putIfAbsent(k, p);
+        return old != null ? old : p;
+    }
+
+    private Plan build(IslandFinder f, IslandFinder.Island isl, WorldRules.Style st, Heights heights, int seed, int R, int lo, int hi, int hMin, int hMax, Roof roof) {
+        int CELL = rules.cell;
         double THR = rules.landThreshold + rules.landMargin;
         int half = CELL / 2;
         int x0 = isl.cx - half, z0 = isl.cz - half;
-        int street = streetLevel(f, isl, heights, THR);
+        int street = streetLevel(f, isl, heights, THR, R, lo, hi, hMin, hMax);
         int N = (int) Math.ceil(R / (double) CELL) + 1;
         List<int[]> keep = new ArrayList<>();
         List<Double> dist = new ArrayList<>();
@@ -101,33 +120,35 @@ public final class CityPlanner {
         for (int n = 0; n < keep.size(); n++) {
             int[] c = keep.get(n);
             double d = dist.get(n);
-            Cell cell = pick(st, isl, c[0], c[1], c[2], c[3], d, extent, seed);
+            int room = roof == null ? Integer.MAX_VALUE : roof.room(c[2], c[3], CELL, street);
+            Cell cell = pick(st, isl, c[0], c[1], c[2], c[3], d, extent, seed, room);
             if (cell != null) cells.add(cell);
         }
         return new Plan(isl.key(), st.id, isl.cx, isl.cz, street, extent, cells);
     }
 
     /** Median ground height over the island's land (columns under a sky island read high and are left out), held in [baseMin, baseMax]. */
-    private int streetLevel(IslandFinder f, IslandFinder.Island isl, Heights heights, double thr) {
+    private int streetLevel(IslandFinder f, IslandFinder.Island isl, Heights heights, double thr, int radius, int lo, int hi, int hMin, int hMax) {
         List<Integer> hs = new ArrayList<>();
-        int R = Math.min(rules.radius, 240), step = rules.sampleStep;
+        int R = Math.min(radius, 240), step = rules.sampleStep;
         for (int dx = -R; dx <= R; dx += step) for (int dz = -R; dz <= R; dz += step) {
             if (dx * dx + dz * dz > R * R) continue;
             int x = isl.cx + dx, z = isl.cz + dz;
             if (f.sample(x, z) < thr || !isl.contains(x, z)) continue;
             int h = heights.base(x, z) - 1;
-            if (h > 40 && h < 190) hs.add(h);
+            if (h > hMin && h < hMax) hs.add(h);
         }
-        if (hs.isEmpty()) return (rules.baseMin + rules.baseMax) / 2;
+        if (hs.isEmpty()) return (lo + hi) / 2;
         Collections.sort(hs);
-        return Math.max(rules.baseMin, Math.min(rules.baseMax, hs.get(hs.size() / 2)));
+        return Math.max(lo, Math.min(hi, hs.get(hs.size() / 2)));
     }
 
-    private Cell pick(WorldRules.Style st, IslandFinder.Island isl, int i, int j, int x, int z, double d, double extent, int seed) {
+    private Cell pick(WorldRules.Style st, IslandFinder.Island isl, int i, int j, int x, int z, double d, double extent, int seed, int room) {
         if (i == 0 && j == 0) {
             if (st.plazas.isEmpty()) return null;
             int start = (int) (Hash.hash3(isl.cx + 31, isl.cz - 17, seed ^ 0x2c1b3c6d) % st.plazas.size());
             String id = st.plazas.get(start);
+            if (st.plazaHeightOf(id) > room) return null;
             return new Cell(i, j, x, z, d, id, 0, st.plazaHeightOf(id), true);
         }
         List<WorldRules.Zone> zones = st.zones;
@@ -140,7 +161,7 @@ public final class CityPlanner {
         for (WorldRules.Template tp : st.templates) {
             Double m = zone == null ? null : zone.kind.get(tp.kind);
             double wt = tp.weight * (m == null ? 1 : m);
-            if (wt <= 0) continue;
+            if (wt <= 0 || tp.height > room) continue;
             list.add(tp); w.add(wt); total += wt;
         }
         if (list.isEmpty()) return null;

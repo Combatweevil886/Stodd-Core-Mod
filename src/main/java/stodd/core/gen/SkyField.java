@@ -399,6 +399,9 @@ public final class SkyField {
     /** A field for an IslandFinder that sees only the sky islands: the raw continentalness on them, -1 elsewhere. */
     public IslandFinder.Field skyOnly() { return (x, z) -> { Column c = column(x, z); return c.sky ? c.raw : -1; }; }
 
+    /** A field for an IslandFinder that sees only the sunken islands: the raw continentalness on their land, -1 elsewhere. */
+    public IslandFinder.Field deepOnly() { return (x, z) -> { Column c = column(x, z); return c.sunk ? c.raw : -1; }; }
+
     /** A field for an IslandFinder that sees only the ground islands. */
     public IslandFinder.Field groundOnly(IslandFinder.Field ground) { return (x, z) -> ground(x, z, ground.at(x, z)); }
 

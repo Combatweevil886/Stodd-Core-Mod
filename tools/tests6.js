@@ -48,7 +48,7 @@ section('Java side: rules and island centres')
   const r = JSON.parse(m.calls.configure[0])
   ok(r.version === 3 && r.bands.length === 8 && Object.keys(r.city.styles).length === 3 && Object.keys(r.makeover.themes).length === 5, 'with the bands, city styles and dressed themes')
   ok(r.origins.list.length === 10 && r.origins.rules.swordsman.fruit === 'path' && r.origins.detect.fruit.items.src === '(no_mi|nomi|fruit)', 'and the origin rules, regexes included')
-  ok(r.logPose.modes.length === 4 && r.logPose.searchRadii.length === 4, 'and the Log Pose settings')
+  ok(r.logPose.modes.length === 5 && r.logPose.searchRadii.length === 4, 'and the Log Pose settings')
   // the jar's built-in copy is the same function's output
   const cands = [process.env.STODD_WORLD_JSON, path.join(__dirname, '../src/main/resources/stodd_world.json'), path.join(__dirname, '../mod/src/main/resources/stodd_world.json')].filter(Boolean)
   const builtPath = cands.find(f => fs.existsSync(f))

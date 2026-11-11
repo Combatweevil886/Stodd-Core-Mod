@@ -447,6 +447,33 @@
      "pre": []
     },
     {
+     "t": "key",
+     "path": "deepIslands.villages",
+     "key": "villages",
+     "def": 0.6,
+     "re": false,
+     "note": "share of sunken islands with a village round their middle (0 = none, 1 = all)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "deepIslands.villageStyle",
+     "key": "villageStyle",
+     "def": "city_primitive",
+     "re": false,
+     "note": "the city style its houses come from (city, city_future, city_primitive); only what fits under the roof is used",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "deepIslands.villageRadius",
+     "key": "villageRadius",
+     "def": 140,
+     "re": false,
+     "note": "how far from the middle the village reaches",
+     "pre": []
+    },
+    {
      "t": "table",
      "path": "city",
      "pre": [
@@ -490,6 +517,24 @@
      "def": false,
      "re": false,
      "note": "true: the scripts also build cities on land generated before STODD Core 3 (the 2.3.0 way)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "city.villagers",
+     "key": "villagers",
+     "def": 0.4,
+     "re": false,
+     "note": "villagers per 48 x 48 city block on average (some with a trade, some looking for a job), in sunken villages too",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "city.golems",
+     "key": "golems",
+     "def": 0.04,
+     "re": false,
+     "note": "iron golems per city block on average",
      "pre": []
     },
     {
@@ -2189,8 +2234,20 @@
      "t": "table",
      "path": "waystones",
      "pre": [
-      "---- ISLAND WAYSTONES (45_waystones.js)"
+      "---- ISLAND WAYSTONES (45_waystones.js)",
+      "Every island, on the ground, in the sky or sunk under a dome, gets ONE waystone at its centre, generated with the world",
+      "(named after the island, styled after its theme). The settings below are for the scripts, which only place stones on",
+      "islands whose middle was generated before STODD Core 3.1 (or when `worldgen` is false)."
      ]
+    },
+    {
+     "t": "key",
+     "path": "waystones.worldgen",
+     "key": "worldgen",
+     "def": true,
+     "re": false,
+     "note": "true = the stone is generated with the island's middle chunk (every island, no exceptions)",
+     "pre": []
     },
     {
      "t": "key",
@@ -2384,6 +2441,15 @@
      "path": "waystones.styleByTheme.skull",
      "key": "skull",
      "def": "waystones:sandy_waystone",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "waystones.styleByTheme.deep",
+     "key": "deep",
+     "def": "waystones:deepslate_waystone",
      "re": false,
      "note": "",
      "pre": []
@@ -2607,10 +2673,33 @@
     },
     {
      "t": "table",
+     "path": "logPose.modes.sunken",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "logPose.modes.sunken.name",
+     "key": "name",
+     "def": "Nearest sunken island",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "logPose.modes.sunken.kind",
+     "key": "kind",
+     "def": "deep",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
      "path": "locate",
      "pre": [
       "---- LOCATE (53_locate.js)",
-      "/stodd locate <city|neocity|tribal|sky|ember|sakura|ruins|crystal|skull|island|<theme>> [list|tp]",
+      "/stodd locate <city|neocity|tribal|sky|sunken|ember|sakura|ruins|crystal|skull|island|<theme>> [list|tp]",
       "Finds the nearest matching island by reading the world's terrain function (nothing has to be explored first).",
       "Meant for testing: set `everyone` to false to make it operator-only."
      ]

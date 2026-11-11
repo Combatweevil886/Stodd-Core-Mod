@@ -63,6 +63,8 @@ public final class StoddRegistry {
     public static final RegistryObject<StructurePieceType> TEMPLATE_PIECE = piece("cell_template", CellTemplatePiece::new);
     public static final RegistryObject<StructurePieceType> FEATURE_PIECE = piece("cell_features", CellFeaturePiece::new);
     public static final RegistryObject<StructurePieceType> DOME_PIECE = piece("cell_dome", CellDomePiece::new);
+    public static final RegistryObject<StructurePieceType> LIFE_PIECE = piece("cell_life", CellLifePiece::new);
+    public static final RegistryObject<StructurePieceType> WAYSTONE_PIECE = piece("cell_waystone", CellWaystonePiece::new);
 
     public static final RegistryObject<StructurePlacementType<CellGridPlacement>> CELL_GRID = PLACEMENTS.register("cell_grid", () -> () -> CellGridPlacement.CODEC);
 

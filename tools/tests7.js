@@ -77,7 +77,7 @@ ok(C.islandThemes.filter(t => t.id === 'newtheme').length === 1, 'a new id is ad
 ok(isRe(C.jjk.purgeNamespaces) && C.jjk.purgeNamespaces.test('jujutsucraft') && !C.jjk.purgeNamespaces.test('malum'), 'regular expressions from text')
 ok(C.slots.human.charm === 9 && C.slots.human.ring === 4, 'part of a table changes only that part')
 ok(C.logPose.searchRadii.join() === '500,900', 'a list replaces the list')
-ok(C.logPose.modes.length === 5 && C.logPose.modes[4].id === 'extra' && C.logPose.modes[0].id === 'next', 'a new Log Pose mode is appended')
+ok(C.logPose.modes.length === 6 && C.logPose.modes[5].id === 'extra' && C.logPose.modes[0].id === 'next', 'a new Log Pose mode is appended')
 const adv = C.powerMastery.unlock.sorcery.advancements
 ok(adv.length === 1 && isRe(adv[0].match) && adv[0].match.test('blackflash'), 'regular expressions inside a list of tables')
 ok(C.detect.fruit.items === null, 'an empty regular expression = none')

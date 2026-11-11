@@ -3,7 +3,11 @@ package stodd.core;
 import stodd.core.config.Json;
 import stodd.core.config.StoddConfig;
 import stodd.core.config.Toml;
+import stodd.core.gen.CityPlanner;
 import stodd.core.gen.IslandFinder;
+import stodd.core.gen.IslandIndex;
+import stodd.core.gen.LogPoseBrain;
+import stodd.core.gen.WorldRules;
 import stodd.core.gen.MiniJson;
 import stodd.core.gen.SkyField;
 
@@ -50,6 +54,7 @@ public final class GenTest3 {
         config();
         sky();
         deep();
+        deepFinding();
         System.out.println("\nGenTest3: " + pass + " passed, " + fail + " failed");
         if (fail > 0) System.exit(1);
     }
@@ -450,5 +455,80 @@ public final class GenTest3 {
         for (int[] g : isl) if (none.domeAt(g[0], g[1]) != null || none.ground(g[0], g[1], raw.at(g[0], g[1])) != raw.at(g[0], g[1]) || none.deepMask(g[0], g[1]) > 0) untouched = false;
         ok(untouched, "rarity none: no domes, the world untouched");
         ok(p.domeTop() == p.seaLevel - p.deepWaterAbove, "the top of the dome is waterAbove under the sea");
+    }
+
+    // ---------------------------------------------------------------- finding sunken islands, and their villages
+
+    static void deepFinding() {
+        section("sunken islands: the Log Pose and /stodd locate find them");
+        final List<int[]> isl = new ArrayList<>();
+        for (int i = -4; i <= 4; i++) for (int j = -4; j <= 4; j++) isl.add(new int[] { i * 700 + ((i * 37 + j * 11) % 90), j * 700 + ((i * 13 - j * 29) % 90), 150 + Math.abs((i * 7 + j * 3) % 60) });
+        SkyField.Raw raw = (x, z) -> {
+            double v = -1;
+            for (int[] g : isl) v = Math.max(v, 0.6 - 0.79 * Math.hypot(x - g[0], z - g[1]) / g[2]);
+            return v;
+        };
+        SkyField.Params p = new SkyField.Params();
+        p.chance = 0.2; p.deepChance = 0.35; p.minSpawnDistance = 300;
+        SkyField f = new SkyField(4242L, p, raw, (x, z) -> 0);
+        WorldRules rules = WorldRules.builtIn();
+        IslandFinder ground = new IslandFinder(f.groundOnly(raw::at), p.landThreshold, rules.peakStep, rules.cell);
+        IslandFinder sky = new IslandFinder(f.skyOnly(), p.landThreshold, rules.peakStep, rules.cell);
+        IslandFinder deep = new IslandFinder(f.deepOnly(), p.landThreshold, rules.peakStep, rules.cell);
+        IslandIndex idx = new IslandIndex(ground, sky, deep, 0, p.lowestSurface() - 24);
+        IslandIndex.Result res = idx.near(0, 0, 3200, 10000, IslandIndex.DEEP);
+        int want = 0;
+        for (int[] g : isl) if (Math.hypot(g[0], g[1]) <= 3200 - 30 && f.isSunk(f.rawIslands().islandAt(g[0], g[1]))) want++;
+        ok(res.complete && res.list.size() >= want && want > 0, "the index lists the sunken islands (" + res.list.size() + ", " + want + " expected)");
+        boolean allDeep = true, sameCentre = true;
+        for (IslandIndex.Hit h : res.list) {
+            if (!h.deep || h.sky) allDeep = false;
+            IslandFinder.Island r = f.rawIslands().islandAt(h.island.cx, h.island.cz);
+            if (r == null || !r.key().equals(h.island.key()) || !f.isSunk(r)) sameCentre = false;
+        }
+        ok(allDeep && sameCentre, "...only sunken ones, with the same centres the domes are built round");
+        ok(idx.near(0, 0, 3200, 10000, IslandIndex.GROUND).list.stream().noneMatch(h -> f.isSunk(f.rawIslands().islandAt(h.island.cx, h.island.cz))), "and they are not ground islands any more");
+
+        LogPoseBrain brain = new LogPoseBrain(rules, idx, 7, 10000);
+        int deepMode = -1;
+        for (int i = 0; i < rules.lpModes.size(); i++) if (rules.lpModes.get(i).kind.equals("deep")) deepMode = i;
+        ok(deepMode >= 0, "the Log Pose has a sunken-island mode");
+        LogPoseBrain.Out o = brain.tick(new LogPoseBrain.State(), 350, 63, 350, 100, deepMode, new ArrayList<>());
+        IslandIndex.Hit first = res.list.isEmpty() ? null : idx.near(350, 350, 3200, 10000, IslandIndex.DEEP).list.get(0);
+        ok(o.hasTarget && o.target.deep && first != null && o.target.x == first.island.cx && o.target.z == first.island.cz, "in that mode it points at the nearest sunken island");
+        // a diver deep in the open sea, in "next island" mode: the next sunken island
+        LogPoseBrain.Out o2 = brain.tick(new LogPoseBrain.State(), 350, 40, 350, 100, 0, new ArrayList<>());
+        ok(o2.hasTarget && o2.target.deep, "next island, deep under the sea: a sunken island");
+        LogPoseBrain.Out o3 = brain.tick(new LogPoseBrain.State(), 350, 64, 350, 100, 0, new ArrayList<>());
+        ok(o3.hasTarget && !o3.target.deep && !o3.target.sky, "next island, at the surface: a ground island");
+        IslandFinder.Island one = first.island;
+        LogPoseBrain.Info here = brain.here(one.cx, 20, one.cz);
+        ok(here != null && here.deep && here.name.equals(rules.deepName(one.cx, one.cz, 7)), "inside the dome you are on the sunken island: " + (here == null ? null : here.name));
+        ok(brain.here(one.cx, 70, one.cz) == null, "...and over it, at the surface, on the open sea");
+
+        section("sunken villages: under the roof, never through it");
+        SkyField.Dome d = f.domeOf(f.rawIslands().islandAt(one.cx, one.cz));
+        CityPlanner cp = new CityPlanner(rules);
+        int lo = (int) d.base + 1, hi = (int) (d.base + d.up * 0.45);
+        CityPlanner.Plan plan = cp.planDeep(deep, one, (x, z) -> (int) d.base + 4, 7, rules.deepVillageStyle, rules.deepVillageRadius, lo, hi,
+            (cx0, cz0, cell2, street) -> {
+                double low = Double.MAX_VALUE;
+                int[][] pts = { { cx0, cz0 }, { cx0 + cell2 - 1, cz0 }, { cx0, cz0 + cell2 - 1 }, { cx0 + cell2 - 1, cz0 + cell2 - 1 } };
+                for (int[] pt : pts) low = Math.min(low, d.ceiling(pt[0], pt[1]));
+                return (int) Math.floor(low) - street - 3;
+            });
+        ok(plan != null && !plan.cells.isEmpty(), "a sunken island gets a village (" + (plan == null ? 0 : plan.cells.size()) + " blocks, style " + rules.deepVillageStyle + ")");
+        boolean fitsRoof = true, inside = true;
+        for (CityPlanner.Cell c : plan.cells) {
+            double low = Math.min(Math.min(d.ceiling(c.x, c.z), d.ceiling(c.x + 47, c.z)), Math.min(d.ceiling(c.x, c.z + 47), d.ceiling(c.x + 47, c.z + 47)));
+            if (plan.street + c.height > low - 3) fitsRoof = false;
+            if (!d.covers(c.x, c.z) || !d.covers(c.x + 47, c.z + 47)) inside = false;
+        }
+        ok(fitsRoof, "every building fits under the roof with room to spare");
+        ok(inside, "every block is inside the dome");
+        ok(plan.street >= lo && plan.street <= hi, "the street is on the island's floor: y " + plan.street);
+        CityPlanner.Plan again = cp.planDeep(deep, one, (x, z) -> (int) d.base + 4, 7, rules.deepVillageStyle, rules.deepVillageRadius, lo, hi, (a, b, c, e) -> 99);
+        ok(again == plan, "planned once per island");
+        ok(rules.villagers > 0 && rules.waystonesWorldgen && rules.waystoneStyles.containsKey("deep"), "villagers in the cities, waystones generated with the world, a style for sunken ones");
     }
 }

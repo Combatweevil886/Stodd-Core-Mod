@@ -12,6 +12,8 @@
   global.stoddWorldRules = function (C, activeIds) {
     let cc = C.city || {}
     let mc = C.makeover || {}
+    let di = C.deepIslands || {}
+    let ws = C.waystones || {}
     let active = {}
     ;(activeIds || C.islandThemes.map(t => t.id)).forEach(id => { active[id] = true })
     let themes = C.islandThemes.map(t => ({
@@ -69,7 +71,15 @@
         enabled: cc.enabled !== false, minOriginDistance: cc.minOriginDistance || 0, cell: cc.cell || 48, radius: cc.radius || 300,
         landMargin: num(cc.landMargin, 0.04), baseMin: cc.baseMin || 66, baseMax: cc.baseMax || 78, sampleStep: cc.sampleStep || 28,
         foundationMax: cc.foundationMax || 40, floorMin: num(cc.floorMin, -58), cutCap: cc.cutCap || 148,
-        biomeBelow: num(cc.biomeBelow, 8), biomeAbove: num(cc.biomeAbove, 104), styles: styles
+        biomeBelow: num(cc.biomeBelow, 8), biomeAbove: num(cc.biomeAbove, 104), styles: styles,
+        villagers: num(cc.villagers, 0.4), golems: num(cc.golems, 0.04)
+      },
+      deep: {
+        villages: num(di.villages, 0.6), villageStyle: di.villageStyle || 'city_primitive', villageRadius: di.villageRadius || 140
+      },
+      waystones: {
+        worldgen: ws.worldgen !== false,
+        styles: ws.styleByTheme || {}
       },
       makeover: {
         enabled: mc.enabled !== false, cell: mc.cell || 48, radius: mc.radius || 330, landMargin: num(mc.landMargin, 0.06),

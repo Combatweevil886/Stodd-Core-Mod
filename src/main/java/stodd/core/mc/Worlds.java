@@ -25,7 +25,7 @@ public final class Worlds {
 
     public static final class Tools {
         public final WorldRules rules;
-        public final IslandFinder ground, sky;
+        public final IslandFinder ground, sky, deep;   // deep: the sunken islands (null: none)
         public final SkyField skyField;          // null: not an island world of this mod
         public final int skyMinY, skyMinRadius;  // a player above skyMinY over a sky island is on it; smaller islands are not listed
         public final IslandIndex index;
@@ -33,9 +33,11 @@ public final class Worlds {
         public final IslePlanner isles;
         Tools(WorldRules rules, IslandFinder ground, IslandFinder sky, SkyField field) {
             this.rules = rules; this.ground = ground; this.sky = sky; this.skyField = field;
+            this.deep = field != null && field.p.deepEnabled && field.p.deepChance > 0
+                ? new IslandFinder(field.deepOnly(), field.p.landThreshold, rules.peakStep, rules.cell) : null;
             this.skyMinY = field != null ? field.p.lowestSurface() - 24 : rules.skyMinY;
             this.skyMinRadius = field != null ? 0 : rules.skyMinRadius;
-            this.index = new IslandIndex(ground, sky, skyMinRadius, skyMinY);
+            this.index = new IslandIndex(ground, sky, deep, skyMinRadius, skyMinY);
             this.cities = new CityPlanner(rules);
             this.isles = new IslePlanner(rules);
         }

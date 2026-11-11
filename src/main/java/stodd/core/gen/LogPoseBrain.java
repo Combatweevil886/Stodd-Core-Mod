@@ -9,8 +9,9 @@ import java.util.Set;
  * What a player's Log Pose points at, once a second: the island in the chosen mode, recording the island the player stands on,
  * "you have arrived". No Minecraft classes, so the whole behaviour is tested here; the item and the client needle only display it.
  *
- * Modes (00_config.js logPose.modes): next = nearest island not recorded yet (sky islands while the player is up high),
- * any = nearest island, themes = nearest island of the listed themes (the cities), sky = nearest sky island.
+ * Modes (00_config.js logPose.modes): next = nearest island not recorded yet (sky islands while the player is up high, sunken
+ * islands while deep under the sea), any = nearest island, themes = nearest island of the listed themes (the cities),
+ * sky = nearest sky island, deep = nearest sunken island.
  */
 public final class LogPoseBrain {
     /** What the Log Pose remembers for one player between seconds (not saved: rebuilt after a relog). */
@@ -20,7 +21,7 @@ public final class LogPoseBrain {
         String target;
         int tx, tz;
         Info tinfo;
-        boolean up;
+        boolean up, down;
         int mode = -1;
         String arrived = "";
         int empty;
@@ -30,8 +31,11 @@ public final class LogPoseBrain {
     public static final class Info {
         public final String key, name, kind, color;
         public final int x, z;
-        public final boolean sky;
-        Info(String key, String name, String kind, String color, int x, int z, boolean sky) { this.key = key; this.name = name; this.kind = kind; this.color = color; this.x = x; this.z = z; this.sky = sky; }
+        public final boolean sky, deep;
+        Info(String key, String name, String kind, String color, int x, int z, boolean sky) { this(key, name, kind, color, x, z, sky, false); }
+        Info(String key, String name, String kind, String color, int x, int z, boolean sky, boolean deep) {
+            this.key = key; this.name = name; this.kind = kind; this.color = color; this.x = x; this.z = z; this.sky = sky; this.deep = deep;
+        }
     }
 
     /** One second's outcome. */
@@ -53,7 +57,11 @@ public final class LogPoseBrain {
 
     public LogPoseBrain(WorldRules rules, IslandIndex index, int seed, int budget) { this.rules = rules; this.index = index; this.seed = seed; this.budget = budget; }
 
-    public Info info(IslandFinder.Island isl, boolean sky) {
+    public Info info(IslandFinder.Island isl, boolean sky) { return info(isl, sky ? IslandIndex.SKY : IslandIndex.GROUND); }
+
+    public Info info(IslandFinder.Island isl, int layer) {
+        if (layer == IslandIndex.DEEP) return new Info("deep:" + isl.key(), rules.deepName(isl.cx, isl.cz, seed), "Sunken", "blue", isl.cx, isl.cz, false, true);
+        boolean sky = layer == IslandIndex.SKY;
         if (sky) return new Info("sky:" + isl.key(), rules.skyName(isl.cx, isl.cz, seed), "Sky", "aqua", isl.cx, isl.cz, true);
         WorldRules.Theme t = rules.themeAt(isl.cx, isl.cz, seed);
         return new Info(isl.key(), rules.groundName(t, isl.cx, isl.cz, seed), t.name, t.color, isl.cx, isl.cz, false);
@@ -63,18 +71,18 @@ public final class LogPoseBrain {
 
     private boolean matches(WorldRules.Mode m, Info i) {
         if (!m.kind.equals("themes")) return true;
-        if (i.sky) return false;
+        if (i.sky || i.deep) return false;
         WorldRules.Theme t = rules.themeAt(i.x, i.z, seed);
         return m.themes.contains(t.id);
     }
 
     /** Nearest island that is not excluded; the current target is kept unless something is clearly (15%) nearer. */
-    private Pick next(double x, double z, Set<String> excl, String prefKey, boolean sky, WorldRules.Mode mode) {
+    private Pick next(double x, double z, Set<String> excl, String prefKey, int layer, WorldRules.Mode mode) {
         for (int R : rules.lpRadii) {
-            IslandIndex.Result res = index.near((int) Math.floor(x), (int) Math.floor(z), R, budget, sky);
+            IslandIndex.Result res = index.near((int) Math.floor(x), (int) Math.floor(z), R, budget, layer);
             Pick best = null, pref = null;
             for (IslandIndex.Hit h : res.list) {
-                Info i = info(h.island, h.sky);
+                Info i = info(h.island, h.layer);
                 if (excl.contains(i.key)) continue;
                 if (mode != null && !matches(mode, i)) continue;
                 Pick p = new Pick();
@@ -92,8 +100,16 @@ public final class LogPoseBrain {
         return null;
     }
 
-    /** The island under a player: the sky island when up high over one, else the ground island (null over the sea). */
+    /** The sea's surface: a player well under it, over a sunken island, is on it. */
+    public static final int SEA = 63;
+
+    /** The island under a player: the sky island when up high over one, the sunken island when deep in its dome, else the ground island (null over the sea). */
     public Info here(double x, double y, double z) {
+        if (index.deep() != null && y < SEA - 4) {
+            int ix = (int) Math.floor(x), iz = (int) Math.floor(z);
+            IslandFinder.Island d = index.deep().isLand(ix, iz) ? index.deep().islandAt(ix, iz) : null;
+            if (d != null) return info(d, IslandIndex.DEEP);
+        }
         boolean high = y >= index.skyMinY();
         if (high && index.sky() != null && rules.skyEnabled) {
             int ix = (int) Math.floor(x), iz = (int) Math.floor(z);
@@ -121,8 +137,12 @@ public final class LogPoseBrain {
         boolean overGround = index.ground().isLand(ix, iz) && !(index.sky() != null && index.sky().isLand(ix, iz));
         boolean up = rules.skyEnabled && index.sky() != null && y >= upY + (overGround ? 50 : 0);
         if (up != s.up) { s.up = up; if (mode.kind.equals("next")) { s.target = null; s.tinfo = null; } }
-        boolean wantSky = mode.kind.equals("sky") || (mode.kind.equals("next") && up);
-        Info here = here(x, up ? y : 0, z);
+        // down in the deep: well under the sea's surface, off any ground island (a diver, or someone inside a dome)
+        boolean down = index.deep() != null && !up && y < SEA - 12 && !index.ground().isLand(ix, iz);
+        if (down != s.down) { s.down = down; if (mode.kind.equals("next")) { s.target = null; s.tinfo = null; } }
+        int layer = mode.kind.equals("sky") || (mode.kind.equals("next") && up) ? IslandIndex.SKY
+            : mode.kind.equals("deep") || (mode.kind.equals("next") && down) ? IslandIndex.DEEP : IslandIndex.GROUND;
+        Info here = here(x, up ? y : Math.min(y, index.skyMinY() - 1), z);
         o.here = here;
         Set<String> seenSet = new HashSet<>(seen);
         if (here != null) {
@@ -145,13 +165,13 @@ public final class LogPoseBrain {
         Set<String> excl = new HashSet<>();
         if (mode.kind.equals("next")) excl.addAll(seenSet);
         if (here != null) excl.add(here.key);
-        Pick nx = next(x, z, excl, s.target, wantSky, mode.kind.equals("themes") ? mode : null);
+        Pick nx = next(x, z, excl, s.target, layer, mode.kind.equals("themes") ? mode : null);
         // "next island" with everything nearby recorded: the nearest island that is not the one underfoot
         if (mode.kind.equals("next") && nx != null && nx.info == null && !nx.pending) nx = null;
         if (mode.kind.equals("next") && nx == null) {
             Set<String> ex2 = new HashSet<>();
             if (here != null) ex2.add(here.key);
-            nx = next(x, z, ex2, s.target, wantSky, null);
+            nx = next(x, z, ex2, s.target, layer, null);
         }
         o.pending = nx != null && nx.info == null && nx.pending;
         String before = s.target;

@@ -219,7 +219,7 @@ section('locate')
   })
   let r = search('sky')
   const mm = /at (-?\d+), (-?\d+)/.exec(r[0] || '')
-  ok(mm != null && SKYI.some(s => Math.hypot(+mm[1] - s.x, +mm[2] - s.z) < 25) && /y ~232/.test(r[0]), 'locate sky finds a floating island (' + r[0] + ')')
+  ok(mm != null && SKYI.some(s => Math.hypot(+mm[1] - s.x, +mm[2] - s.z) < 25) && /up in the sky/.test(r[0]), 'locate sky finds a floating island (' + r[0] + ')')
   r = search('city', 'list')
   ok(r.length === 5, 'list shows five results (' + r.length + ')')
   const ds = r.map(x => +/(\d+) blocks/.exec(x)[1])
@@ -246,7 +246,7 @@ section('log pose: modes')
   p.getInventory = () => ({ getContainerSize: () => 1, getItem: () => pose })
   p.getMainHandItem = () => pose; p.getOffhandItem = () => ({ isEmpty: () => true, id: 'minecraft:air' }); p.getYRot = () => 0
   const MODES = S.cfg.logPose.modes
-  ok(MODES.map(m => m.id).join() === 'next,nearest,city,sky', 'four modes: next, nearest, city, sky')
+  ok(MODES.map(m => m.id).join() === 'next,nearest,city,sky,sunken', 'five modes: next, nearest, city, sky, sunken')
   function target(modeIdx, x, z, y) {
     S.data(p).putInt('lp_mode', modeIdx)
     p.x = x; p.z = z; p.y = y == null ? 70 : y
@@ -281,7 +281,7 @@ section('log pose: modes')
   const cyc = S.logPoseCycle(p, false)
   ok(cyc.id === 'nearest', 'right-click cycles to the next mode (' + cyc.id + ')')
   ok(S.logPoseCycle(p, true).id === 'next', 'shift + right-click goes back')
-  S.data(p).putInt('lp_mode', 3)
+  S.data(p).putInt('lp_mode', MODES.length - 1)
   ok(S.logPoseCycle(p, false).id === 'next', 'the cycle wraps round')
   // /stodd logpose registers
   let regs = 0

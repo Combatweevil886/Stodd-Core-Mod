@@ -191,6 +191,12 @@ public final class WorldRules {
     public final double cityMinOriginDistance;
     public final int cell, radius, baseMin, baseMax, sampleStep, foundationMax, floorMin, cutCap, biomeBelow, biomeAbove;
     public final double landMargin;
+    public final double villagers, golems;                 // per 48 x 48 city block, on average
+    public final double deepVillages;                      // share of sunken islands with a village
+    public final String deepVillageStyle;
+    public final int deepVillageRadius;
+    public final boolean waystonesWorldgen;
+    public final Map<String, String> waystoneStyles;
     public final Map<String, Style> styles;
     // dressed islands and sky-island dressing
     public final boolean isleEnabled;
@@ -260,6 +266,23 @@ public final class WorldRules {
         cutCap = (int) MiniJson.num(c.get("cutCap"), 148);
         biomeBelow = (int) MiniJson.num(c.get("biomeBelow"), 8);
         biomeAbove = (int) MiniJson.num(c.get("biomeAbove"), 104);
+        villagers = Math.max(0, MiniJson.num(c.get("villagers"), 0.4));
+        golems = Math.max(0, MiniJson.num(c.get("golems"), 0.04));
+        Map<String, Object> dp = MiniJson.obj(m.get("deep"));
+        deepVillages = Math.max(0, Math.min(1, MiniJson.num(dp.get("villages"), 0.6)));
+        deepVillageStyle = MiniJson.str(dp.get("villageStyle"), "city_primitive");
+        deepVillageRadius = Math.max(48, (int) MiniJson.num(dp.get("villageRadius"), 140));
+        Map<String, Object> wsj = MiniJson.obj(m.get("waystones"));
+        waystonesWorldgen = MiniJson.bool(wsj.get("worldgen"), true);
+        Map<String, String> wst = new java.util.HashMap<>();
+        String[][] defs = { { "one_piece", "waystones:sandy_waystone" }, { "jujutsu", "waystones:blackstone_waystone" }, { "cyberpunk", "waystones:deepslate_waystone" },
+            { "arcane", "waystones:waystone" }, { "wild", "waystones:mossy_waystone" }, { "city", "waystones:deepslate_waystone" }, { "sky", "waystones:waystone" },
+            { "city_future", "waystones:waystone" }, { "city_primitive", "waystones:sandy_waystone" }, { "ember", "waystones:blackstone_waystone" },
+            { "sakura", "waystones:waystone" }, { "ruins", "waystones:mossy_waystone" }, { "crystal", "waystones:deepslate_waystone" }, { "skull", "waystones:sandy_waystone" },
+            { "deep", "waystones:deepslate_waystone" } };
+        for (String[] d : defs) wst.put(d[0], d[1]);
+        for (Map.Entry<String, Object> e : MiniJson.obj(wsj.get("styles")).entrySet()) if (e.getValue() instanceof String) wst.put(e.getKey(), (String) e.getValue());
+        waystoneStyles = Collections.unmodifiableMap(wst);
         Map<String, Style> sm = new LinkedHashMap<>();
         for (Map.Entry<String, Object> e : MiniJson.obj(c.get("styles")).entrySet()) sm.put(e.getKey(), new Style(e.getKey(), MiniJson.obj(e.getValue())));
         styles = Collections.unmodifiableMap(sm);

@@ -23,8 +23,8 @@ import stodd.core.mc.Worlds;
 public final class StoddApi {
     private StoddApi() { }
 
-    /** 4 = this API (3.1: config files, lifted sky islands); the scripts check it before relying on anything here. */
-    public static int version() { return 4; }
+    /** 5 = this API (3.1: config files, lifted sky islands, sunken islands); the scripts check it before relying on anything here. */
+    public static int version() { return 5; }
 
     /** Hands the live world rules (02_rules.js, as JSON) to the generator; returns null on success, else the reason. */
     public static String configure(String json) {
@@ -102,6 +102,33 @@ public final class StoddApi {
             }
             return out.values().toArray(new int[0][]);
         } catch (Throwable t) { return new int[0][]; }
+    }
+
+    /**
+     * The sunken islands whose centre is within R of (x, z), nearest first: {cx, cz, radius, floorY, topY} each, or null while the
+     * search is not finished (call again next tick; at most `budget` new 512-block map cells are looked at per call).
+     */
+    public static int[][] deepNear(Level level, int x, int z, int R, int budget) {
+        if (!(level instanceof ServerLevel)) return new int[0][];
+        try {
+            Worlds.Tools t = Worlds.of((ServerLevel) level);
+            if (t.deep == null || t.skyField == null) return new int[0][];
+            stodd.core.gen.IslandIndex.Result res = t.index.near(x, z, R, budget, stodd.core.gen.IslandIndex.DEEP);
+            if (!res.complete) return null;
+            java.util.List<int[]> out = new java.util.ArrayList<>();
+            for (stodd.core.gen.IslandIndex.Hit h : res.list) {
+                stodd.core.gen.SkyField.Dome d = t.skyField.domeAt(h.island.cx, h.island.cz);
+                out.add(new int[] { h.island.cx, h.island.cz, h.island.radius, d == null ? 16 : (int) d.base, d == null ? 50 : (int) (d.base + d.up) });
+            }
+            return out.toArray(new int[0][]);
+        } catch (Throwable t) { return new int[0][]; }
+    }
+
+    /** The name of the sunken island centred on (cx, cz). */
+    public static String deepName(Level level, int cx, int cz) {
+        if (!(level instanceof ServerLevel)) return "Sunken island";
+        try { return Worlds.of((ServerLevel) level).rules.deepName(cx, cz, stodd.core.gen.WorldRules.scriptSeed(((ServerLevel) level).getSeed())); }
+        catch (Throwable t) { return "Sunken island"; }
     }
 
     /** The height at or above which a player over a sky island is on it (0: this world has no sky islands). */

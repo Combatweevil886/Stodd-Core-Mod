@@ -1254,6 +1254,33 @@
      }
     ]
    }
+  },
+  "villagers": 0.4,
+  "golems": 0.04
+ },
+ "deep": {
+  "villages": 0.6,
+  "villageStyle": "city_primitive",
+  "villageRadius": 140
+ },
+ "waystones": {
+  "worldgen": true,
+  "styles": {
+   "one_piece": "waystones:sandy_waystone",
+   "jujutsu": "waystones:blackstone_waystone",
+   "cyberpunk": "waystones:deepslate_waystone",
+   "arcane": "waystones:waystone",
+   "wild": "waystones:mossy_waystone",
+   "city": "waystones:deepslate_waystone",
+   "sky": "waystones:waystone",
+   "city_future": "waystones:waystone",
+   "city_primitive": "waystones:sandy_waystone",
+   "ember": "waystones:blackstone_waystone",
+   "sakura": "waystones:waystone",
+   "ruins": "waystones:mossy_waystone",
+   "crystal": "waystones:deepslate_waystone",
+   "skull": "waystones:sandy_waystone",
+   "deep": "waystones:deepslate_waystone"
   }
  },
  "makeover": {
@@ -2622,6 +2649,12 @@
     "id": "sky",
     "name": "Nearest sky island",
     "kind": "sky",
+    "themes": []
+   },
+   {
+    "id": "sunken",
+    "name": "Nearest sunken island",
+    "kind": "deep",
     "themes": []
    }
   ]

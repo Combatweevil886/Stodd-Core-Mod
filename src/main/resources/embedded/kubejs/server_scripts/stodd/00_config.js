@@ -67,7 +67,10 @@ global.stodd.cfg = {
     depthBelow: 20,          // how far the dome reaches into the ground under the island (it drains the caves down there too)
     lighting: 8,             // an invisible light every this many blocks over the island, as daylight does not reach that deep (0 = none: dark, mobs spawn)
     bubbleLight: 7,          // light given off by the bubble itself, 0 to 15 (needs a game restart)
-    bubbleBreakable: false   // true: the bubble can be broken like glass (and the dome flooded); false: unbreakable (needs a game restart)
+    bubbleBreakable: false,  // true: the bubble can be broken like glass (and the dome flooded); false: unbreakable (needs a game restart)
+    villages: 0.6,           // share of sunken islands with a village round their middle (0 = none, 1 = all)
+    villageStyle: 'city_primitive',   // the city style its houses come from (city, city_future, city_primitive); only what fits under the roof is used
+    villageRadius: 140       // how far from the middle the village reaches
   },
 
   // ---------------------------------------------------------------- WORLD SPAWN (47_spawn.js)
@@ -79,7 +82,11 @@ global.stodd.cfg = {
   },
 
   // ---------------------------------------------------------------- ISLAND WAYSTONES (45_waystones.js)
+  // Every island, on the ground, in the sky or sunk under a dome, gets ONE waystone at its centre, generated with the world
+  // (named after the island, styled after its theme). The settings below are for the scripts, which only place stones on
+  // islands whose middle was generated before STODD Core 3.1 (or when `worldgen` is false).
   waystones: {
+    worldgen: true,          // true = the stone is generated with the island's middle chunk (every island, no exceptions)
     minPlayerDistance: 10,   // never build the stone closer than this to any player
     minSpawnDistance: 12,    // ...or to the world spawn point
     arrivalTicks: 400,       // wait this long after a player joins before the first island waystone is placed
@@ -93,7 +100,7 @@ global.stodd.cfg = {
       arcane: 'waystones:waystone', wild: 'waystones:mossy_waystone', city: 'waystones:deepslate_waystone', sky: 'waystones:waystone',
       city_future: 'waystones:waystone', city_primitive: 'waystones:sandy_waystone',
       ember: 'waystones:blackstone_waystone', sakura: 'waystones:waystone', ruins: 'waystones:mossy_waystone',
-      crystal: 'waystones:deepslate_waystone', skull: 'waystones:sandy_waystone'
+      crystal: 'waystones:deepslate_waystone', skull: 'waystones:sandy_waystone', deep: 'waystones:deepslate_waystone'
     }
   },
 
@@ -117,13 +124,14 @@ global.stodd.cfg = {
       { id: 'next',    name: 'Next island',      kind: 'next' },
       { id: 'nearest', name: 'Nearest island',   kind: 'any' },
       { id: 'city',    name: 'Nearest city',     kind: 'themes', themes: ['city', 'city_future', 'city_primitive'] },
-      { id: 'sky',     name: 'Nearest sky island', kind: 'sky' }
+      { id: 'sky',     name: 'Nearest sky island', kind: 'sky' },
+      { id: 'sunken',  name: 'Nearest sunken island', kind: 'deep' }
     ],
     recipe: ['minecraft:compass', 'minecraft:amethyst_shard', 'minecraft:glass_pane']
   },
 
   // ---------------------------------------------------------------- LOCATE (53_locate.js)
-  // /stodd locate <city|neocity|tribal|sky|ember|sakura|ruins|crystal|skull|island|<theme>> [list|tp]
+  // /stodd locate <city|neocity|tribal|sky|sunken|ember|sakura|ruins|crystal|skull|island|<theme>> [list|tp]
   // Finds the nearest matching island by reading the world's terrain function (nothing has to be explored first).
   // Meant for testing: set `everyone` to false to make it operator-only.
   locate: {
@@ -170,6 +178,8 @@ global.stodd.cfg = {
     // or a number (1.5 = one and a half times as often). The exact share of each kind is its `chance` under [islandThemes.<kind>].
     rarity: 'normal',
     scriptBuilder: false,       // true: the scripts also build cities on land generated before STODD Core 3 (the 2.3.0 way)
+    villagers: 0.4,             // villagers per 48 x 48 city block on average (some with a trade, some looking for a job), in sunken villages too
+    golems: 0.04,               // iron golems per city block on average
     minOriginDistance: 900,     // islands closer than this to 0,0 are never cities, so the first island you meet is an ordinary one
     cell: 48,                   // the templates are 48 x 48; do not change this unless you redraw the templates
     radius: 300,                // city blocks are built up to this far from the island's centre (the island's own coast cuts it earlier)

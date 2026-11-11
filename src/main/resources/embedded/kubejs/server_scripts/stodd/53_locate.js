@@ -3,7 +3,7 @@
 //
 //   /stodd locate city            nearest city island of any style (modern, Neo City, tribal)
 //   /stodd locate neocity         nearest Neo City (futuristic)        /stodd locate tribal      nearest tribal town
-//   /stodd locate sky             nearest floating sky island
+//   /stodd locate sky             nearest floating sky island     /stodd locate sunken      nearest sunken island (its bubble dome)
 //   /stodd locate ember|sakura|ruins|crystal|skull|onepiece|jujutsu|cyberpunk|arcane|wild
 //   /stodd locate island          nearest island of any kind
 //   /stodd locate <what> list     the nearest five          /stodd locate <what> tp    (operators) teleport there
@@ -28,6 +28,9 @@
   ;(S.activeThemes || C.islandThemes).forEach(t => { if (TARGETS[t.id] == null) TARGETS[t.id] = { label: t.name, themes: [t.id], sky: false } })
   TARGETS.island = { label: 'island', themes: null, sky: false }
   if (SKY_ON) TARGETS.sky = { label: 'sky island', themes: null, sky: true }
+  // sunken islands are found by the Java side (STODD Core 3.1, API 5)
+  let DEEP_ON = S.API != null && Number(S.API.version()) >= 5 && !(C.deepIslands && C.deepIslands.enabled === false)
+  if (DEEP_ON) { TARGETS.sunken = { label: 'sunken island', themes: null, deep: true }; TARGETS.deep = TARGETS.sunken }
   // drop targets whose themes are not active in this pack (their mods are missing or they are turned off)
   Object.keys(TARGETS).forEach(k => {
     let t = TARGETS[k]
@@ -69,14 +72,14 @@
     }
     let top = found.slice(0, job.want)
     top.forEach(it => {
-      let info = S.islandInfo(job.level, it.e)
-      let name = info.label
-      let msg = name + ' at ' + it.e.x + ', ' + it.e.z + (it.e.sky ? ' (y ~232)' : '') + '  -  ' + Math.round(it.d) + ' blocks ' + bearing(it.e.x - job.x, it.e.z - job.z)
+      let name = it.e.deep ? it.e.name : S.islandInfo(job.level, it.e).label
+      let where = it.e.deep ? ' (under the sea: its dome from y ' + it.e.floor + ' to ' + it.e.top + ')' : it.e.sky ? ' (up in the sky)' : ''
+      let msg = name + ' at ' + it.e.x + ', ' + it.e.z + where + '  -  ' + Math.round(it.d) + ' blocks ' + bearing(it.e.x - job.x, it.e.z - job.z)
       p.tell(Text.gold('[Locate] ').append(Text.white(msg)))
     })
     if (job.mode === 'tp') {
       let it = top[0]
-      let y = it.e.sky ? (L.tpHeight || 262) : (L.tpHeightGround || 200)
+      let y = it.e.deep ? it.e.top - 2 : it.e.sky ? (L.tpHeight || 262) : (L.tpHeightGround || 200)
       let n = p.username
       S.run(p.server, 'execute in minecraft:overworld run tp ' + n + ' ' + it.e.x + ' ' + y + ' ' + it.e.z)
       S.run(p.server, 'effect give ' + n + ' minecraft:slow_falling 90 0 true')
@@ -88,6 +91,18 @@
     let job = jobs.get(S.uuidOf(p))
     if (job == null) return
     let R = RADII[job.ri]
+    if (job.t.deep) {
+      let list = S.API.deepNear(job.level, Math.floor(job.x), Math.floor(job.z), R, CELLS)
+      if (list == null) return
+      let found = []
+      for (let k = 0; k < list.length; k++) {
+        let a = list[k], x = Number(a[0]), z = Number(a[1])
+        found.push({ e: { x: x, z: z, deep: true, floor: Number(a[3]), top: Number(a[4]), name: String(S.API.deepName(job.level, x, z)) }, d: Math.sqrt((x - job.x) * (x - job.x) + (z - job.z) * (z - job.z)) })
+      }
+      if (found.length >= job.want || job.ri >= RADII.length - 1) { finish(p, job, found); return }
+      job.ri++
+      return
+    }
     let res = S.islandsNear(job.level, job.x, job.z, R, job.t.sky ? 1 : CELLS, job.t.sky)
     if (!res.complete) return
     let found = res.list.filter(it => test(job.level, it.e, job.t))
@@ -118,7 +133,7 @@
     })
     // /stodd find city|sky kept as a short alias
     let find = Commands.literal('find').requires(src => L.everyone !== false || src.hasPermission(2))
-    ;['city', 'sky'].forEach(name => {
+    ;['city', 'sky', 'sunken'].forEach(name => {
       if (TARGETS[name] != null) find = find.then(Commands.literal(name).executes(ctx => S.locateStart(ctx.source.getPlayerOrException(), name, 'find')))
     })
     event.register(Commands.literal('stodd').then(loc).then(find))

@@ -49,6 +49,18 @@ public final class CellGroundPiece extends StructurePiece {
     final List<String[]> paint;
     // landmark footprint (fw = 0: none)
     final int fx, fz, fw, fd, my0, mClear, mTop, mFoundLo;   // template base, clear from, clear to, foundation floor
+    // a sunken island's dome over the cell (rr = 0: none): clearing always stops 2 blocks under its roof
+    double rcx, rcz, rr, rbase, rup;
+
+    /** Keeps the clearing under a dome's roof. */
+    CellGroundPiece underRoof(double cx, double cz, double r, double base, double up) { rcx = cx; rcz = cz; rr = r; rbase = base; rup = up; return this; }
+
+    int roofCap(int x, int z, int cap) {
+        if (rr <= 0) return cap;
+        double h = ((x - rcx) * (x - rcx) + (z - rcz) * (z - rcz)) / (rr * rr);
+        if (h >= 1) return Math.min(cap, (int) rbase - 2);
+        return Math.min(cap, (int) Math.floor(rbase + rup * Math.sqrt(1 - h)) - 2);
+    }
 
     CellGroundPiece(int mode, int x0, int z0, int size, int street, int height, int cutCap, int foundLo, int surfLo, int surfHi,
                     String foundation, String biome, int bioLo, int bioHi, List<String[]> paint,
@@ -72,6 +84,7 @@ public final class CellGroundPiece extends StructurePiece {
         paint = p;
         fx = tag.getInt("FX"); fz = tag.getInt("FZ"); fw = tag.getInt("FW"); fd = tag.getInt("FD");
         my0 = tag.getInt("MY0"); mClear = tag.getInt("MCl"); mTop = tag.getInt("MTop"); mFoundLo = tag.getInt("MFLo");
+        rcx = tag.getDouble("RCX"); rcz = tag.getDouble("RCZ"); rr = tag.getDouble("RR"); rbase = tag.getDouble("RBase"); rup = tag.getDouble("RUp");
     }
 
     @Override
@@ -85,6 +98,7 @@ public final class CellGroundPiece extends StructurePiece {
         tag.put("Paint", pl);
         tag.putInt("FX", fx); tag.putInt("FZ", fz); tag.putInt("FW", fw); tag.putInt("FD", fd);
         tag.putInt("MY0", my0); tag.putInt("MCl", mClear); tag.putInt("MTop", mTop); tag.putInt("MFLo", mFoundLo);
+        if (rr > 0) { tag.putDouble("RCX", rcx); tag.putDouble("RCZ", rcz); tag.putDouble("RR", rr); tag.putDouble("RBase", rbase); tag.putDouble("RUp", rup); }
     }
 
     @Override
@@ -99,7 +113,7 @@ public final class CellGroundPiece extends StructurePiece {
             int want = street + height + 1;
             for (int x = ax; x <= bx; x++) for (int z = az; z <= bz; z++) {
                 int top = level.getHeight(Heightmap.Types.WORLD_SURFACE, x, z) - 1;
-                int cut = Math.min(cutCap, Math.max(top, want));
+                int cut = roofCap(x, z, Math.min(cutCap, Math.max(top, want)));
                 for (int y = street + 1; y <= cut; y++) {
                     m.set(x, y, z);
                     if (!level.getBlockState(m).isAir()) level.setBlock(m, air, 2);

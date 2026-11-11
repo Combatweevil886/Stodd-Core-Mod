@@ -25,6 +25,7 @@ import java.util.Optional;
  * stodd:sky_block (kind "sky") - one cell of a lifted sky island: the odd ruin and, when the config asks for them, a fixed biome
  * and extra trees / flowers / boulders (by default a sky island keeps the biomes and plants it would have had on the ground).
  * stodd:deep_block (kind "deep") - one cell of a sunken island's bubble dome (CellDomePiece).
+ * stodd:waystone_block (kind "waystone") - the waystone of every island whose centre is in the cell (CellWaystonePiece).
  * All are generated with their chunks; IslePlanner decides the layout once per island.
  */
 public final class IsleStructure extends Structure {
@@ -51,6 +52,37 @@ public final class IsleStructure extends Structure {
         int mx = x0 + half, mz = z0 + half;
         int seed = WorldRules.scriptSeed(ctx.seed());
         Heights h = (x, z) -> ctx.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG, ctx.heightAccessor(), ctx.randomState());
+        if ("waystone".equals(kind)) {
+            // the waystone of every island whose centre is in this cell (ground, sky or sunken: no exceptions)
+            if (!rules.waystonesWorldgen) return Optional.empty();
+            SkyField f = tools.skyField;
+            IslandFinder all = f != null ? f.rawIslands() : tools.ground;
+            java.util.Map<String, IslandFinder.Island> found = new java.util.LinkedHashMap<>();
+            int L = IslandFinder.LATTICE;
+            for (int lx = Math.floorDiv(x0 - 64, L) * L; lx <= x0 + cell + 64; lx += L)
+                for (int lz = Math.floorDiv(z0 - 64, L) * L; lz <= z0 + cell + 64; lz += L) {
+                    if (!all.isLand(lx, lz)) continue;
+                    IslandFinder.Island i = all.islandAt(lx, lz);
+                    if (i != null && i.cx >= x0 && i.cx < x0 + cell && i.cz >= z0 && i.cz < z0 + cell) found.putIfAbsent(i.key(), i);
+                }
+            if (found.isEmpty()) return Optional.empty();
+            List<CellWaystonePiece> pieces = new ArrayList<>();
+            for (IslandFinder.Island i : found.values()) {
+                if (f != null && f.isLifted(i)) {
+                    pieces.add(new CellWaystonePiece(i.cx, i.cz, CellWaystonePiece.SKY, rules.waystoneStyles.getOrDefault("sky", "waystones:waystone"),
+                        rules.skyName(i.cx, i.cz, seed), 0, 0, 0, 0, 0, tools.skyMinY - 40, 319));
+                } else if (f != null && f.isSunk(i)) {
+                    SkyField.Dome d = f.domeOf(i);
+                    pieces.add(new CellWaystonePiece(i.cx, i.cz, CellWaystonePiece.DEEP, rules.waystoneStyles.getOrDefault("deep", "waystones:deepslate_waystone"),
+                        rules.deepName(i.cx, i.cz, seed), d.cx, d.cz, d.r, d.base, d.up, (int) (d.base - d.down) - 2, (int) (d.base + d.up) + 2));
+                } else {
+                    WorldRules.Theme th = rules.themeAt(i.cx, i.cz, seed);
+                    pieces.add(new CellWaystonePiece(i.cx, i.cz, CellWaystonePiece.GROUND, rules.waystoneStyles.getOrDefault(th.id, rules.waystoneStyles.getOrDefault("wild", "waystones:mossy_waystone")),
+                        rules.groundName(th, i.cx, i.cz, seed), 0, 0, 0, 0, 0, -60, tools.skyField != null ? 319 : tools.skyMinY));
+                }
+            }
+            return Optional.of(new GenerationStub(new BlockPos(mx, 64, mz), builder -> { for (CellWaystonePiece pc : pieces) builder.addPiece(pc); }));
+        }
         if ("deep".equals(kind)) {
             // a cell of a sunken island's bubble dome (any cell the dome reaches into, over land or sea)
             SkyField f = tools.skyField;
