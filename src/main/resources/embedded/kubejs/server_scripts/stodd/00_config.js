@@ -49,6 +49,14 @@ global.stodd.cfg = {
     extraPlants: 0           // extra trees / flowers / rocks per 48 x 48 cell, on top of the biome's own (the old sky-meadow dressing used 5)
   },
 
+  // ---------------------------------------------------------------- WORLD SPAWN (47_spawn.js)
+  // The map is mostly sea, so on a brand-new world the spawn point is moved to the nearest island, inland.
+  spawn: {
+    ringStep: 192,           // the search goes outwards from 0,0 in rings this far apart
+    maxRadius: 24000,        // ...up to this far
+    inland: 0.22             // how far inland the spawn must be (continentalness above the shore)
+  },
+
   // ---------------------------------------------------------------- ISLAND WAYSTONES (45_waystones.js)
   waystones: {
     minPlayerDistance: 10,   // never build the stone closer than this to any player
@@ -140,6 +148,7 @@ global.stodd.cfg = {
     // how often an island is a city (each of the three kinds):  none  very_rare (x0.25)  rare (x0.5)  normal  common (x1.75)  very_common (x2.5)
     // or a number (1.5 = one and a half times as often). The exact share of each kind is its `chance` under [islandThemes.<kind>].
     rarity: 'normal',
+    scriptBuilder: false,       // true: the scripts also build cities on land generated before STODD Core 3 (the 2.3.0 way)
     minOriginDistance: 900,     // islands closer than this to 0,0 are never cities, so the first island you meet is an ordinary one
     cell: 48,                   // the templates are 48 x 48; do not change this unless you redraw the templates
     radius: 300,                // city blocks are built up to this far from the island's centre (the island's own coast cuts it earlier)
@@ -187,6 +196,7 @@ global.stodd.cfg = {
     enabled: true,
     // how often an island is dressed (Ember, Sakura, Ruins, Crystal, Skull Cove): the same words or a number as city.rarity
     rarity: 'normal',
+    scriptBuilder: false,       // true: the scripts also dress islands on land generated before STODD Core 3 (the 2.3.0 way)
     cell: 48,
     radius: 330,                // dressed up to this far from the island's centre (the coast cuts it earlier)
     landMargin: 0.06,

@@ -363,6 +363,15 @@
     },
     {
      "t": "key",
+     "path": "city.scriptBuilder",
+     "key": "scriptBuilder",
+     "def": false,
+     "re": false,
+     "note": "true: the scripts also build cities on land generated before STODD Core 3 (the 2.3.0 way)",
+     "pre": []
+    },
+    {
+     "t": "key",
      "path": "city.minOriginDistance",
      "key": "minOriginDistance",
      "def": 900,
@@ -609,6 +618,15 @@
      "pre": [
       "how often an island is dressed (Ember, Sakura, Ruins, Crystal, Skull Cove): the same words or a number as city.rarity"
      ]
+    },
+    {
+     "t": "key",
+     "path": "makeover.scriptBuilder",
+     "key": "scriptBuilder",
+     "def": false,
+     "re": false,
+     "note": "true: the scripts also dress islands on land generated before STODD Core 3 (the 2.3.0 way)",
+     "pre": []
     },
     {
      "t": "key",
@@ -1992,6 +2010,41 @@
      ],
      "re": false,
      "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
+     "path": "spawn",
+     "pre": [
+      "---- WORLD SPAWN (47_spawn.js)",
+      "The map is mostly sea, so on a brand-new world the spawn point is moved to the nearest island, inland."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "spawn.ringStep",
+     "key": "ringStep",
+     "def": 192,
+     "re": false,
+     "note": "the search goes outwards from 0,0 in rings this far apart",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "spawn.maxRadius",
+     "key": "maxRadius",
+     "def": 24000,
+     "re": false,
+     "note": "...up to this far",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "spawn.inland",
+     "key": "inland",
+     "def": 0.22,
+     "re": false,
+     "note": "how far inland the spawn must be (continentalness above the shore)",
      "pre": []
     },
     {

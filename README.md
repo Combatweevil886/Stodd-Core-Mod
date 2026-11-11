@@ -1,39 +1,46 @@
-# STODD Core 3.0.0: the core mod of *mods 4 stodd (season 2)*, as a real Forge mod
+# STODD Core 3.1.0: the core mod of *mods 4 stodd (season 2)*, as a real Forge mod
 
-Forge 1.20.1 / Forge 47.4.20. **One jar, `mods/stodd_core-3.0.0.jar`.** Since 3.0 it is a **compiled Forge mod** (Java, built with ForgeGradle) and an **add-on to the pack's power-system mods**: True Prime Piece (Devil Fruits), Jujutsu Craft (Cursed Energy), Malum (dark magic), Project: Edgerunner (chrome) and Curios. It holds the **ten origins** and their rules, the **Survival Island world** (guaranteed on servers too), **city islands, dressed islands and sky-island dressing generated with the terrain like any structure**, the **Log Pose as a real item with its own needle**, and the levels, power caps, mastery, level links, waystones, ore tiers and Downgrade Template that run as KubeJS scripts the mod installs for you.
+Forge 1.20.1 / Forge 47.4.20. **One jar, `mods/stodd_core-3.1.0.jar`.** A **compiled Forge mod** (Java, built with ForgeGradle) and an **add-on to the pack's power-system mods**: True Prime Piece (Devil Fruits), Jujutsu Craft (Cursed Energy), Malum (dark magic), Project: Edgerunner (chrome) and Curios. It holds the **ten origins** and their rules, the **Survival Island world** (guaranteed on servers too) with **sky islands that are normal islands lifted into the sky**, **city islands and dressed islands generated with the terrain like any structure**, the **Log Pose as a real item with its own needle**, the levels, power caps, mastery, level links, waystones, ore tiers and Downgrade Template that run as KubeJS scripts the mod installs for you, and **every setting in `config/stodd/*.toml`** (section 0).
 
-## Getting the jar (read this first)
+## Getting the jar
 
-The mod is delivered as its **source project** (`STODD_Core_3.0.0_source.zip`), ready to build. **I could not build the jar myself**: this workspace can reach GitHub but not the Forge, Mojang or Maven servers that every Forge build needs (they refuse the connection here), and a 1.20.1 mod has to be compiled against Minecraft and renamed to Forge's runtime names by ForgeGradle. Three ways to get it, pick one:
+The mod is built on GitHub, in the repository **Combatweevil886/Stodd-Core-Mod**: every push compiles it against the real Minecraft 1.20.1 and Forge 47.4.20, runs all the tests, and puts the game-ready jar on the `dist` branch: **https://github.com/Combatweevil886/Stodd-Core-Mod/raw/dist/stodd_core-3.1.0.jar** (also attached to each run under Actions as the artifact `stodd_core`).
 
-1. **GitHub (no installs, about 10 minutes):** make a new repository on github.com (private is fine), upload the *contents* of the source zip (the folder with `build.gradle` in it) and commit. The included workflow (`.github/workflows/build.yml`) starts by itself: open the **Actions** tab, wait for the green tick, open the run and download the artifact **`stodd_core`**: it contains `stodd_core-3.0.0.jar`. (The first run takes longer: ForgeGradle downloads Minecraft and Forge.)
-2. **On your PC:** install a Java 17 JDK, unzip the source, and in that folder run `gradlew build` (Windows: `gradlew.bat build`). The jar is `build/libs/stodd_core-3.0.0.jar` (not the `-unobfuscated` one).
-3. **Let me do it:** connect GitHub to Claude (claude.ai settings, connectors) and tell me the repository. I can then push the project, run the build, fix anything the real compiler reports, and give you the finished jar.
-
-What was checked here instead: the whole mod was **compiled (with every warning as an error) against a model of every Minecraft and Forge class and method it uses**, and every one of those names was looked up in Forge's 1.20.1 source and patches or in the 1.20.1 source of The Aether and Twilight Forest, which use the same calls. The island, city, dressing, origin-rule and Log Pose logic has its own **81 tests in plain Java**, the scripts **873 mock-world tests**, and the assembled resources **388 checks** (section "Tests"). A name I got wrong would stop the build with a clear compiler message, not break a world; option 3 is the quickest way to clear that last step.
+To build it yourself instead: a Java 17 JDK, then `gradlew build` in the project folder; the game-ready jar is the `...-renamed.jar` in `build/libs` (rename it to `stodd_core-3.1.0.jar`). Not the `-unobfuscated` one: that one has development names and does not run in the game.
 
 ## How the mod is put together
 
 | Part | What it is |
 |---|---|
 | Java, `stodd.core.gen` | The logic, plain Java so it is tested on its own: which island a point is on and where its centre is, the theme rolls (identical to the scripts'), the city planner, the dressed-island and sky-island planner, the origin rules, the Log Pose |
-| Java, `stodd.core.mc` | The Minecraft side: the structure types `stodd_core:city_block` and `stodd_core:isle_block`, their pieces and the 48-block cell grid placement; the **island world pack**; the Log Pose item and needle; `/stodd core ...` and `/stodd logpose` |
+| Java, `stodd.core.mc` | The Minecraft side: the sky-island density function `stodd_core:sky`, the structure types `stodd_core:city_block` and `stodd_core:isle_block`, their pieces and the 48-block cell grid placement; the **island world pack**; the Log Pose item and needle; `/stodd core ...`, `/stodd logpose` and `/stodd config` |
+| Java, `stodd.core.config` | **The settings**: `config/stodd/*.toml`, read, checked and (re)written; handed to the scripts as one object (section 0) |
+| Java, `stodd.core.client` | The settings screen (Mods > STODD Core > Config) |
 | Java, `stodd.core.addon` | The **add-on to the power mods**: the origin gate on Forge's events, and live access to the other mods' player data (section 7) |
 | Java, `stodd.core.api` | What the KubeJS scripts call (`StoddApi`) |
 | Data (`data/`, `assets/`) | Everything an origin IS (the ten origins, Curios slots, health, cyberware capacity, the Apoli locks), the 9 biomes, the 126 city block templates and 55 landmark templates, the three cell structures, the Log Pose model and recipe, +15% Ancient Debris |
 | `packs/stodd_world` | The island world (overworld noise settings, the default world preset, climate and sky-island functions) as a built-in data pack that sits **above every mod** |
-| `embedded/` | The KubeJS scripts and configs; on start-up the mod copies them into `kubejs/` and `config/` exactly as 2.x did (scripts follow the jar, `00_config.js` and the configs survive your edits, `config/stodd_islands.properties` is yours) |
+| `embedded/` | The KubeJS scripts and the other mods' configs; on start-up the mod copies them into `kubejs/` and `config/` (scripts, `00_config.js` included, follow the jar; the other mods' configs survive your edits) |
+| `stodd_config/schema.json` | Every setting with its default and its explanation, made from `00_config.js` when the jar is built (`tools/gen_config.js`); the config files are written from it |
 
-* **All balance numbers are still in `kubejs/server_scripts/stodd/00_config.js`.** Edit and `/reload`; the world-generation part (cities, dressing, island themes) is handed to the Java side when the server starts, so those edits need a restart and only affect chunks generated afterwards.
+* **Every setting is in `config/stodd/*.toml`** (section 0). `00_config.js` only holds the defaults and their explanations now, and is replaced on every start.
 * **If KubeJS fails, the ten origins still appear with their health, slots, starter kit and locks** (data), the origin rules are still enforced (Java), and the cities, dressed islands and the Log Pose still work (Java). Levels, mastery and the waystones need the scripts.
 * **With an older jar the new scripts still work**: they look for the Java side and, without it, build the cities and drive the compass Log Pose themselves as in 2.3.0.
 
 ## Install
 
-* Put **`stodd_core-3.0.0.jar`** in `mods/`. **Delete every `stodd_compat-*.jar` and every older `stodd_core-*.jar`.** Start once, stop, start again (the first start installs the scripts; KubeJS and Survival Island read them on the next).
-* **Start a new world.** The cities, dressed islands and sky dressing are generated with new chunks, and the island terrain only applies to new chunks. **On a server, delete (or rename) the world folder** (`level-name` in `server.properties`) before the first start. In an existing world, land that was already generated keeps what it had; set `city.scriptBuilder = true` and `makeover.scriptBuilder = true` in `00_config.js` to let the scripts build on that old land the 2.3.0 way.
-* The overrides zip and full-pack zip of earlier versions are not needed any more: the jar installs everything. (`STODD_Core_3.0.0_scripts_and_configs.zip` carries the same scripts and configs as loose files, without a jar, if you prefer to copy them yourself; they also run on a 2.3.0 jar, without the Java parts.)
+* Put **`stodd_core-3.1.0.jar`** in `mods/`. **Delete every `stodd_compat-*.jar` and every older `stodd_core-*.jar`.** Start once, stop, start again (the first start installs the scripts; KubeJS and Survival Island read them on the next).
+* **Start a new world.** The cities, dressed islands and sky dressing are generated with new chunks, and the island terrain only applies to new chunks. **On a server, delete (or rename) the world folder** (`level-name` in `server.properties`) before the first start. In an existing world, land that was already generated keeps what it had; set `city.scriptBuilder = true` and `makeover.scriptBuilder = true` in `config/stodd/world.toml` to let the scripts build on that old land the 2.3.0 way.
+* The overrides zip and full-pack zip of earlier versions are not needed any more: the jar installs everything.
 * Same mods as before: Survival Island, Origins, Curios, KubeJS, Waystones, True Prime Piece, Jujutsu Craft, Malum, Project: Edgerunner.
+
+## What changed in 3.1.0
+
+* **Sky islands are normal islands, lifted into the sky** (section 4c). A share of the world's islands, on the normal island spacing, is generated up in the air instead of in the sea: the same outline, the same terrain (hills, cliffs, beaches round the rim), the same biomes with their trees, grass, flowers, animals and ores, with a rocky underside hanging below. Where the island would have stood there is a shallow sea. How many: `skyIslands.rarity` (none, very_rare, rare, normal, common, very_common, or an exact `chance`). The island at the world spawn always stays on the ground. The old fixed sky islands (flat meadows over the gaps between islands) are gone; `skyIslands.biome` and `extraPlants` bring their look back if you want it.
+* **Every setting in one place: `config/stodd/`** (section 0). `world.toml`, `origins.toml`, `progression.toml` and `general.toml` list all 420 settings of the mod with their explanations: the spawn islands and their spacing, the sky islands, city and dressed-island rarity, island themes and names, waystones, the Log Pose, the origins and their slots and rules, the power systems, levels, mastery, level links, boss scaling, ore tiers and the crash guards. Edit them in the file, with `/stodd config set`, or in the game under **Mods > STODD Core > Config**.
+* **Rarity for cities and dressed islands**: `city.rarity` and `makeover.rarity` (none, very_rare, rare, normal, common, very_common, or a number), on top of each kind's own `chance` under `[islandThemes.<kind>]`.
+* `config/stodd_islands.properties` moves into `[spawnIslands]` of `world.toml` by itself (the old file is renamed `...moved-to-stodd-world-toml`). Edits you made to `00_config.js` are kept as `00_config.js.stodd-old`; copy them into the new files.
+* **Upgrading from 3.0.0:** replace the jar and **start a new world** (the sky islands and the ground under them are generated differently).
 
 ## What changed in 3.0.0
 
@@ -88,6 +95,23 @@ What was checked here instead: the whole mod was **compiled (with every warning 
 * **Island theme chances.** Specials are rolled separately, so the weights of One Piece / Jujutsu / Night City / Arcane / Wild are unchanged: City 12.5%, Neo City 5%, Tribal Town 4%, and 4% for each of the five dressed themes, so about 41.5% of islands are special and about 58.5% are ordinary. None appears within 600 to 900 blocks of 0,0 (the first island you meet is ordinary).
 * **Upgrading an existing world:** every island the world had already recorded before 2.0.0 keeps the rule it had (no new special themes, and islands registered before 1.3.0 are never cities), so a base on one is safe. **Back the world up first anyway.** A new world is the cleanest way to get the full effect.
 
+## 0. Settings: `config/stodd/`
+
+STODD Core writes four files the first time it starts, each with every setting it controls and the explanation next to it:
+
+| File | What is in it | When a change applies |
+|---|---|---|
+| `world.toml` | `[spawnIslands]` (island size and spacing, presets), `[skyIslands]` (rarity, height, thickness, hills, biomes, landmarks), `[city]` and `[makeover]` (incl. `rarity`), `[islandThemes.<id>]` (each theme's weight / chance / where it may be), island names, the world spawn search, waystones, the Log Pose, `/stodd locate`, the world check | spawn islands: restart, then a new world; sky islands, cities, dressed islands, themes: worlds (chunks) generated afterwards; the rest after `/reload` |
+| `origins.toml` | the origin list and names, Curios slots per origin and per level, who may use which power system, cyberware capacity, how each system's items, blocks and NPCs are recognised, the Jujutsu starter purge | `/reload` |
+| `progression.toml` | levels and XP, per-origin growth and damage traits, the power cap, power mastery, level links, boss scaling, ore bonus and tiers | `/reload` |
+| `general.toml` | debug logging, crash guards | `/reload` |
+
+* **Editing.** Change a value and save; text goes in quotes (`rarity = "rare"`), regular expressions in single quotes (`'/^malum$/i'`), lists in brackets (`[500, 1000]`), small tables in braces (`{ min = -0.5, max = 0.9 }`). Delete a line, or the whole file, to get the default back. When a new version adds settings, STODD Core rewrites the file **keeping your values** (comments you wrote yourself are not kept).
+* **In the game** (operators): `/stodd config` (where the files are, what is changed, any problems), `/stodd config get <setting>`, `/stodd config find <word>`, `/stodd config set <setting> <value>` (plain words count as text: `/stodd config set skyIslands.rarity common`), `/stodd config reset <setting>`, `/stodd config reload` (reads the files and runs `/reload`). Setting names are suggested as you type.
+* **The settings screen**: Mods > STODD Core > Config. The four files as tabs, a search box, one field per setting (hover for its explanation and default), Save. It edits the files on that computer: in single player that is the game's config; a server keeps its own (use `/stodd config set` there).
+* **Mistakes never stop the game.** A value of the wrong kind falls back to the default; a file that cannot be read keeps all its settings at their defaults and is left as it is so you can fix it. Both are written to the log (`[STODD Core] config: ...`) and listed by `/stodd config`.
+* **Rarities.** `skyIslands.rarity`: the share of islands lifted into the sky, none 0, very_rare 5 %, rare 10 %, normal 18 %, common 30 %, very_common 45 % (or `skyIslands.chance` for an exact share). `city.rarity` and `makeover.rarity`: none, very_rare (x0.25), rare (x0.5), normal, common (x1.75), very_common (x2.5), or a number, multiplying each kind's `chance`; together the special themes never take more than 95 % of the islands (the proportions are kept).
+
 ## 1. Origins (the only ten on the selection screen)
 
 | Origin | Health | Combat | Curios slots | Cyber capacity | Powers |
@@ -126,7 +150,7 @@ Every origin keeps Haki. Slot totals run Weakling (1) < Cyberware 12 < Devil Fru
 * Starts with 7 hearts (14 HP), one ring slot, 100 chrome capacity and a power cap of 100.
 * Personal cap **level 35** (everyone else stops at 20). Levels 1 to 20 cost the same XP as everyone (48,398 total); levels 21 to 35 each cost 14% more than the last, 689,340 XP in total.
 * Health is quadratic: it starts far below a Human (74 HP vs 87 at L20) and ends far above (151 HP at L35). Damage: +22% at L20 and +69% at L35 on top of the normal +0.25 attack/level. Power cap 100 to 750.
-* Slots by level: L1 **1**, L5 **6**, L10 **9**, L15 **12**, L20 **16**, L25 **19**, L30 **22**, L35 **24** (`slotsByMilestone.weakling` in `00_config.js`).
+* Slots by level: L1 **1**, L5 **6**, L10 **9**, L15 **12**, L20 **16**, L25 **19**, L30 **22**, L35 **24** (`slotsByMilestone.weakling` in `config/stodd/origins.toml`).
 * A Weakling who changes to another origin drops to that origin's cap.
 
 **How it works.** Each origin is a set of Origins/Apoli powers inside the jar: `marker` (entity tag `stodd_o_<origin>`), attribute/damage powers, `slots` (`/curios set` for every slot on choosing the origin, login, respawn and once a minute), `cyber` (`/projectedgerunner cyberware capacity set`), `kit` (Cyberware User's Kiroshi Optics and Ripperdoc), `fists` / `iron_skin` / `poor_aim` (Brawler), `swift` (Skyborn), and the locks `no_fruit`, `no_sorcery`, `no_magic`, `no_magic_block`, `no_chrome`.
@@ -150,7 +174,7 @@ No item id of True Prime Piece could be read here, so none is hard-coded. `06_di
 | Cyberware tolerance | `<origin>/cyber` on choosing the origin and on respawn | re-sent on login, respawn and whenever the level changes it (every 10 s check) | as 2.x |
 | Curios slots | `<origin>/slots` sets the level-1 counts | the Weakling's slots follow its level (a new row every 5 levels) | as 2.x |
 
-The Java gate and the scripts use one table (`rules` in `00_config.js`, handed to Java at start-up) and the same item rules (`detect`, `sorcery*`, `ripperdoc*`), so they cannot disagree; creative players are never stopped; before an origin is chosen every power item is refused (as in 2.x). While the Java gate runs, the scripts' own event handlers stand down, so a refused player is told once.
+The Java gate and the scripts use one table (`rules` in `config/stodd/origins.toml`, handed to Java at start-up) and the same item rules (`detect`, `sorcery*`, `ripperdoc*`), so they cannot disagree; creative players are never stopped; before an origin is chosen every power item is refused (as in 2.x). While the Java gate runs, the scripts' own event handlers stand down, so a refused player is told once.
 
 Honest limits:
 * **A power that is not an item cannot be blocked at the item.** A fruit eaten from an NPC or granted by a command can only be caught by the sweep, and only with a working removal command (`/stodd addons scan` shows the real data names).
@@ -159,7 +183,7 @@ Honest limits:
 
 ## 1b. The Cursed Technique book and the Jujutsu starter kit
 
-Origins that cannot use Cursed Energy (every origin except the Sorcerer, and a Swordsman or Marksman on the fruit path) **lose any cursed-technique item the moment it enters their inventory**. Before an origin is chosen the book is left alone; a Sorcerer keeps it; a Swordsman or Marksman keeps it while their path is open. If one slips through, `/stodd itemid` prints its id; add it to `sorceryItems` in `00_config.js`.
+Origins that cannot use Cursed Energy (every origin except the Sorcerer, and a Swordsman or Marksman on the fruit path) **lose any cursed-technique item the moment it enters their inventory**. Before an origin is chosen the book is left alone; a Sorcerer keeps it; a Swordsman or Marksman keeps it while their path is open. If one slips through, `/stodd itemid` prints its id; add it to `sorceryItems` in `config/stodd/origins.toml`.
 
 **Starter kit purge (new in 2.0.0).** Jujutsu Craft hands every new player a random cursed technique and a kit of items. For every origin that may not use Cursed Energy, the scripts reset the technique and take back **every item from the Jujutsu mods** (`jujutsucraft`, `jjk_addon`, `sorceryfight`, `jujutsucrafts`), starting when the very first origin is chosen and for 5 minutes afterwards (`jjk.starterWindowTicks`) in case the mod hands things out late. Materials (`*_ore`, `*_ingot`, `*_planks` and similar, `jjk.keep`) are never taken, and the Sorcerer and the Brawler keep everything. After the 5 minutes only the Cursed Technique / selection book rule above applies, so something you earned later is not taken. Switch it off with `jjk.purgeStarter = false`. *Limit:* before the origin screen is answered nothing is removed (the script cannot know the origin yet), so the kit may sit in your inventory for the few seconds you spend choosing, and it goes the moment you choose.
 
@@ -193,7 +217,7 @@ The other things that scale with level already reach their full value at level 2
 | **Armament** (Busoshoku) | level 10 | hits from creatures hurt 4% / 8% / 12% less (from level 10); your melee blows add 0.1 / 0.2 / 0.3 x the target's armour (armour counted up to 20) |
 | **Conqueror's** (Haoshoku) | level 20 | every 2 seconds, hostile non-boss mobs within 10 blocks whose max health is at most half of yours get Weakness and Slowness for 4 seconds (up to 24 at a time) |
 
-**Opening things in the power mods** (`powerMastery.unlock`). A stage can grant advancements (found by name at run time), run commands (once) or raise a Jujutsu Craft variable (never lowers it). Defaults: Cursed Energy opens Simple Domain at Honed, Reverse Cursed Technique at Refined, Domain Expansion and Black Flash at Mastered; Devil Fruit opens awakening advancements at Mastered; Haki opens True Prime Piece's Ken / Buso / Hao advancements at Awakened / Honed / Mastered. **These ids are guesses**: the mods' advancement ids could not be read here. As an operator run **`/stodd mastery scan`**: it lists how many advancements each mod has, some of their ids, and for every pattern which advancement it hit or `NO MATCH`. Correct the patterns in `00_config.js` and `/reload`. A pattern that matches nothing simply opens nothing; the built-in Haki above always works.
+**Opening things in the power mods** (`powerMastery.unlock`). A stage can grant advancements (found by name at run time), run commands (once) or raise a Jujutsu Craft variable (never lowers it). Defaults: Cursed Energy opens Simple Domain at Honed, Reverse Cursed Technique at Refined, Domain Expansion and Black Flash at Mastered; Devil Fruit opens awakening advancements at Mastered; Haki opens True Prime Piece's Ken / Buso / Hao advancements at Awakened / Honed / Mastered. **These ids are guesses**: the mods' advancement ids could not be read here. As an operator run **`/stodd mastery scan`**: it lists how many advancements each mod has, some of their ids, and for every pattern which advancement it hit or `NO MATCH`. Correct the patterns in `config/stodd/progression.toml` (`[powerMastery.unlock...]`) and `/reload`. A pattern that matches nothing simply opens nothing; the built-in Haki above always works.
 
 **What it does not do.** It does not lock a mod's abilities below level 20 (nothing outside the mods' own data can do that reliably), and it does not touch True Prime Piece's own EXP or Haki EXP. The stat levels and the Jujutsu grade are tied to the level by the level links below. `/stodd mastery sync [player]` (operator) re-applies everything; logging in repeats the advancement grants, so a pattern fixed later reaches players who are already high.
 
@@ -221,7 +245,7 @@ The other things that scale with level already reach their full value at level 2
 2. **The Fame values for each grade (0 / 1,000 / 5,000 / 20,000 / 50,000) are placeholders.** Jujutsu Craft's real grade thresholds could not be read here. Until they are corrected the grade shown by this link may not match the grade the mod itself shows.
 3. Writing into True Prime Piece's data is done through the player's saved data; the **client's HUD may not show the new numbers until the next relog** (the server value is the real one). A mod that keeps its own copy and overwrites ours would show as a refused write (`/stodd link` reports it read-only).
 
-**How to correct it (about two minutes).** In the game, as an operator, run **`/stodd link scan`** and send me the output (or edit it yourself): it lists every capability that looks like True Prime Piece or Jujutsu Craft with the numbers inside it (`Stats/Agility = 12`) and the Jujutsu variables that look like progress. Then set `capKey` and the field patterns for `tppStats`, the `fields` for `jjcGrade` and the real Fame values in `levelLinks` in `kubejs/server_scripts/stodd/00_config.js`, and `/reload`. A mod that has no numbers to find stays unlinked and harmless. If the stats are not NBT at all (a command-based system), `writeCommands` (`{p}`, `{field}`, `{v}`) can set them instead.
+**How to correct it (about two minutes).** In the game, as an operator, run **`/stodd link scan`** and send me the output (or edit it yourself): it lists every capability that looks like True Prime Piece or Jujutsu Craft with the numbers inside it (`Stats/Agility = 12`) and the Jujutsu variables that look like progress. Then set `capKey` and the field patterns for `tppStats`, the `fields` for `jjcGrade` and the real Fame values in `levelLinks` in `config/stodd/progression.toml`, and `/reload`. A mod that has no numbers to find stays unlinked and harmless. If the stats are not NBT at all (a command-based system), `writeCommands` (`{p}`, `{field}`, `{v}`) can set them instead.
 
 **Commands.** `/stodd link` shows what is linked, where it was found and the value as a level. Operator: `/stodd link scan`, `/stodd link sync [player]` (retry a link that gave up), `/stodd link reset [player]` (re-declare stats and level equal from now on; use it after hand-editing a player's numbers).
 
@@ -233,14 +257,15 @@ The other things that scale with level already reach their full value at level 2
 ## 4. Island world: Survival Island
 
 * **What is used.** The *Survival Island* mod (Jasmine) adds a terrain function, `survivalisland:islandcont`, that turns the world into separate islands in open ocean. STODD Core swaps that function into the **overworld** (`minecraft:overworld` noise settings, with private copies of the terrain functions that read the continents: `stodd:overworld/*`) and makes it the **default world type** (see "What changed"). **The Survival Island mod must stay installed**: the data refers to its function type, and without it the world cannot be created.
-* **Island size and spacing: one file you edit, `config/stodd_islands.properties`.** Change one word, save, restart, make a **new world**:
+* **Island size and spacing: `[spawnIslands]` in `config/stodd/world.toml`.** Change one word, save, restart, make a **new world**:
 
-  ```properties
-  preset = default        # packed | snug | default | wide | remote | lonely | large | grand
-  # islandSize = 140        # fine control (remove the # to use it)
-  # islandSeparation = 680
+  ```toml
+  [spawnIslands]
+  preset = "default"      # packed | snug | default | wide | remote | lonely | large | grand
+  islandSize = 0          # fine control: 0 = from the preset
+  islandSeparation = 0
   ```
-  The loader copies the values into `config/survivalisland.json` every time the game or server starts, so **never edit `survivalisland.json` yourself** (it is overwritten; if it was hand-written it is saved as `survivalisland.json.stodd-old` the first time). The numbers below come from a Python port of Survival Island's own placement and falloff code (`IslandContinentalNoise`, run over 14 x 14 km maps, 3 seeds each, land = the terrain that stands above the sea including its beach). **They are estimates**: the mod's 28-block domain-warp noise is left out, so real islands wobble by some tens of blocks. The port reproduces the figures I gave you for the default earlier (island about 375 across, gaps about 310 to 960, median about 480).
+  STODD Core copies the values into `config/survivalisland.json` every time the game or server starts, so **never edit `survivalisland.json` yourself** (it is overwritten). The numbers below come from a Python port of Survival Island's own placement and falloff code (`IslandContinentalNoise`, run over 14 x 14 km maps, 3 seeds each, land = the terrain that stands above the sea including its beach). **They are estimates**: the mod's 28-block domain-warp noise is left out, so real islands wobble by some tens of blocks. Sky islands take some of these islands up with them (section 4c), so the sea between the islands that stay is a little wider.
 
 | Preset | islandSize | islandSeparation | Island across | Sea between coasts, typical (closest .. farthest) | Islands per 100 km2 |
 |---|---|---|---|---|---|
@@ -255,8 +280,8 @@ The other things that scale with level already reach their full value at level 2
 
   * `packed`: small islands close together; `snug`: normal islands, a bit closer; `default`: what STODD has shipped with so far (existing worlds use it); `wide` / `remote` / `lonely`: ever longer sails; `large` and `grand`: bigger islands (more room for towns and the city; `grand` is about 800 blocks across).
   * **`islandSize`** is the radius of an island's core (40 to 800); the island you walk on is about 2.6 times that across. **`islandSeparation`** is the smallest distance between two island *centres* (160 to 6000). Keep it at least **4 x islandSize**: at 3.2 x the simulation shows coasts nearly touching, and below 2.5 x the loader raises it and says so in the log.
-  * Advanced lines in the file: `underwaterFalloff` (how gently the sea floor slopes, 1 to 30, default 9) and `coastA.min / coastA.max / coastB.min / coastB.max` (the two continentalness ranges the generator blends; min below 0 and max above 0).
-  * **A typo never stops the game**: the log (`[STODD Core]`) names the line, says what it used instead, and the file still produces a valid `survivalisland.json`. The log also says `islands: preset 'wide' (islandSize 140.0, islandSeparation 900)` on every start, and `/stodd world` shows what is active.
+  * Advanced settings: `underwaterFalloff` (how gently the sea floor slopes, 1 to 30, default 9) and `coastA` / `coastB` (the two continentalness ranges the generator blends; min below 0 and max above 0).
+  * **A typo never stops the game**: the log (`[STODD Core]`) names the setting, says what it used instead, and the file still produces a valid `survivalisland.json`. The log also says `islands: preset 'wide' (islandSize 140.0, islandSeparation 900)` on every start, and `/stodd world` shows what is active.
   * **Changing the spacing needs a new world.** Chunks that already exist keep their islands, so changing the spacing in an old world gives seams where old and new terrain meet. The log warns about this each time the values change.
   * Cities, sky islands and themed islands adapt to whatever land they are given (a small island gets a smaller city); for the full-size city keep `islandSize` at 140 or more.
 * **Climate on every island.** Temperature and humidity are stepped per island (cold / temperate / warm / hot, arid to wet). **There is no frozen band**: no frozen oceans, ice sheets or icebergs. High peaks can still be snowy and a biome mod may add icy biomes.
@@ -281,7 +306,7 @@ The other things that scale with level already reach their full value at level 2
   * **Nearest sky island**: the nearest floating island, even from the ground.
 * **What you see.** Hold it: the bar above the hotbar shows an arrow relative to where you face, the island's name and kind, the distance, the mode, and a recording bar while you record. The tooltip names the mode and the target. A title and a chime mark each recorded island, and a message says "You have arrived".
 * **Record islands.** Stand near an island's middle (within 40 blocks) for **3 seconds**, or anywhere on it for **30 seconds**. "Next island" then skips it, so following the needle takes you from island to island and never back (tested: six hops, six different islands). The last 96 islands are remembered (saved with the player, kept through death); `/stodd logpose reset` forgets them.
-* **How it finds islands.** The map is cut into 512-block cells; each cell is looked at once (the terrain function, every 64 blocks) and the islands found are remembered for everyone, so a search spreads over a few seconds the first time an area is asked about and is instant afterwards. Reach: 800, 1,500, 3,000 and then 5,000 blocks. Settings: `logPose` in `00_config.js`.
+* **How it finds islands.** The map is cut into 512-block cells; each cell is looked at once (the terrain function, every 64 blocks) and the islands found are remembered for everyone, so a search spreads over a few seconds the first time an area is asked about and is instant afterwards. Reach: 800, 1,500, 3,000 and then 5,000 blocks. Settings: `[logPose]` in `config/stodd/world.toml`.
 * *Not tested in Minecraft:* the needle's look (the model uses vanilla's 32 compass pictures with a glass-and-amethyst overlay) and its feel. The direction maths is vanilla's and was tested on its own.
 
 ## 4b. City islands
@@ -298,22 +323,25 @@ Three styles, each rolled as its own theme, each built block by block around a p
 * **How it is generated (new in 3.0).** Each 48 x 48 block is a structure, `stodd:city_block` (structure set `stodd:city_blocks`): the world generator offers it the first chunk of every block on a fixed 48-block grid, it looks up the island (and whether that island is a city, and of which style) and the island's plan (street level, which design goes where, rotation), and adds two pieces, the ground work and the building. **Each chunk then builds its own part while it is being generated**, in the last step of decoration (after trees, so none stand on the roofs), and the block's biome is set in the same pass. Nothing is built afterwards, nothing waits for a player, and the server does no work for a city while you play.
 * **Every city island has its own layout**: the plaza design, the districts (downtown = inner third, outskirts = outer third) and the weights are the style's, but which design lands on which block and how it is turned now also depends on the island.
 * **Commands.** `/stodd city` (or `/stodd core island`) tells you which city you are on, how many blocks it has, its street level and which design you stand on. To find cities: `/stodd locate city` or the Log Pose in "Nearest city".
-* **Settings**: `city` in `00_config.js` (radius, street-level range, foundation depth, land margin, styles on/off), the template lists, weights and district multipliers in `01_content.js`. They reach the generator when the server starts; chunks generated before keep what they got.
+* **Settings**: `[city]` in `config/stodd/world.toml` (rarity, radius, street-level range, foundation depth, land margin) and each kind's `chance` under `[islandThemes.city]`, `[islandThemes.city_future]`, `[islandThemes.city_primitive]`; the template lists, weights and district multipliers are content in `01_content.js`. They reach the generator when the server starts; chunks generated before keep what they got.
 * **Honest limits.**
   * **New chunks only.** Land that was generated before 3.0 keeps its natural terrain; `city.scriptBuilder = true` brings the 2.3.0 command builder back for such worlds.
   * **It replaces the ground inside its blocks** (trees, ores, caves, villages): it is world generation, so there are no player builds to lose in a new world.
   * The buildings are **hollow shells** with a few loot chests and props, vanilla blocks only.
   * **Not tested in Minecraft**: the planner (plaza on the centre, every block on the grid and inside the radius, rotations filling their block exactly, downtown taller than the outskirts, the same city after a restart) is tested in plain Java; the structure code compiles against the models of the real classes, but nobody has walked through one yet. If a design's template were missing, its block is cleared and left empty (`/stodd core island` names the design).
 
-## 4c. Floating sky islands
+## 4c. Sky islands: normal islands, lifted
 
-* **What they are.** Islands of grass and stone that float in the air at about **y = 232 to 246**, with a tapering rocky underside down to about **y = 150**. They are made by the world generator itself (noises and density functions in the data part, combined with the ordinary terrain by `max(...)` in the overworld noise settings), so they generate in new chunks like any terrain.
-* **They float over open ocean now.** Their strength is multiplied by a gate that is zero over land and the coast and full strength a little way out to sea, so each one hangs in the gap between ground islands, where a ground island would otherwise be, and never above land. A simulation of the final generator gave about **33 sky islands per 10,000 x 10,000 blocks** (about half as many as ground islands), median **about 240 blocks across**, the largest 10% above about 550 and a few bigger. The scripts ignore anything under 48 blocks of radius.
-* **Dressed.** Each sky island gets the **Sky Meadow** biome, a random style (meadow, blossom, grove or pines: trees, flowers, tall grass, rocks scattered only well inside the island and away from its middle) and **one to a few landmarks** (a ruin, a shrine, an obelisk, a hut), each checked so the whole footprint plus a 3-block margin lies on the island and nothing hangs over the rim (section 4d).
-* **Finding them.** `/stodd locate sky`, or the Log Pose in "sky" mode (or in "next" mode above y=200).
-* **Getting up there.** Nothing in this pack lifts a player 150 blocks by default. Use your own flight, or `/stodd locate sky tp` (operator), which teleports you above the island with slow falling.
-* **Waystone and mobs.** Each sky island gets a plain waystone on its top the first time a player stands on it near its centre. Themed (anime-mod) mobs do not spawn there.
-* **Honest limits.** Surface features follow the heightmap, so trees and flowers can appear on a sky island and the ground underneath gets less vegetation. **Not tested in Minecraft**: the shape and coverage were tuned in a simulation of the density functions; if they turn out too rare, too big or too thick, tell me and send a screenshot (the numbers are in the `sky_*` density functions inside the jar).
+* **What they are.** Some of the world's islands are generated up in the sky instead of in the sea. A sky island is **the island that would have been there**: the same outline from the island noise, the same terrain (the world's own terrain functions, read with the island's continentalness and raised to `skyIslands.height`, 190 by default, give or take `heightVariation`), so it has beaches round the rim, hills, cliffs and sometimes a mountain, **and the same biomes**: plains, forests, taigas, deserts, jungles, cherry groves... chosen the way the ground's are, with their own grass, trees, flowers, animals and ores. Below hangs a rocky underside, deepest in the middle (`thickness`, more for big islands), ragged at the edge, with stalactite-like spikes (`spikes`). Where the island would have stood there is a **shallow sea**.
+* **How many.** `skyIslands.rarity` in `config/stodd/world.toml`: none, very_rare (5 % of the islands), rare (10 %), **normal (18 %)**, common (30 %), very_common (45 %), or an exact `skyIslands.chance`. Which islands is decided by the world seed and the island's position, so a world always lifts the same ones. The island at the world spawn, islands within `minSpawnDistance` (700) of 0,0 and islands smaller than `minRadius` always stay on the ground.
+* **Their spacing is the normal island spacing**: they take the place of normal islands, so `[spawnIslands]` sets their size and spacing too.
+* **Hills.** `relief` (0.85) is how tall the hills are compared with the same island on the ground; nothing goes above `maxHeight` (316). The terrain up there has no dry river beds cut across it (the river band of the terrain noise is moved aside for sky islands).
+* **Their look.** `biome = "natural"` keeps the island's own biomes. A biome id (for example `"stodd:sky_meadow"`) gives every sky island that biome instead; `extraPlants` adds trees, flowers and rocks per 48 x 48 cell on top of the biome's own (the old sky-meadow dressing used 5). `landmarks` and `landmarkDensity`: the odd ruin, shrine, obelisk or hut, each checked so its footprint plus a 3-block margin lies on the island.
+* **Finding them.** `/stodd locate sky`, or the Log Pose in "sky" mode (or in "next" mode once you are up at their height and not on a ground island). `/stodd core island` says "Sky island ... (a lifted island)" up there and "Open sea, under a sky island (look up)" below one.
+* **Getting up there.** Nothing in this pack lifts a player 130 blocks by default. Use your own flight, or `/stodd locate sky tp` (operator), which teleports you above the island with slow falling.
+* **Waystone and mobs.** Each sky island gets a plain waystone on its top the first time a player stands on it near its centre. Themed (anime-mod) mobs do not spawn there; the biome's own animals do.
+* **Changing the settings** applies to worlds created afterwards (new chunks of an old world would not match the old ones).
+* **Honest limits.** Not walked in Minecraft yet. A vanilla structure can generate on a sky island like on any island (a village on a big plains sky island may reach over the rim). The sea under a sky island has no kelp or seagrass (the game puts sea plants on the highest solid ground, which is the island). If something looks wrong, send me a screenshot and the `skyIslands` lines of your `world.toml`.
 
 ## 4d. Dressed island themes
 
@@ -327,9 +355,9 @@ Five themes that change a whole island, **generated with the island's chunks** (
 | **Crystal Isle** | Crystal (grass to calcite, leaves to azalea) | crystal heart, crystal garden | spires, geodes, pool, arch, crystal field, altar |
 | **Skull Cove** | Skull Cove (grass to coarse dirt, trees cleared) | bone fort, harbour | wreck, cave mouth, giant ribs, gallows, camp, totems, bone piles |
 
-Centrepieces are 47 x 47 and 19 to 43 blocks tall; scatter landmarks 15 to 37 wide and 8 to 26 tall. Each landmark stands on a 3-block ground base at the footprint's typical height, its footprint is cleared first and gaps underneath are filled with the theme's foundation, never more than 14 blocks down (no pillars into the sea). Settings: `makeover` in `00_config.js` (density, foundation depth, paint rules) and `01_content.js` (the lists). `/stodd isle` (or `/stodd core island`) names the island, its theme, its cells and landmarks.
+Centrepieces are 47 x 47 and 19 to 43 blocks tall; scatter landmarks 15 to 37 wide and 8 to 26 tall. Each landmark stands on a 3-block ground base at the footprint's typical height, its footprint is cleared first and gaps underneath are filled with the theme's foundation, never more than 14 blocks down (no pillars into the sea). Settings: `[makeover]` in `config/stodd/world.toml` (rarity, density, foundation depth, paint rules per theme) and `01_content.js` (the lists). `/stodd isle` (or `/stodd core island`) names the island, its theme, its cells and landmarks.
 
-**Sky islands** are dressed the same way (structure `stodd:sky_block`): the Sky Meadow biome, one of four styles (meadow, blossom, grove, pines) with trees, flowers and boulders well inside the island and away from its middle, and the odd ruin, shrine, obelisk or hut whose footprint plus 3 blocks lies wholly on the island.
+**Sky islands** keep their own biomes; the structure `stodd:sky_block` only adds the odd ruin, shrine, obelisk or hut whose footprint plus 3 blocks lies wholly on the island (and, if `skyIslands.biome` / `extraPlants` ask for it, a fixed biome and extra trees, flowers and boulders in one of four styles: meadow, blossom, grove, pines).
 
 *Limits:* new chunks only (`makeover.scriptBuilder = true` for land generated before 3.0); hollow templates of vanilla blocks; the planner is tested in plain Java (centrepiece in the middle, no two landmarks side by side, every footprint inside its cell, rotations exact, sky landmarks and trees on the island), the structure itself has not been seen in the game yet.
 
@@ -346,7 +374,7 @@ Centrepieces are 47 x 47 and 19 to 43 blocks tall; scatter landmarks 15 to 37 wi
 Run it as an operator (or read the same lines in `logs/latest.log` after start-up). The output looks like this (the numbers are an example):
 
 ```
-[STODD] Island layout: preset default, islandSize 140.0, islandSeparation 680 (from config/stodd_islands.properties).
+[STODD] Island layout: preset default, islandSize 140.0, islandSeparation 680 (from config/stodd/world.toml).
 [STODD] Overworld noise settings come from: mod:stodd_core  >  file/kubejs   (the last one wins)
 [STODD] ISLANDS: sampling 625 points over 3.2 km: 7.5% land, 9 separate landmasses, the biggest is 11 points (about 480 blocks across).
 ```
@@ -355,7 +383,7 @@ Run it as an operator (or read the same lines in `logs/latest.log` after start-u
 * **NOT ISLANDS** = new chunks will be an ordinary world. The line under it says what to try; the lines above it name the cause when it is one of the known ones: a leftover `stodd_compat` jar, Survival Island missing, or a third pack providing the noise settings.
 * The sampling answers for the server's *current* generator, so after fixing something restart and run it again; then delete the world folder so it is generated again.
 * If it says NOT ISLANDS and you cannot see why, send me this output and the `[STODD]` / `[STODD Core]` lines of `logs/latest.log`.
-* Settings (`world` in `00_config.js`): `logOnStart`, `gridHalf`, `gridStep`, `maxLandFraction`, `maxBlobCells`.
+* Settings (`[world]` in `config/stodd/world.toml`): `logOnStart`, `gridHalf`, `gridStep`, `maxLandFraction`, `maxBlobCells`.
 
 ## 5. Ore progression
 
@@ -382,7 +410,7 @@ STODD Core 3 is built as an add-on to the pack's power-system mods: it does not 
 | **Curios** | The Weakling's slots grow with its level; equipping a magic curio is refused to everyone but the Dark Magician. |
 | **Origins** (Fabric, via Sinytra Connector) | The ten STODD origins; the origin is read from the marker tag each origin's power sets, so nothing depends on Origins' Java classes. |
 
-**`/stodd addons scan [player]`** (operator) prints every piece of mod data on a player: each capability by name with the numbers inside it (`Stats/Agility = 12`), and which of them are MCreator variables. That is exactly what the level links (`levelLinks` in `00_config.js`) and the fruit sweep (`hold`) need to be set to the real names: run it once in the game and send me the output, or edit the patterns yourself.
+**`/stodd addons scan [player]`** (operator) prints every piece of mod data on a player: each capability by name with the numbers inside it (`Stats/Agility = 12`), and which of them are MCreator variables. That is exactly what the level links (`levelLinks` in `config/stodd/progression.toml`) and the fruit sweep (`hold`) need to be set to the real names: run it once in the game and send me the output, or edit the patterns yourself.
 
 *Honest limit:* none of these mods' data names could be read here (their jars are not reachable from this workspace). The Java side finds the data by looking (capabilities by name, MCreator variables by their sync method), never by a hard-coded class, so a wrong guess makes a link say NOT LINKED rather than break anything.
 
@@ -397,7 +425,7 @@ STODD Core 3 is built as an add-on to the pack's power-system mods: it does not 
 
 ## Known crash: Royal Variations Spectral Anvil
 
-The server crash `... provides no component of type apoli:powers` (`Ticking entity`) is **not caused by STODD**: Royal Variations' `SpectralAnvil` calls `Entity.isInWall()` every tick and Apoli's Connector mixin on that method assumes every entity has the `apoli:powers` component. `07_guards.js` removes every `royalvariations:spectral_anvil` as it is added to the world (also those saved in the world). More ids can be added to `blockedEntities` in `00_config.js`. The permanent fix is removing Royal Variations or updating Apoli / Sinytra Connector.
+The server crash `... provides no component of type apoli:powers` (`Ticking entity`) is **not caused by STODD**: Royal Variations' `SpectralAnvil` calls `Entity.isInWall()` every tick and Apoli's Connector mixin on that method assumes every entity has the `apoli:powers` component. `07_guards.js` removes every `royalvariations:spectral_anvil` as it is added to the world (also those saved in the world). More ids can be added to `blockedEntities` in `config/stodd/general.toml`. The permanent fix is removing Royal Variations or updating Apoli / Sinytra Connector.
 
 ## If the Origin screen does not appear
 
@@ -408,7 +436,7 @@ The server crash `... provides no component of type apoli:powers` (`Ticking enti
 
 ## Verify in your first test world
 
-1. **The log at start-up** shows `[STODD Core] 3.0.0 loaded`, `The STODD island world pack is enabled` and `ISLANDS: ...`. On a server run `/stodd core world` (operator). Then `/stodd addons`: every mod you have should say `[found]`.
+1. **The log at start-up** shows `[STODD Core] 3.1.0 loaded`, `settings: ...config/stodd`, `The STODD island world pack is enabled` and `ISLANDS: ...`. On a server run `/stodd core world` (operator). Then `/stodd addons`: every mod you have should say `[found]`.
 2. Create a world: the world type already shows **Survival Island (Default)**. The Origin screen shows only the ten origins. A Weakling starts with 14 HP and one ring slot; a Brawler has 45 HP and 4 hand slots; a Skyborn takes no fall damage. A non-Sorcerer has no Jujutsu items after a few seconds.
 3. As a Human, right-click a Devil Fruit: refused once, with one message. As a Dark Magician, a Malum altar and scythe work; anyone else is refused. A Sorcerer cannot use the Ripperdoc. As a Swordsman eat a fruit: the message says the other path is closed.
 4. **The Log Pose:** you start with one. The needle points; walk around and it keeps pointing at the same island. Right-click to cycle the modes. Stand in the middle of an island for 3 seconds: "Island recorded", and the needle moves on to the next island.

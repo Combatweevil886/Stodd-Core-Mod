@@ -24,13 +24,13 @@ jobs:
           node tools/gen_config.js
           python3 tools/gen_sky_world.py
           git diff --exit-code -- src/main/resources || (echo "run node tools/gen_config.js and python3 tools/gen_sky_world.py, then commit" && exit 1)
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build the mod (ForgeGradle downloads Minecraft and Forge 1.20.1 the first time)
+        run: ./gradlew build stoddTests --stacktrace
       - name: Script tests (KubeJS scripts against a mock world)
         run: |
           node tools/lint.js src/main/resources/embedded/kubejs/server_scripts/stodd src/main/resources/embedded/kubejs/startup_scripts/stodd_startup.js
           node tools/runall.js src/main/resources/embedded/kubejs/server_scripts/stodd
-      - uses: gradle/actions/setup-gradle@v4
-      - name: Build the mod (ForgeGradle downloads Minecraft and Forge 1.20.1 the first time)
-        run: ./gradlew build stoddTests --stacktrace
       - name: Collect the jar
         run: |
           mkdir dist

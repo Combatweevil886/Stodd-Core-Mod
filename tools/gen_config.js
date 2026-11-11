@@ -22,7 +22,7 @@ const FILES = [
     ],
     keys: ['spawnIslands', 'skyIslands', 'city', 'makeover', 'islandThemes', 'islandNames', 'islandSyllables', 'oceanTheme',
       'islandLandThreshold', 'islandPeakStep', 'islandMergeRadius', 'islandLinkRadius', 'islandScanStep', 'islandThemeCell',
-      'waystones', 'logPose', 'locate', 'world']
+      'spawn', 'waystones', 'logPose', 'locate', 'world']
   },
   {
     name: 'origins', title: 'origins and the power systems',
