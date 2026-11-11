@@ -29,7 +29,10 @@ jobs:
       - name: Collect the jar
         run: |
           mkdir dist
-          find build -name 'stodd_core-*.jar' ! -name '*-unobfuscated.jar' ! -name '*-sources.jar' -exec cp {} dist/ \;
+          ver=$(grep '^mod_version=' gradle.properties | cut -d= -f2)
+          # Renamer writes the game-ready (SRG) jar as ...-renamed.jar; that is the one for mods/
+          jar=$(find build -name 'stodd_core-*-renamed.jar' | head -n 1)
+          cp "$jar" "dist/stodd_core-$ver.jar"
           ls -l dist
           test -n "$(ls dist)"
       - uses: actions/upload-artifact@v4
