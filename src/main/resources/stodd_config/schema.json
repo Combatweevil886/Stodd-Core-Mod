@@ -299,6 +299,15 @@
     },
     {
      "t": "key",
+     "path": "skyIslands.beaches",
+     "key": "beaches",
+     "def": false,
+     "re": false,
+     "note": "true = sandy beach biomes round the rim like on the ground (they also bring beached shipwrecks and buried treasure up there); false = the rim is the island's inland biome",
+     "pre": []
+    },
+    {
+     "t": "key",
      "path": "skyIslands.landmarks",
      "key": "landmarks",
      "def": true,

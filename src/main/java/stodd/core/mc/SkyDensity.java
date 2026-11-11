@@ -85,7 +85,7 @@ public final class SkyDensity implements DensityFunction {
             case RELIEF: return f.relief();
             case BOTTOM: return f.bottom(x, z);
             case CEILING: return f.ceiling();
-            case CLIMATE_CONT: return f.skyClimate(x, c.blockY(), z) ? f.continents(x, z) : argument.compute(c);
+            case CLIMATE_CONT: return f.skyClimate(x, c.blockY(), z) ? f.climateContinents(x, z) : argument.compute(c);
             case CLIMATE_RIDGES: {
                 double w = argument.compute(c);
                 return f.skyClimate(x, c.blockY(), z) ? SkyField.pushRidges(w) : w;

@@ -34,11 +34,13 @@ public final class SkyField {
         public int maxHeight = 316;
         public double landThreshold = -0.19;
         public double centreContinents = 0.9;
+        /** false: no beach / stony-shore biome up there (sandy rims would invite beached shipwrecks and buried treasure) */
+        public boolean beaches = false;
         public int cell = 48, peakStep = 32;
 
         public String key() {
             return enabled + "|" + chance + "|" + minSpawnDistance + "|" + minRadius + "|" + height + "|" + heightVariation + "|" + thickness + "|"
-                + spikes + "|" + relief + "|" + maxHeight + "|" + landThreshold + "|" + centreContinents + "|" + cell + "|" + peakStep;
+                + spikes + "|" + relief + "|" + maxHeight + "|" + landThreshold + "|" + centreContinents + "|" + cell + "|" + peakStep + "|" + beaches;
         }
 
         /** the lowest a sky island's surface can be (the rim of the lowest island) */
@@ -51,13 +53,15 @@ public final class SkyField {
     /** One column. */
     public static final class Column {
         public final boolean sky;          // part of a lifted island
+        public final boolean fringe;       // open sea within a few dozen blocks of a lifted island's coast
         public final double raw;           // raw continentalness
         public final double t;             // 0 at the coast .. 1 in the middle (sky columns only)
         public final double level;         // the island's coast height (sky columns only)
         public final double bottom;        // lowest solid block of the island here (sky columns only; 1000 elsewhere)
         public final IslandFinder.Island island;
-        Column(boolean sky, double raw, double t, double level, double bottom, IslandFinder.Island island) {
-            this.sky = sky; this.raw = raw; this.t = t; this.level = level; this.bottom = bottom; this.island = island;
+        Column(boolean sky, double raw, double t, double level, double bottom, IslandFinder.Island island) { this(sky, false, raw, t, level, bottom, island); }
+        Column(boolean sky, boolean fringe, double raw, double t, double level, double bottom, IslandFinder.Island island) {
+            this.sky = sky; this.fringe = fringe; this.raw = raw; this.t = t; this.level = level; this.bottom = bottom; this.island = island;
         }
     }
 
@@ -160,7 +164,15 @@ public final class SkyField {
 
     private Column compute(int x, int z, double knownRaw) {
         double r = Double.isNaN(knownRaw) ? raw.at(x, z) : knownRaw;
-        if (!p.enabled || p.chance <= 0 || r < p.landThreshold) return new Column(false, r, 0, 0, 1000, null);
+        if (!p.enabled || p.chance <= 0) return new Column(false, r, 0, 0, 1000, null);
+        if (r < p.landThreshold) {
+            // the sea just off a lifted island's coast: its air up at the island's height must not count as ocean either, or a
+            // structure that looks for the highest ground in an ocean (a shipwreck) could land on the island's edge
+            if (r < p.landThreshold - FRINGE) return new Column(false, r, 0, 0, 1000, null);
+            IslandFinder.Island near = islandOfLand(x, z);
+            boolean f = near != null && isLifted(near);
+            return new Column(false, f, r, 0, 0, 1000, f ? near : null);
+        }
         IslandFinder.Island isl = islandOfLand(x, z);
         if (isl == null || !isLifted(isl)) return new Column(false, r, 0, 0, 1000, isl);
         double t = Math.max(1e-4, Math.min(1, (r - p.landThreshold) / (p.centreContinents - p.landThreshold)));
@@ -171,6 +183,10 @@ public final class SkyField {
         double bottom = level - 3 - thicknessOf(isl) * st * (0.8 + 0.25 * n1) - p.spikes * n2 * n2 * st;
         return new Column(true, r, t, level, bottom, isl);
     }
+
+    static final double FRINGE = 0.08;
+    /** the lowest continentalness of the near-inland band: above the coast (beach / stony shore) band of the biome table */
+    static final double INLAND = -0.10;
 
     private static double clamp(double v, double lo, double hi) { return v < lo ? lo : (v > hi ? hi : v); }
 
@@ -205,11 +221,21 @@ public final class SkyField {
         return s * (0.07 + a * (0.18 / 0.25));
     }
 
-    /** true when the climate at (x, y, z) is the sky island's: inside one, from a little under its underside up. */
+    /** true when the climate at (x, y, z) is the sky island's: inside one from a little under its underside up, and in the air just off its coast. */
     public boolean skyClimate(int x, int y, int z) {
         if (!p.enabled || y < p.lowestBottom() - 8) return false;
         Column c = column(x, z);
-        return c.sky && y >= c.bottom - 8;
+        return c.sky ? y >= c.bottom - 8 : c.fringe;
+    }
+
+    /**
+     * The continentalness the biomes up there are chosen with: the island's own; never an ocean, and (unless skyIslands.beaches)
+     * never the coast band, so a sky island has no ocean or beach biome for sea structures to look for.
+     */
+    public double climateContinents(int x, int z) {
+        Column c = column(x, z);
+        double v = c.sky ? c.raw : INLAND;
+        return p.beaches ? Math.max(v, p.landThreshold + 0.005) : Math.max(v, INLAND);
     }
 
     /** The sky island that covers column (x, z), or null. */

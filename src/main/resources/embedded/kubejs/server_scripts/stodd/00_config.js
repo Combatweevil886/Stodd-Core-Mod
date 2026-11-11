@@ -44,6 +44,7 @@ global.stodd.cfg = {
     minSpawnDistance: 700,   // islands whose middle is closer than this to 0,0 always stay on the ground
     minRadius: 40,           // smaller islands always stay on the ground
     biome: 'natural',        // natural = the biomes the island would have had on the ground; or one biome id for every sky island (e.g. 'stodd:sky_meadow')
+    beaches: false,          // true = sandy beach biomes round the rim like on the ground (they also bring beached shipwrecks and buried treasure up there); false = the rim is the island's inland biome
     landmarks: true,         // the odd sky ruin / shrine from the landmark lists
     landmarkDensity: 0.9,    // how many of them (1 = as many as a dressed island)
     extraPlants: 0           // extra trees / flowers / rocks per 48 x 48 cell, on top of the biome's own (the old sky-meadow dressing used 5)

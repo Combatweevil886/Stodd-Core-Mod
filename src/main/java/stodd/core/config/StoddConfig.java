@@ -538,6 +538,7 @@ public final class StoddConfig {
         p.maxHeight = (int) Math.round(clampNote("skyIslands.maxHeight", num("skyIslands.maxHeight", 316), p.height + 16, 319));
         p.minSpawnDistance = (int) Math.round(clampNote("skyIslands.minSpawnDistance", num("skyIslands.minSpawnDistance", 700), 0, 1_000_000));
         p.minRadius = (int) Math.round(clampNote("skyIslands.minRadius", num("skyIslands.minRadius", 40), 0, 4000));
+        p.beaches = bool("skyIslands.beaches", false);
         p.landThreshold = num("islandLandThreshold", -0.19);
         p.peakStep = Math.max(8, integer("islandPeakStep", 32));
         p.cell = Math.max(16, integer("city.cell", 48));

@@ -297,6 +297,32 @@ public final class GenTest3 {
         double bot = f.bottom(cx, cz);
         ok(f.skyClimate(cx, (int) bot + 2, cz) && f.skyClimate(cx, 300, cz) && !f.skyClimate(cx, 64, cz), "the island's climate from just under its underside up, not at sea level");
         ok(bot >= p.lowestBottom(), "the underside never below lowestBottom: " + bot + " >= " + p.lowestBottom());
+
+        section("sky islands: no ocean or beach biome up there (nothing for shipwrecks and buried treasure to look for)");
+        // walk out from the middle of a lifted island to the open sea
+        double coastC = 99, fringeC = 99;
+        boolean fringeSky = false, fringeLow = true, seaFar = true;
+        for (int d = 0; d < 400; d += 2) {
+            int x = cx + d, z = cz;
+            double r = raw.at(x, z);
+            if (f.mask(x, z) > 0 && r < p.landThreshold + 0.03) coastC = Math.min(coastC, f.climateContinents(x, z));
+            if (f.mask(x, z) < 0 && r >= p.landThreshold - 0.07 && r < p.landThreshold) {
+                fringeC = Math.min(fringeC, f.climateContinents(x, z));
+                if (f.skyClimate(x, 250, z)) fringeSky = true;
+                if (f.skyClimate(x, 64, z)) fringeLow = false;
+            }
+            if (r < p.landThreshold - 0.2 && f.skyClimate(x, 250, z)) seaFar = false;
+        }
+        ok(coastC >= -0.10 - 1e-12, "the rim of a sky island is an inland biome, not a beach: " + coastC);
+        ok(fringeSky && fringeC >= -0.10 - 1e-12, "the air just off its coast is land climate too: " + fringeC);
+        ok(fringeLow, "...but not down at the sea, where the sea stays sea");
+        ok(seaFar, "open sea far from any sky island keeps its ocean climate up high");
+        SkyField.Params pb = new SkyField.Params();
+        pb.chance = 0.4; pb.minSpawnDistance = 300; pb.beaches = true;
+        SkyField fb = new SkyField(12345L, pb, raw, (x, z) -> Math.sin(x * 0.05) * Math.cos(z * 0.05));
+        double beachC = 99;
+        for (int d = 0; d < 400; d += 2) if (fb.mask(cx + d, cz) > 0 && raw.at(cx + d, cz) < pb.landThreshold + 0.03) beachC = Math.min(beachC, fb.climateContinents(cx + d, cz));
+        ok(beachC < -0.11 && beachC >= pb.landThreshold, "skyIslands.beaches = true: a beach round the rim, still never ocean: " + beachC);
         SkyField f2 = new SkyField(12345L, p, raw, (x, z) -> Math.sin(x * 0.05) * Math.cos(z * 0.05));
         boolean det = true;
         for (int k = 0; k < 300; k++) {
