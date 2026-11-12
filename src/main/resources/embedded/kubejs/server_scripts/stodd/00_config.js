@@ -592,6 +592,21 @@ global.stodd.cfg = {
         mode: 'linear', perLevel: 1, combine: 'min',
         writeCommands: []       // optional: commands run instead of mergeNbt, {p} = player, {field} = index, {v} = new value
       },
+      tppMastery: {
+        // Every number True Prime Piece keeps with "mastery" in its name (the Devil Fruit's mastery, and any other) grows with
+        // the STODD level: at least (level - 1) / (top level - 1) of its maximum, so at your origin's top level it is at its
+        // maximum. One way only: it never lowers a mastery you earned, and mastery never moves your level.
+        name: 'True Prime Piece mastery',
+        who: 'all', type: 'nbt',
+        capKey: /(true_?prime|prime_?piece|tpp)/i,
+        allMatches: true,
+        fields: [/mastery/i],
+        exclude: /max/i,        // "MaxMastery" and the like are the maximum, not a mastery
+        fieldWho: [ { match: /(fruit|devil|(^|_)df|nomi)/i, who: 'fruit' } ],   // a fruit's mastery only for origins that may eat one
+        mode: 'scale',
+        max: 100,               // the maximum when the mod keeps none next to the number; /stodd link scan shows what it keeps
+        writeCommands: []
+      },
       jjcGrade: {
         name: 'Jujutsu grade',
         who: 'sorcery', type: 'jjc',

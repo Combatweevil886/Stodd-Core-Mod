@@ -5317,6 +5317,121 @@
     },
     {
      "t": "table",
+     "path": "levelLinks.links.tppMastery",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.tppMastery.name",
+     "key": "name",
+     "def": "True Prime Piece mastery",
+     "re": false,
+     "note": "",
+     "pre": [
+      "Every number True Prime Piece keeps with \"mastery\" in its name (the Devil Fruit's mastery, and any other) grows with",
+      "the STODD level: at least (level - 1) / (top level - 1) of its maximum, so at your origin's top level it is at its",
+      "maximum. One way only: it never lowers a mastery you earned, and mastery never moves your level."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.tppMastery.who",
+     "key": "who",
+     "def": "all",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.tppMastery.type",
+     "key": "type",
+     "def": "nbt",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.tppMastery.capKey",
+     "key": "capKey",
+     "def": "/(true_?prime|prime_?piece|tpp)/i",
+     "re": true,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.tppMastery.allMatches",
+     "key": "allMatches",
+     "def": true,
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.tppMastery.fields",
+     "key": "fields",
+     "def": [
+      "/mastery/i"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.tppMastery.exclude",
+     "key": "exclude",
+     "def": "/max/i",
+     "re": true,
+     "note": "\"MaxMastery\" and the like are the maximum, not a mastery",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.tppMastery.fieldWho",
+     "key": "fieldWho",
+     "def": [
+      {
+       "match": "/(fruit|devil|(^|_)df|nomi)/i",
+       "who": "fruit"
+      }
+     ],
+     "re": false,
+     "note": "a fruit's mastery only for origins that may eat one",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.tppMastery.mode",
+     "key": "mode",
+     "def": "scale",
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.tppMastery.max",
+     "key": "max",
+     "def": 100,
+     "re": false,
+     "note": "the maximum when the mod keeps none next to the number; /stodd link scan shows what it keeps",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "levelLinks.links.tppMastery.writeCommands",
+     "key": "writeCommands",
+     "def": [],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "table",
      "path": "levelLinks.links.jjcGrade",
      "pre": []
     },

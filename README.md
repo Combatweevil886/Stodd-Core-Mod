@@ -1,12 +1,12 @@
-# STODD Core 3.2.0: the core mod of *mods 4 stodd (season 2)*, as a real Forge mod
+# STODD Core 3.2.1: the core mod of *mods 4 stodd (season 2)*, as a real Forge mod
 
-Forge 1.20.1 / Forge 47.4.20. **One jar, `mods/stodd_core-3.2.0.jar`.** A **compiled Forge mod** (Java, built with ForgeGradle) and an **add-on to the pack's power-system mods**: True Prime Piece (Devil Fruits), Jujutsu Craft (Cursed Energy), Malum (dark magic), Project: Edgerunner (chrome) and Curios. It holds the **ten origins** and their rules, the **Survival Island world** (guaranteed on servers too) with **sky islands that are normal islands lifted into the sky**, **city islands and dressed islands generated with the terrain like any structure**, the **Log Pose as a real item with its own needle**, the levels, power caps, mastery, level links, waystones, ore tiers and Downgrade Template that run as KubeJS scripts the mod installs for you, and **every setting in `config/stodd/*.toml`** (section 0).
+Forge 1.20.1 / Forge 47.4.20. **One jar, `mods/stodd_core-3.2.1.jar`.** A **compiled Forge mod** (Java, built with ForgeGradle) and an **add-on to the pack's power-system mods**: True Prime Piece (Devil Fruits), Jujutsu Craft (Cursed Energy), Malum (dark magic), Project: Edgerunner (chrome) and Curios. It holds the **ten origins** and their rules, the **Survival Island world** (guaranteed on servers too) with **sky islands that are normal islands lifted into the sky**, **city islands and dressed islands generated with the terrain like any structure**, the **Log Pose as a real item with its own needle**, the levels, power caps, mastery, level links, waystones, ore tiers and Downgrade Template that run as KubeJS scripts the mod installs for you, and **every setting in `config/stodd/*.toml`** (section 0).
 
 ## Getting the jar
 
-The mod is built on GitHub, in the repository **Combatweevil886/Stodd-Core-Mod**: every push compiles it against the real Minecraft 1.20.1 and Forge 47.4.20, runs all the tests, and puts the game-ready jar on the `dist` branch: **https://github.com/Combatweevil886/Stodd-Core-Mod/raw/dist/stodd_core-3.2.0.jar** (also attached to each run under Actions as the artifact `stodd_core`).
+The mod is built on GitHub, in the repository **Combatweevil886/Stodd-Core-Mod**: every push compiles it against the real Minecraft 1.20.1 and Forge 47.4.20, runs all the tests, and puts the game-ready jar on the `dist` branch: **https://github.com/Combatweevil886/Stodd-Core-Mod/raw/dist/stodd_core-3.2.1.jar** (also attached to each run under Actions as the artifact `stodd_core`).
 
-To build it yourself instead: a Java 17 JDK, then `gradlew build` in the project folder; the game-ready jar is the `...-renamed.jar` in `build/libs` (rename it to `stodd_core-3.2.0.jar`). Not the `-unobfuscated` one: that one has development names and does not run in the game.
+To build it yourself instead: a Java 17 JDK, then `gradlew build` in the project folder; the game-ready jar is the `...-renamed.jar` in `build/libs` (rename it to `stodd_core-3.2.1.jar`). Not the `-unobfuscated` one: that one has development names and does not run in the game.
 
 ## How the mod is put together
 
@@ -29,10 +29,14 @@ To build it yourself instead: a Java 17 JDK, then `gradlew build` in the project
 
 ## Install
 
-* Put **`stodd_core-3.2.0.jar`** in `mods/`. **Delete every `stodd_compat-*.jar` and every older `stodd_core-*.jar`.** Start once, stop, start again (the first start installs the scripts; KubeJS and Survival Island read them on the next).
+* Put **`stodd_core-3.2.1.jar`** in `mods/`. **Delete every `stodd_compat-*.jar` and every older `stodd_core-*.jar`.** Start once, stop, start again (the first start installs the scripts; KubeJS and Survival Island read them on the next).
 * **Start a new world.** The cities, dressed islands and sky dressing are generated with new chunks, and the island terrain only applies to new chunks. **On a server, delete (or rename) the world folder** (`level-name` in `server.properties`) before the first start. In an existing world, land that was already generated keeps what it had; set `city.scriptBuilder = true` and `makeover.scriptBuilder = true` in `config/stodd/world.toml` to let the scripts build on that old land the 2.3.0 way.
 * The overrides zip and full-pack zip of earlier versions are not needed any more: the jar installs everything.
 * Same mods as before: Survival Island, Origins, Curios, KubeJS, Waystones, True Prime Piece, Jujutsu Craft, Malum, Project: Edgerunner.
+
+## What changed in 3.2.1
+
+* **A player at the top level has every mastery at its maximum** (section 2b): a new level link raises True Prime Piece's mastery numbers (the Devil Fruit's mastery and any other with "mastery" in the name) with your level, to the maximum at your origin's top level. It never lowers a mastery and never moves your level. **The name of True Prime Piece's mastery number is a guess**: if it still shows 0, `/stodd link scan` shows the real names (section 2b).
 
 ## What changed in 3.2.0
 
@@ -243,14 +247,15 @@ The other things that scale with level already reach their full value at level 2
 
 **Commands.** `/stodd mastery` (yours), `/stodd mastery scan` and `/stodd mastery sync [player]` (operator).
 
-## 2b. Level links: stats and grade in step with the level (new in 2.2.0)
+## 2b. Level links: stats, grade and mastery in step with the level (new in 2.2.0)
 
-**What it does.** Two things in the other mods are tied to the STODD level, and each follows the other:
+**What it does.** Three things in the other mods are tied to the STODD level. The stats and the grade follow the level and the level follows them; the mastery follows the level:
 
 | Link | Moves with the STODD level like this |
 |---|---|
 | **True Prime Piece stats** (Agility, Strength, Health, Toughness) | every STODD level is worth **+1 of each stat** (`perLevel`). Level up and all four stats are lifted by one; raise **all four** yourself and your STODD level rises by the same amount |
 | **Jujutsu Craft grade** (its Fame, for origins that hold Cursed Energy: Sorcerer, Brawler, and a Swordsman or Marksman who chose it) | level 1 = **Grade 4**, level 5 = **Grade 3**, level 10 = **Grade 2**, level 15 = **Grade 1**, level 20 = **Special Grade**. Earn the Fame for a higher grade and your level rises to that grade's level; level up and your Fame is lifted to the grade's minimum |
+| **True Prime Piece mastery** (new in 3.2.1: every number in its data with "mastery" in the name, the Devil Fruit's mastery first of all) | **at your origin's top level every mastery is at its maximum** (level 20; Weakling 35). On the way up each one is at least (level - 1) / (top level - 1) of its maximum, so about half at level 10. The maximum is the one True Prime Piece keeps next to the number (a "...Max" number) or else `max` (100). One way only: a mastery you earned yourself above that is kept, lowering your level never lowers it, and mastery never changes your level. A fruit's mastery is only raised for origins that may eat a fruit |
 
 **The rules.**
 * **Nothing is ever lowered by a link.** If your stats or Fame are already above what your level asks for, they are left alone. The STODD level is only raised by the mod side, never lowered, and an operator lowering your level (`/stodd setlevel`) does not lower the mod values and does not get dragged back up by them.
@@ -261,7 +266,7 @@ The other things that scale with level already reach their full value at level 2
 * **It tells you** with a short `[Link]` message when it raises something; set `levelLinks.announce = false` to silence it.
 
 **Please read: this part is based on guesses.** I could not read True Prime Piece's or Jujutsu Craft's files here, so:
-1. The script **looks for the numbers by name** inside the player data: a capability whose name matches `tpp` / `true_prime` / `prime_piece` holding numbers called Agility / Strength / Health (or Vitality) / Toughness, and a Jujutsu Craft variable called `PlayerFame`. If the real names differ, the link says **NOT LINKED** in `/stodd link` (with the reason) and does nothing; it never writes to something it did not find.
+1. The script **looks for the numbers by name** inside the player data: a capability whose name matches `tpp` / `true_prime` / `prime_piece` holding numbers called Agility / Strength / Health (or Vitality) / Toughness, numbers with "mastery" in the name, and a Jujutsu Craft variable called `PlayerFame`. **If your fruit mastery still shows 0 at the top level**, True Prime Piece keeps it under another name, or its maximum is not 100: run `/stodd link` (it says what the mastery link found, or NOT LINKED and why) and `/stodd link scan` (every number in the mod's data), and correct `fields` / `max` under `[levelLinks.links.tppMastery]` in `progression.toml`. If the real names differ, the link says **NOT LINKED** in `/stodd link` (with the reason) and does nothing; it never writes to something it did not find.
 2. **The Fame values for each grade (0 / 1,000 / 5,000 / 20,000 / 50,000) are placeholders.** Jujutsu Craft's real grade thresholds could not be read here. Until they are corrected the grade shown by this link may not match the grade the mod itself shows.
 3. Writing into True Prime Piece's data is done through the player's saved data; the **client's HUD may not show the new numbers until the next relog** (the server value is the real one). A mod that keeps its own copy and overwrites ours would show as a refused write (`/stodd link` reports it read-only).
 
@@ -483,7 +488,7 @@ The server crash `... provides no component of type apoli:powers` (`Ticking enti
 
 ## Verify in your first test world
 
-1. **The log at start-up** shows `[STODD Core] 3.2.0 loaded`, `settings: ...config/stodd`, `The STODD island world pack is enabled` and `ISLANDS: ...`. On a server run `/stodd core world` (operator). Then `/stodd addons`: every mod you have should say `[found]`.
+1. **The log at start-up** shows `[STODD Core] 3.2.1 loaded`, `settings: ...config/stodd`, `The STODD island world pack is enabled` and `ISLANDS: ...`. On a server run `/stodd core world` (operator). Then `/stodd addons`: every mod you have should say `[found]`.
 2. Create a world: the world type already shows **Survival Island (Default)**. The Origin screen shows only the ten origins. A Weakling starts with 14 HP and one ring slot; a Brawler has 45 HP and 4 hand slots; a Skyborn takes no fall damage. A non-Sorcerer has no Jujutsu items after a few seconds.
 3. As a Human, right-click a Devil Fruit: refused once, with one message. As a Dark Magician, a Malum altar and scythe work; anyone else is refused. A Sorcerer cannot use the Ripperdoc. As a Swordsman eat a fruit: the message says the other path is closed.
 4. **The Log Pose:** you start with one. The needle points; walk around and it keeps pointing at the same island. Right-click to cycle the modes. Stand in the middle of an island for 3 seconds: "Island recorded", and the needle moves on to the next island.

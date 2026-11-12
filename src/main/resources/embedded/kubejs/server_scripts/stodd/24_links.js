@@ -2,6 +2,8 @@
 // LEVEL LINKS: the STODD level and the other mods' own progression climb in tandem, in both directions.
 //   True Prime Piece stat levels   <->   STODD level      (linear: each STODD level is worth perLevel of every stat)
 //   Jujutsu Craft Fame (the grade) <->   STODD level      (table: Grade 4 / 3 / 2 / 1 / Special at levels 1 / 5 / 10 / 15 / 20)
+//   True Prime Piece mastery        <-    STODD level      (scale: every number named like "mastery" grows with the level and is
+//                                                           at its maximum at the origin's top level; mastery never lowers the level)
 // Rules, whatever the link: nothing is ever lowered by the other side, a link counts only what it did not write itself, a value
 // the mod clamps is respected, three failed writes in a row make a link read-only, and a link that cannot find its fields says so
 // (/stodd link) instead of guessing. See cfg.levelLinks in 00_config.js.
@@ -46,6 +48,31 @@
     }
     return null
   }
+  // Every numeric tag (at most 4 compounds deep) whose name matches one of res and not ex; returns their key paths
+  function findAll(c, res, ex, prefix, out, depth) {
+    let ks = keysOf(c)
+    for (let i = 0; i < ks.length && out.length < 64; i++) {
+      let k = String(ks[i]), t = c.get(k)
+      if (isNum(t)) { if (res.some(re => re.test(k)) && !(ex && ex.test(k))) out.push(prefix.concat([k])) }
+      else if (isCompound(t) && depth < 4) findAll(c.getCompound(k), res, ex, prefix.concat([k]), out, depth + 1)
+    }
+    return out
+  }
+  // The maximum the mod keeps next to a number: a sibling named like it with "max" in it ("FruitMasteryMax", "MaxMastery" ...)
+  function norm(k) { return String(k).toLowerCase().replace(/[^a-z0-9]/g, '') }
+  function maxPathOf(root, path) {
+    let parent = root
+    for (let i = 0; i < path.length - 1; i++) parent = parent.getCompound(path[i])
+    let name = norm(path[path.length - 1]), ks = keysOf(parent), loose = null
+    for (let i = 0; i < ks.length; i++) {
+      let k = String(ks[i])
+      if (!/max/i.test(k) || !isNum(parent.get(k))) continue
+      let rest = norm(k).replace(/max(imum)?/g, '')
+      if (rest === name) return path.slice(0, path.length - 1).concat([k])
+      if (loose == null && rest !== '' && name.indexOf(rest) >= 0) loose = path.slice(0, path.length - 1).concat([k])
+    }
+    return loose
+  }
   function walk(c, path) {
     let cur = c
     for (let i = 0; i < path.length - 1; i++) cur = cur.getCompound(path[i])
@@ -86,15 +113,24 @@
           if (!L.capKey.test(key)) continue
           keyFound = true
           let root = caps.getCompound(key)
-          let paths = L.fields.map(re => findLeaf(root, re, 0))
+          let paths = L.allMatches ? findAll(root, L.fields, L.exclude, [], [], 0) : L.fields.map(re => findLeaf(root, re, 0))
           let n = paths.filter(p => p != null).length
-          if (n > 0 && (best == null || n > best.n)) best = { n: n, key: key, paths: paths }
+          if (n > 0 && (best == null || n > best.n)) best = { n: n, key: key, paths: paths, maxPaths: L.allMatches ? paths.map(p => maxPathOf(root, p)) : null }
         }
         if (best == null) {
           return { error: keyFound ? 'a capability matching ' + String(L.capKey) + ' exists but none of its numbers is named like ' + L.fields.map(String).join(' ')
             : 'no player capability matches ' + String(L.capKey) + ' (is the mod installed? run /stodd link scan)' }
         }
-        return { res: { key: best.key, paths: best.paths, desc: best.key + ' > ' + best.paths.map(p => p == null ? '(missing)' : p.join('/')).join(', ') } }
+        return { res: { key: best.key, paths: best.paths, maxPaths: best.maxPaths, desc: best.key + ' > ' + best.paths.map(p => p == null ? '(missing)' : p.join('/')).join(', ') } }
+      },
+      // the maximum of each number: the mod's own when it keeps one, else the link's `max`
+      maxima: function (player, res, L) {
+        let root = capsOf(player).getCompound(res.key)
+        return res.paths.map((p, i) => {
+          let mp = res.maxPaths ? res.maxPaths[i] : null
+          let v = mp == null ? null : walk(root, mp)
+          return v != null && isFinite(v) && v > 0 ? v : (L.max > 0 ? L.max : 100)
+        })
       },
       read: function (player, res) {
         let root = capsOf(player).getCompound(res.key)
@@ -187,6 +223,18 @@
     for (let r = 0; r < L.table.length; r++) if (L.table[r].level <= level) idx = r
     return L.labels[idx] || ''
   }
+  // scale links: the share of the maximum a level is worth (0 at level 1, all of it at the origin's top level)
+  function shareAt(player, level) {
+    let cap = S.maxLevelOf ? S.maxLevelOf(S.getOrigin(player)) : C.maxLevel
+    if (!(cap > 1)) return 1
+    return Math.max(0, Math.min(1, (level - 1) / (cap - 1)))
+  }
+  function fieldApplies(player, L, path) {
+    let name = path[path.length - 1]
+    let fw = L.fieldWho || []
+    for (let i = 0; i < fw.length; i++) if (fw[i].match.test(name)) return S.masteryHas ? S.masteryHas(player, fw[i].who) : true
+    return true
+  }
   function appliesTo(player, L) {
     if (L.who == null || L.who === 'all') return true
     if (S.masteryHas) return S.masteryHas(player, L.who)
@@ -219,6 +267,17 @@
     let vals = null
     try { vals = ad.read(player, m.res) } catch (e) { S.log('link read ' + id + ' ' + e) }
     if (vals == null) { m.res = null; m.note = 'the value disappeared, looking for it again'; return 0 }
+    if (L.mode === 'scale') {
+      // one way: the level sets the least each number may be; the mod's own progress never moves the level
+      let lv = S.getLevel(player), share = shareAt(player, lv), mx = ad.maxima(player, m.res, L), outS = [], needS = false
+      for (let i = 0; i < vals.length; i++) {
+        if (vals[i] == null || !fieldApplies(player, L, m.res.paths[i])) { outS.push(null); continue }
+        let t = share >= 1 ? mx[i] : Math.floor(mx[i] * share + EPS)
+        if (vals[i] < t - EPS) { outS.push(t); needS = true } else outS.push(null)
+      }
+      if (!needS) { m.lastTargets = ''; return 0 }
+      return writeTargets(player, id, L, m, ad, outS, lv)
+    }
     let changed = 0
     // linear links: the first time a field is seen it is declared equal to the current level
     if (L.mode !== 'table') for (let i = 0; i < vals.length; i++) if (vals[i] != null) calibrate(d, id, i, S.getLevel(player), vals[i])
@@ -245,6 +304,12 @@
       if (vals[i] < t - EPS) { out.push(t); need = true } else out.push(null)
     }
     if (!need) { m.lastTargets = ''; return changed }
+    return changed + writeTargets(player, id, L, m, ad, out, lvl2)
+  }
+
+  // Writes the raised values and checks the mod took them. Returns 1 when it did.
+  function writeTargets(player, id, L, m, ad, out, lvl2) {
+    let changed = 0
     // a new target (the level moved) gets a fresh start; the same target refused three times in a row stops being tried
     let key = out.join(',')
     if (m.lastTargets !== key) { m.fails = 0; m.lastTargets = key }
@@ -258,7 +323,7 @@
     }
     if (reached) {
       m.fails = 0; m.lastTargets = ''; m.note = ''
-      say(player, L.name + ' raised to match level ' + lvl2 + (labelAt(L, lvl2) ? ': ' + labelAt(L, lvl2) : '') + '.')
+      say(player, L.name + ' raised to match level ' + lvl2 + (labelAt(L, lvl2) ? ': ' + labelAt(L, lvl2) : '') + (L.mode === 'scale' && shareAt(player, lvl2) >= 1 ? ': at its maximum' : '') + '.')
       changed++
     } else {
       m.fails++
@@ -285,6 +350,7 @@
     ids.forEach(id => {
       let L = LK.links[id], m = memOf(player, id)
       try {
+        if (L.mode === 'scale') return
         if (L.mode !== 'table') { for (let i = 0; i < 8; i++) { d.putString(ck(id, 'b', i), ''); d.putString(ck(id, 'l', i), '') }; return }
         if (!appliesTo(player, L) || !resolveFor(player, id, L, m)) return
         let vals = adapters[L.type].read(player, m.res)
@@ -348,6 +414,14 @@
       try { vals = adapters[L.type].read(player, m.res) } catch (e) { }
       if (vals == null) { out.push(Text.yellow(L.name + ': ').append(Text.gray('linked, but the value cannot be read right now'))); return }
       let shown = vals.filter(v => v != null).map(v => String(Math.round(v * 100) / 100)).join(' / ')
+      if (L.mode === 'scale') {
+        let mx = adapters[L.type].maxima ? adapters[L.type].maxima(player, m.res, L) : []
+        let parts = vals.map((v, i) => v == null ? null : m.res.paths[i][m.res.paths[i].length - 1] + ' ' + (Math.round(v * 100) / 100) + ' of ' + (Math.round(mx[i] * 100) / 100))
+          .filter(x => x != null).join(', ')
+        out.push(Text.green(L.name + ': linked ').append(Text.gray(m.res.key + ' > ' + parts + '; at level ' + lvl + ' at least ' + Math.round(shareAt(player, lvl) * 100) + '% of each')))
+        if (m.fails >= 3) out.push(Text.red('   read-only: the mod did not accept the values the script wrote'))
+        return
+      }
       let eq = equivalent(L, d, id, vals)
       let line = Text.green(L.name + ': linked ').append(Text.gray(m.res.desc + '   now ' + shown + ' = level ' + eq + (labelAt(L, eq) ? ' (' + labelAt(L, eq) + ')' : '') + ', your level ' + lvl))
       out.push(line)

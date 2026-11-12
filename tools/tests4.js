@@ -105,7 +105,8 @@ function setup(opts) {
 section('links: configuration')
 {
   const { C, LK, S } = setup()
-  ok(LK.enabled === true && Object.keys(LK.links).length === 2, 'two links are configured and on')
+  ok(LK.enabled === true && Object.keys(LK.links).length === 3, 'three links are configured and on')
+  ok(LK.links.tppMastery.mode === 'scale' && LK.links.tppMastery.allMatches === true && LK.links.tppMastery.fields[0].test('FruitMastery'), 'the mastery link takes every number named like mastery')
   const g = LK.links.jjcGrade, t = LK.links.tppStats
   const stageLevels = C.powerMastery.stageLevels
   ok(g.table.length === stageLevels.length && g.table.every((r, i) => r.level === stageLevels[i]), 'the grade table has one row per mastery stage, at the same levels')
@@ -227,7 +228,7 @@ section('links: stats - what can go wrong')
   ok(T.stats(p).join() === '2,2,2,2', 'when the mod shows up later, the next look links it and calibrates (2 stays 2)')
   S.setLevel(p, 8, 0)
   ok(T.stats(p).join() === '4,4,4,4', 'and then it follows the level')
-  ok(/linked/.test(T.text(S.linkLines(p))) && !/NOT LINKED/.test(T.text(S.linkLines(p))), 'the readout says linked')
+  ok(/True Prime Piece stats: linked/.test(T.text(S.linkLines(p))) && !/True Prime Piece stats: NOT LINKED/.test(T.text(S.linkLines(p))), 'the readout says linked')
 }
 {
   const T = setup()
@@ -469,6 +470,47 @@ section('links: /stodd link output and commands')
   S.data(r).putInt('lvl', 4)
   S.syncLinks(r)
   ok(T.lvl(r) === 4 && T.stats(r).join() === '5,5,5,5', 'reset re-declares the pair equal at the current level: nothing is pulled back up')
+}
+
+// ================================================================ True Prime Piece mastery: at its maximum at the top level
+section('links: mastery is at its maximum at the top level')
+{
+  const T = setup()
+  const { S } = T
+  const caps = lv => ({ [TPP_KEY]: { Stats: { Agility: 1, Strength: 1, Health: 1, Toughness: 1 },
+    Fruit: { FruitMastery: lv, FruitMasteryMax: 500 }, HakiMastery: 0, MaxMastery: 7, Haki: { ObservationMastery: 3 } } })
+  const get = (p, ...path) => { let c = p.caps.getCompound(TPP_KEY); for (let i = 0; i < path.length - 1; i++) c = c.getCompound(path[i]); return c.get(path[path.length - 1]).v }
+  const p = T.player('devil_fruit_user', 1, { caps: caps(0) })
+  S.syncLinks(p)
+  ok(get(p, 'Fruit', 'FruitMastery') === 0 && get(p, 'HakiMastery') === 0, 'at level 1 nothing is raised')
+  S.setLevel(p, 20, 0)
+  ok(get(p, 'Fruit', 'FruitMastery') === 500, 'at the top level the fruit mastery is at the maximum the mod keeps next to it (' + get(p, 'Fruit', 'FruitMastery') + ')')
+  ok(get(p, 'HakiMastery') === 7 || get(p, 'HakiMastery') === 100, 'every other mastery too (' + get(p, 'HakiMastery') + ')')
+  ok(get(p, 'Haki', 'ObservationMastery') === 100, 'also deeper down, at the link\'s max where the mod keeps none (' + get(p, 'Haki', 'ObservationMastery') + ')')
+  ok(get(p, 'Fruit', 'FruitMasteryMax') === 500 && get(p, 'MaxMastery') === 7, 'the maxima themselves are left alone')
+  ok(T.lvl(p) === 20, 'the level stays where it was set')
+  ok(/True Prime Piece mastery: linked/.test(T.text(S.linkLines(p))) && /FruitMastery 500 of 500/.test(T.text(S.linkLines(p))), 'the readout shows each mastery and its maximum')
+
+  const q = T.player('devil_fruit_user', 1, { caps: caps(0) })
+  S.syncLinks(q)
+  S.setLevel(q, 10, 0)
+  const half = get(q, 'Fruit', 'FruitMastery')
+  ok(half === Math.floor(500 * 9 / 19), 'halfway up, about half (' + half + ')')
+  const r = T.player('devil_fruit_user', 10, { caps: caps(450) })
+  S.syncLinks(r)
+  ok(get(r, 'Fruit', 'FruitMastery') === 450 && T.lvl(r) === 10, 'a mastery earned past the level is kept, and does not move the level')
+  S.setLevel(r, 3, 0)
+  ok(get(r, 'Fruit', 'FruitMastery') === 450, 'lowering the level never lowers a mastery')
+
+  const b = T.player('brawler', 20, { caps: caps(0) })
+  S.syncLinks(b)
+  ok(get(b, 'Fruit', 'FruitMastery') === 0 && get(b, 'Haki', 'ObservationMastery') === 100, 'an origin that may not eat a fruit gets the other masteries, not the fruit\'s')
+
+  const w = T.player('weakling', 20, { caps: caps(0) })
+  S.syncLinks(w)
+  ok(get(w, 'Haki', 'ObservationMastery') < 100, 'a Weakling is not at the top at 20 (' + get(w, 'Haki', 'ObservationMastery') + ')')
+  S.setLevel(w, 35, 0)
+  ok(get(w, 'Haki', 'ObservationMastery') === 100, '...but is at its own top level, 35')
 }
 
 // ================================================================ the real 15_powers helpers
