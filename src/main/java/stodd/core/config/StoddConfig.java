@@ -585,6 +585,13 @@ public final class StoddConfig {
         p.deepMargin = (int) Math.round(clampNote("deepIslands.margin", num("deepIslands.margin", 40), 6, 200));
         p.deepDown = (int) Math.round(clampNote("deepIslands.depthBelow", num("deepIslands.depthBelow", 24), 20, 60));
         p.deepRing = (int) Math.round(clampNote("deepIslands.slope", num("deepIslands.slope", 64), 0, 200));
+        p.deepStream = bool("deepIslands.stream", true);
+        p.deepStreamRadius = (int) Math.round(clampNote("deepIslands.streamRadius", num("deepIslands.streamRadius", 8), 2, 32));
+        p.cloudSea = bool("skyIslands.cloudSea", true);
+        p.cloudWidth = (int) Math.round(clampNote("skyIslands.cloudWidth", num("skyIslands.cloudWidth", 56), 8, 200));
+        p.cloudDepth = (int) Math.round(clampNote("skyIslands.cloudDepth", num("skyIslands.cloudDepth", 6), 1, 24));
+        p.streams = (int) Math.round(clampNote("skyIslands.streams", num("skyIslands.streams", 1), 0, 8));
+        p.streamRadius = (int) Math.round(clampNote("skyIslands.streamRadius", num("skyIslands.streamRadius", 10), 2, 32));
         if (p.deepCoast - p.deepDown < -58) { p.deepDown = p.deepCoast + 58; notes.add("deepIslands.depthBelow reaches the lava at the bottom of the world, using " + p.deepDown); }
         // an island's land reaches about 1.35 x islandSize from its middle (the size of the spawn islands, preset or set)
         double isize = num("spawnIslands.islandSize", 0);

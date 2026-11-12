@@ -25,6 +25,7 @@ import java.util.Optional;
  * stodd:sky_block (kind "sky") - one cell of a lifted sky island: the odd ruin and, when the config asks for them, a fixed biome
  * and extra trees / flowers / boulders (by default a sky island keeps the biomes and plants it would have had on the ground).
  * stodd:deep_block (kind "deep") - one cell of a sunken island's bubble dome (CellDomePiece).
+ * stodd:cloud_block (kind "cloud") - one cell of the cloud sea round sky islands and their knock up streams (CellCloudPiece).
  * stodd:waystone_block (kind "waystone") - the waystone of every island whose centre is in the cell (CellWaystonePiece).
  * All are generated with their chunks; IslePlanner decides the layout once per island.
  */
@@ -91,8 +92,19 @@ public final class IsleStructure extends Structure {
             if (ds.isEmpty()) return Optional.empty();
             SkyField.Dome d = ds.get(0);
             int yMin = (int) Math.floor(d.base - d.down) - 2, yMax = (int) Math.ceil(d.base + d.up) + 2;
-            final CellDomePiece piece = new CellDomePiece(x0, z0, cell, d.cx, d.cz, d.r, d.base, d.up, d.down, f.p.deepLighting, yMin, yMax);
+            SkyField.Stream st = f.deepStream(d);
+            final CellDomePiece piece = new CellDomePiece(x0, z0, cell, d.cx, d.cz, d.r, d.base, d.up, d.down, f.p.deepLighting,
+                st != null ? st.array() : new int[0], yMin, yMax);
             return Optional.of(new GenerationStub(new BlockPos(mx, (int) d.base + 2, mz), builder -> builder.addPiece(piece)));
+        }
+        if ("cloud".equals(kind)) {
+            // the cloud sea round sky islands, and their knock up streams
+            SkyField f = tools.skyField;
+            if (f == null) return Optional.empty();
+            SkyField.CloudCell cc = f.cloudCell(x0, z0, cell);
+            if (cc == null) return Optional.empty();
+            final CellCloudPiece piece = new CellCloudPiece(x0, z0, cell, Math.max(1, f.p.cloudDepth), cc.top, cc.streamArray(), cc.yMin - 2, cc.yMax + 2);
+            return Optional.of(new GenerationStub(new BlockPos(mx, cc.yMax, mz), builder -> builder.addPiece(piece)));
         }
         if ("sky".equals(kind)) {
             if (tools.sky == null || !rules.skyDress) return Optional.empty();

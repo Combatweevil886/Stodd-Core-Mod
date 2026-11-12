@@ -1,12 +1,12 @@
-# STODD Core 3.1.1: the core mod of *mods 4 stodd (season 2)*, as a real Forge mod
+# STODD Core 3.2.0: the core mod of *mods 4 stodd (season 2)*, as a real Forge mod
 
-Forge 1.20.1 / Forge 47.4.20. **One jar, `mods/stodd_core-3.1.1.jar`.** A **compiled Forge mod** (Java, built with ForgeGradle) and an **add-on to the pack's power-system mods**: True Prime Piece (Devil Fruits), Jujutsu Craft (Cursed Energy), Malum (dark magic), Project: Edgerunner (chrome) and Curios. It holds the **ten origins** and their rules, the **Survival Island world** (guaranteed on servers too) with **sky islands that are normal islands lifted into the sky**, **city islands and dressed islands generated with the terrain like any structure**, the **Log Pose as a real item with its own needle**, the levels, power caps, mastery, level links, waystones, ore tiers and Downgrade Template that run as KubeJS scripts the mod installs for you, and **every setting in `config/stodd/*.toml`** (section 0).
+Forge 1.20.1 / Forge 47.4.20. **One jar, `mods/stodd_core-3.2.0.jar`.** A **compiled Forge mod** (Java, built with ForgeGradle) and an **add-on to the pack's power-system mods**: True Prime Piece (Devil Fruits), Jujutsu Craft (Cursed Energy), Malum (dark magic), Project: Edgerunner (chrome) and Curios. It holds the **ten origins** and their rules, the **Survival Island world** (guaranteed on servers too) with **sky islands that are normal islands lifted into the sky**, **city islands and dressed islands generated with the terrain like any structure**, the **Log Pose as a real item with its own needle**, the levels, power caps, mastery, level links, waystones, ore tiers and Downgrade Template that run as KubeJS scripts the mod installs for you, and **every setting in `config/stodd/*.toml`** (section 0).
 
 ## Getting the jar
 
-The mod is built on GitHub, in the repository **Combatweevil886/Stodd-Core-Mod**: every push compiles it against the real Minecraft 1.20.1 and Forge 47.4.20, runs all the tests, and puts the game-ready jar on the `dist` branch: **https://github.com/Combatweevil886/Stodd-Core-Mod/raw/dist/stodd_core-3.1.1.jar** (also attached to each run under Actions as the artifact `stodd_core`).
+The mod is built on GitHub, in the repository **Combatweevil886/Stodd-Core-Mod**: every push compiles it against the real Minecraft 1.20.1 and Forge 47.4.20, runs all the tests, and puts the game-ready jar on the `dist` branch: **https://github.com/Combatweevil886/Stodd-Core-Mod/raw/dist/stodd_core-3.2.0.jar** (also attached to each run under Actions as the artifact `stodd_core`).
 
-To build it yourself instead: a Java 17 JDK, then `gradlew build` in the project folder; the game-ready jar is the `...-renamed.jar` in `build/libs` (rename it to `stodd_core-3.1.1.jar`). Not the `-unobfuscated` one: that one has development names and does not run in the game.
+To build it yourself instead: a Java 17 JDK, then `gradlew build` in the project folder; the game-ready jar is the `...-renamed.jar` in `build/libs` (rename it to `stodd_core-3.2.0.jar`). Not the `-unobfuscated` one: that one has development names and does not run in the game.
 
 ## How the mod is put together
 
@@ -29,10 +29,18 @@ To build it yourself instead: a Java 17 JDK, then `gradlew build` in the project
 
 ## Install
 
-* Put **`stodd_core-3.1.1.jar`** in `mods/`. **Delete every `stodd_compat-*.jar` and every older `stodd_core-*.jar`.** Start once, stop, start again (the first start installs the scripts; KubeJS and Survival Island read them on the next).
+* Put **`stodd_core-3.2.0.jar`** in `mods/`. **Delete every `stodd_compat-*.jar` and every older `stodd_core-*.jar`.** Start once, stop, start again (the first start installs the scripts; KubeJS and Survival Island read them on the next).
 * **Start a new world.** The cities, dressed islands and sky dressing are generated with new chunks, and the island terrain only applies to new chunks. **On a server, delete (or rename) the world folder** (`level-name` in `server.properties`) before the first start. In an existing world, land that was already generated keeps what it had; set `city.scriptBuilder = true` and `makeover.scriptBuilder = true` in `config/stodd/world.toml` to let the scripts build on that old land the 2.3.0 way.
 * The overrides zip and full-pack zip of earlier versions are not needed any more: the jar installs everything.
 * Same mods as before: Survival Island, Origins, Curios, KubeJS, Waystones, True Prime Piece, Jujutsu Craft, Malum, Project: Edgerunner.
+
+## What changed in 3.2.0
+
+* **Cloud seas round the sky islands** (section 4c3): every sky island sits in a sea of **dense cloud** at its coast, reaching about `skyIslands.cloudWidth` (56) blocks out with a ragged edge, `cloudDepth` (6) blocks deep. Boats float on it, Valkyrien Skies / Eureka ships sail on it, you swim in it without drowning, and falling into it does no damage.
+* **Knock up streams**: next to every sky island a column of rising water (`streams`, 1 per island, `streamRadius` 10) stands from under the sea's surface up to its cloud sea. Sail into it and it carries your ship up to the cloud sea, where you sail on to the island. Players, mobs, boats and items ride it too.
+* **A stream in every dome** (`deepIslands.stream`, `streamRadius` 8): from the sea inside a sunken island's dome up through the roof to the surface, so a ship (or a swimmer) that went down gets back up.
+* New items in the Tools tab: a Bucket of Dense Cloud and a Bucket of Knock Up Stream (creative). Neither fluid ever flows, so a cloud sea hangs in the sky without pouring down.
+* **Upgrading from 3.1.x:** replace the jar (**delete the older `stodd_core-*.jar`**). Cloud seas and streams only come with newly generated land: start a new world, or fly to sky islands nobody has been near yet.
 
 ## What changed in 3.1.1
 
@@ -372,6 +380,14 @@ Three styles, each rolled as its own theme, each built block by block around a p
 * **Upgrading from 3.1.0:** a `world.toml` that still holds 3.1.0's defaults (`coastDepth = 16`, `waterAbove = 10`, `margin = 24`, `depthBelow = 20`) gets the new ones by itself (the log and `/stodd config` say so); a value you chose yourself is kept. Domes that were already generated keep their old look, so **start a new world** to see the new one.
 * **Honest limits.** Not walked in Minecraft yet.
 
+## 4c3. Cloud seas and knock up streams
+
+* **Dense cloud** (`stodd_core:dense_cloud`) is a white fluid. Every sky island sits in a sea of it, one block under its coast (where the sea would be round a ground island), so its beaches meet the cloud like a shore. It reaches `skyIslands.cloudWidth` (56) blocks out from the coast with a ragged edge, `cloudDepth` (6) blocks deep, and fills only open sky: valleys of the island lower than its coast become cloud lakes, but caves and the underside are left alone. **Boats float on it** like on water. **Valkyrien Skies / Eureka ships** take it as a liquid three times as heavy as water, so they float high on it (a shallow layer holds them); make `cloudDepth` larger for very heavy ships. You swim in it and cannot drown in it, and a fall into it does no damage. Off its edge there is nothing but sky.
+* **A knock up stream** (`stodd_core:sky_stream`) is a column of rising, glowing water. Each sky island gets `streams` (1) of them in its cloud sea, just off the coast, `streamRadius` (10) blocks in radius, standing from 12 blocks under the sea's surface straight up to the cloud sea's surface. **Sail a ship into its foot and it rises** (it is eight times as heavy as water to the ship's physics) to the top, where it floats out onto the cloud sea; sail on to the island's beach. Players, mobs, boats and items in it are carried up at about 12 blocks a second, slowing at the top so you come out on the cloud. It glows, so you can see it from far out at sea and at night. To come back down, sail off the cloud's edge, or jump.
+* **Every dome has one too** (`deepIslands.stream`, `streamRadius` 8): over the sea inside the dome, from just under its surface up through the roof to the surface of the ocean. A ship that came down into a dome sails into it and comes back up to the surface; so do swimmers.
+* **The fluids never flow.** A cloud sea hangs in the air and a stream stands in the sea; neither pours out when a block next to it changes, and no water can wash them away. Buckets of both are in the creative Tools tab, for building your own (one bucket = one block).
+* **Ships, honestly:** made for Valkyrien Skies 2 / Eureka as they work now (their physics read a liquid's weight from the jar's `data/stodd_core/vs_mass`). Not tried in the game yet. If a ship does not rise in a stream, make the stream wider than the ship (`streamRadius`), and tell me what happens. Eureka's helm may try to hold the ship's height while you do not press up; press up as you enter.
+
 ## 4d. Dressed island themes
 
 Five themes that change a whole island, **generated with the island's chunks** (structure `stodd:isle_block`, set `stodd:isle_blocks`; new in 3.0): every 48 x 48 cell of the island has its ground repainted (e.g. grass to basalt or moss, leaves to cherry) and the theme's biome, and about 20% of the cells get a landmark (never two next to each other), picked by weight from the theme's list and turned at random. The middle cell gets one of the theme's **centrepieces**, chosen per island, and the island's waystone stands in its yard.
@@ -467,7 +483,7 @@ The server crash `... provides no component of type apoli:powers` (`Ticking enti
 
 ## Verify in your first test world
 
-1. **The log at start-up** shows `[STODD Core] 3.1.1 loaded`, `settings: ...config/stodd`, `The STODD island world pack is enabled` and `ISLANDS: ...`. On a server run `/stodd core world` (operator). Then `/stodd addons`: every mod you have should say `[found]`.
+1. **The log at start-up** shows `[STODD Core] 3.2.0 loaded`, `settings: ...config/stodd`, `The STODD island world pack is enabled` and `ISLANDS: ...`. On a server run `/stodd core world` (operator). Then `/stodd addons`: every mod you have should say `[found]`.
 2. Create a world: the world type already shows **Survival Island (Default)**. The Origin screen shows only the ten origins. A Weakling starts with 14 HP and one ring slot; a Brawler has 45 HP and 4 hand slots; a Skyborn takes no fall damage. A non-Sorcerer has no Jujutsu items after a few seconds.
 3. As a Human, right-click a Devil Fruit: refused once, with one message. As a Dark Magician, a Malum altar and scythe work; anyone else is refused. A Sorcerer cannot use the Ripperdoc. As a Swordsman eat a fruit: the message says the other path is closed.
 4. **The Log Pose:** you start with one. The needle points; walk around and it keeps pointing at the same island. Right-click to cycle the modes. Stand in the middle of an island for 3 seconds: "Island recorded", and the needle moves on to the next island.

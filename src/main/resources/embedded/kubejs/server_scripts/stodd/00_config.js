@@ -47,7 +47,14 @@ global.stodd.cfg = {
     beaches: false,          // true = sandy beach biomes round the rim like on the ground (they also bring beached shipwrecks and buried treasure up there); false = the rim is the island's inland biome
     landmarks: true,         // the odd sky ruin / shrine from the landmark lists
     landmarkDensity: 0.9,    // how many of them (1 = as many as a dressed island)
-    extraPlants: 0           // extra trees / flowers / rocks per 48 x 48 cell, on top of the biome's own (the old sky-meadow dressing used 5)
+    extraPlants: 0,          // extra trees / flowers / rocks per 48 x 48 cell, on top of the biome's own (the old sky-meadow dressing used 5)
+    // the cloud sea: a sea of dense cloud round every sky island, at its coast, that boats and Valkyrien Skies / Eureka ships sail on
+    cloudSea: true,
+    cloudWidth: 56,          // how far it reaches out from the coast, in blocks (its edge is ragged)
+    cloudDepth: 6,           // how deep it is, in blocks (deeper holds heavier ships)
+    // knock up streams: a column of rising water from the sea up to the cloud sea, that carries ships, boats, players and mobs up
+    streams: 1,              // how many per sky island (0 = none, at most 8)
+    streamRadius: 10         // how wide each one is (radius in blocks: make it wider than your ships)
   },
 
   // ---------------------------------------------------------------- SUNKEN ISLANDS (world generation)
@@ -66,6 +73,8 @@ global.stodd.cfg = {
     margin: 40,              // room between the island's coast and the dome's wall: the shallow sea round the island in there
     depthBelow: 24,          // how far the dome reaches under the inner sea (at least 20; the sea in there is at most 18 deep)
     slope: 64,               // round the dome the sea floor is lowered to its foot and rises back over this many blocks (0 = no hollow)
+    stream: true,            // a knock up stream inside every dome: from its sea up through the roof to the surface, so ships that came down get back up
+    streamRadius: 8,         // how wide it is (radius in blocks)
     lighting: 8,             // an invisible light every this many blocks over the island and its sea, as daylight does not reach that deep (0 = none: dark, mobs spawn)
     bubbleLight: 7,          // light given off by the bubble itself, 0 to 15 (needs a game restart)
     bubbleBreakable: false,  // true: the bubble can be broken like glass (and the dome flooded); false: unbreakable (needs a game restart)

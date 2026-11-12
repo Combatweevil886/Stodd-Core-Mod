@@ -335,6 +335,55 @@
      "pre": []
     },
     {
+     "t": "key",
+     "path": "skyIslands.cloudSea",
+     "key": "cloudSea",
+     "def": true,
+     "re": false,
+     "note": "",
+     "pre": [
+      "the cloud sea: a sea of dense cloud round every sky island, at its coast, that boats and Valkyrien Skies / Eureka ships sail on"
+     ]
+    },
+    {
+     "t": "key",
+     "path": "skyIslands.cloudWidth",
+     "key": "cloudWidth",
+     "def": 56,
+     "re": false,
+     "note": "how far it reaches out from the coast, in blocks (its edge is ragged)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "skyIslands.cloudDepth",
+     "key": "cloudDepth",
+     "def": 6,
+     "re": false,
+     "note": "how deep it is, in blocks (deeper holds heavier ships)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "skyIslands.streams",
+     "key": "streams",
+     "def": 1,
+     "re": false,
+     "note": "how many per sky island (0 = none, at most 8)",
+     "pre": [
+      "knock up streams: a column of rising water from the sea up to the cloud sea, that carries ships, boats, players and mobs up"
+     ]
+    },
+    {
+     "t": "key",
+     "path": "skyIslands.streamRadius",
+     "key": "streamRadius",
+     "def": 10,
+     "re": false,
+     "note": "how wide each one is (radius in blocks: make it wider than your ships)",
+     "pre": []
+    },
+    {
      "t": "table",
      "path": "deepIslands",
      "pre": [
@@ -426,6 +475,24 @@
      "def": 64,
      "re": false,
      "note": "round the dome the sea floor is lowered to its foot and rises back over this many blocks (0 = no hollow)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "deepIslands.stream",
+     "key": "stream",
+     "def": true,
+     "re": false,
+     "note": "a knock up stream inside every dome: from its sea up through the roof to the surface, so ships that came down get back up",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "deepIslands.streamRadius",
+     "key": "streamRadius",
+     "def": 8,
+     "re": false,
+     "note": "how wide it is (radius in blocks)",
      "pre": []
     },
     {

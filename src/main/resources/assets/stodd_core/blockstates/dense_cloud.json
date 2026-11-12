@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "stodd_core:block/dense_cloud"
+    }
+  }
+}

@@ -50,12 +50,18 @@ public final class SkyField {
         public int deepRing = 64;
         /** how far from a point the middle of a dome over it can be: an island's radius + the margin + the ring (from the spawn-island size) */
         public int deepReach = 484;
+        // the cloud sea round sky islands and the knock up streams ([skyIslands]); one up through every dome ([deepIslands])
+        public boolean cloudSea = true;
+        public int cloudWidth = 56, cloudDepth = 6, streams = 1, streamRadius = 10;
+        public boolean deepStream = true;
+        public int deepStreamRadius = 8;
 
         public String key() {
             return enabled + "|" + chance + "|" + minSpawnDistance + "|" + minRadius + "|" + height + "|" + heightVariation + "|" + thickness + "|"
                 + spikes + "|" + relief + "|" + maxHeight + "|" + landThreshold + "|" + centreContinents + "|" + cell + "|" + peakStep + "|" + beaches
                 + "|" + deepEnabled + "|" + deepChance + "|" + seaLevel + "|" + deepCoast + "|" + deepWaterAbove + "|" + deepDown + "|" + deepMargin
-                + "|" + deepLighting + "|" + deepRelief + "|" + deepReach + "|" + deepRing;
+                + "|" + deepLighting + "|" + deepRelief + "|" + deepReach + "|" + deepRing
+                + "|" + cloudSea + "|" + cloudWidth + "|" + cloudDepth + "|" + streams + "|" + streamRadius + "|" + deepStream + "|" + deepStreamRadius;
         }
 
         /** the highest block of a bubble dome (always under the sea) */
@@ -489,5 +495,198 @@ public final class SkyField {
         if (!p.deepOn() || y > p.domeTop() + 2) return false;
         Dome d = column(x, z).dome;
         return d != null && d.f(x, y, z) < 1.05;
+    }
+
+    // ---------------------------------------------------------------- the cloud sea round sky islands, and the knock up streams
+
+    /** A knock up stream: an upright column of rising sky_stream fluid, radius r, from yLow up to yTop (both included). */
+    public static final class Stream {
+        public final int x, z, r, yLow, yTop;
+        Stream(int x, int z, int r, int yLow, int yTop) { this.x = x; this.z = z; this.r = r; this.yLow = yLow; this.yTop = yTop; }
+        public boolean covers(int px, int pz) { double dx = px - x, dz = pz - z; return dx * dx + dz * dz <= (r + 0.5) * (r + 0.5); }
+        public boolean nearRect(int x0, int z0, int x1, int z1, int margin) {
+            double nx = Math.max(x0, Math.min(x1, x)), nz = Math.max(z0, Math.min(z1, z));
+            return (nx - x) * (nx - x) + (nz - z) * (nz - z) <= (double) (r + margin) * (r + margin);
+        }
+        public int[] array() { return new int[] { x, z, r, yLow, yTop }; }
+    }
+
+    /** One cell's cloud sea: the top of the cloud over each column (y - 64; 0 = no cloud) and the streams that reach into it. */
+    public static final class CloudCell {
+        public final byte[] top;
+        public final List<Stream> streams;
+        public final int yMin, yMax;
+        CloudCell(byte[] top, List<Stream> streams, int yMin, int yMax) { this.top = top; this.streams = streams; this.yMin = yMin; this.yMax = yMax; }
+        public int topAt(int i) { int t = top[i] & 0xff; return t == 0 ? Integer.MIN_VALUE : t + 64; }
+        public int[] streamArray() {
+            int[] a = new int[streams.size() * 5];
+            for (int i = 0; i < streams.size(); i++) System.arraycopy(streams.get(i).array(), 0, a, i * 5, 5);
+            return a;
+        }
+    }
+
+    private final Map<String, List<Stream>> skyStreams = new ConcurrentHashMap<>();
+    private final Map<String, Object> deepStreams = new ConcurrentHashMap<>();
+    private final Map<Long, List<IslandFinder.Island>> liftedRegions = new ConcurrentHashMap<>();
+
+    /** The cloud sea's surface round a sky island: one under its coast, as the sea is one under a ground island's. */
+    public int cloudTop(IslandFinder.Island isl) { return (int) Math.round(levelOf(isl)) - 1; }
+
+    boolean cloudOn() { return p.enabled && p.chance > 0 && (p.cloudSea || p.streams > 0); }
+
+    /** no land at all on a disc (sea, at the ground and up in the sky) */
+    boolean clearDisc(int x, int z, double rr) {
+        if (raw.at(x, z) >= p.landThreshold - 0.01) return false;
+        for (int a = 0; a < 16; a++) {
+            double ang = a * Math.PI / 8;
+            for (double f : new double[] { 1, 0.5 }) {
+                if (raw.at((int) Math.round(x + rr * f * Math.cos(ang)), (int) Math.round(z + rr * f * Math.sin(ang))) >= p.landThreshold - 0.01) return false;
+            }
+        }
+        return true;
+    }
+
+    /** about how far (x, z) is from the island's coast (its nearest land lattice point, less half a lattice step) */
+    public double distanceToLand(IslandFinder.Island isl, int x, int z) {
+        double best = Double.MAX_VALUE;
+        for (long k : isl.lattice) {
+            double dx = (int) (k >> 32) - x, dz = (int) k - z;
+            best = Math.min(best, dx * dx + dz * dz);
+        }
+        return Math.sqrt(best) - IslandFinder.LATTICE / 2.0;
+    }
+
+    /** The knock up streams of a sky island: in its cloud sea just off the coast, rising from under the sea's surface to the cloud's. */
+    public List<Stream> skyStreams(IslandFinder.Island isl) {
+        if (isl == null || !cloudOn() || p.streams <= 0 || !isLifted(isl)) return Collections.emptyList();
+        List<Stream> c = skyStreams.get(isl.key());
+        if (c != null) return c;
+        int sr = Math.max(2, p.streamRadius), n = Math.min(8, p.streams);
+        List<Stream> out = new ArrayList<>();
+        double a0 = unit(isl, 21) * 2 * Math.PI;
+        for (int k = 0; k < n; k++) {
+            for (int t = 0; t < 16; t++) {
+                double ang = a0 + k * 2 * Math.PI / n + (t % 2 == 0 ? 1 : -1) * ((t + 1) / 2) * 0.3;
+                double cs = Math.cos(ang), sn = Math.sin(ang);
+                double lastLand = 0, maxT = isl.radius * 2.4 + 96;
+                for (double s2 = 0; s2 <= maxT; s2 += 6) if (raw.at((int) Math.round(isl.cx + s2 * cs), (int) Math.round(isl.cz + s2 * sn)) >= p.landThreshold) lastLand = s2;
+                double d = lastLand + sr + 10;
+                int x = (int) Math.round(isl.cx + d * cs), z = (int) Math.round(isl.cz + d * sn);
+                if (!clearDisc(x, z, sr + 3)) continue;
+                if (distanceToLand(isl, x, z) > Math.max(sr + 12, p.cloudWidth - sr)) continue;
+                boolean apart = true;
+                for (Stream o : out) if (Math.hypot(o.x - x, o.z - z) < 2 * sr + 24) apart = false;
+                if (!apart) continue;
+                out.add(new Stream(x, z, sr, p.seaLevel - 12, cloudTop(isl)));
+                break;
+            }
+        }
+        out = Collections.unmodifiableList(out);
+        if (skyStreams.size() > 100_000) skyStreams.clear();
+        skyStreams.put(isl.key(), out);
+        return out;
+    }
+
+    /** The knock up stream of a sunken island: over the sea inside its dome, from just under the inner sea up to the outer sea's surface. */
+    public Stream deepStream(Dome d) {
+        if (d == null || !p.deepStream || p.deepStreamRadius <= 0) return null;
+        Object o = deepStreams.get(d.key());
+        if (o != null) return o == NONE ? null : (Stream) o;
+        int sr = Math.max(2, p.deepStreamRadius);
+        Stream found = null;
+        double a0 = unit(d.island, 25) * 2 * Math.PI;
+        outer:
+        for (int t = 0; t < 16; t++) {
+            double ang = a0 + t * Math.PI / 8;
+            for (double dist = d.r - sr - 8; dist >= Math.max(sr + 4, d.r * 0.35); dist -= 6) {
+                int x = (int) Math.round(d.cx + dist * Math.cos(ang)), z = (int) Math.round(d.cz + dist * Math.sin(ang));
+                if (Math.hypot(x - d.cx, z - d.cz) + sr > d.r - 6) continue;
+                if (!clearDisc(x, z, sr + 3)) continue;
+                found = new Stream(x, z, sr, d.sea() - 6, p.seaLevel - 1);
+                break outer;
+            }
+        }
+        if (deepStreams.size() > 100_000) deepStreams.clear();
+        deepStreams.put(d.key(), found == null ? NONE : found);
+        return found;
+    }
+
+    /** The sky islands whose cloud sea may reach the rectangle (looked up per 256 x 256 region). */
+    public List<IslandFinder.Island> liftedNear(int x0, int z0, int x1, int z1) {
+        if (!cloudOn()) return Collections.emptyList();
+        final int R = 256;
+        List<IslandFinder.Island> out = new ArrayList<>();
+        java.util.Set<String> seen = new java.util.HashSet<>();
+        for (int rx = Math.floorDiv(x0, R); rx <= Math.floorDiv(x1, R); rx++)
+            for (int rz = Math.floorDiv(z0, R); rz <= Math.floorDiv(z1, R); rz++) {
+                long key = ((long) rx << 32) ^ (rz & 0xffffffffL);
+                List<IslandFinder.Island> l = liftedRegions.get(key);
+                if (l == null) {
+                    l = new ArrayList<>();
+                    java.util.Set<String> s2 = new java.util.HashSet<>();
+                    int reach = reach() + p.cloudWidth + 64, L = IslandFinder.LATTICE * 2;
+                    for (int lx = Math.floorDiv(rx * R - reach, L) * L; lx <= rx * R + R + reach; lx += L)
+                        for (int lz = Math.floorDiv(rz * R - reach, L) * L; lz <= rz * R + R + reach; lz += L) {
+                            if (raw.at(lx, lz) < p.landThreshold) continue;
+                            IslandFinder.Island isl = islands.islandAt(lx, lz);
+                            if (isl != null && s2.add(isl.key()) && isLifted(isl)) l.add(isl);
+                        }
+                    if (liftedRegions.size() > 200_000) liftedRegions.clear();
+                    liftedRegions.put(key, l);
+                }
+                for (IslandFinder.Island isl : l) if (seen.add(isl.key())) out.add(isl);
+            }
+        return out;
+    }
+
+    /** The cloud sea and knock up streams of one cell (null: none reach it). */
+    public CloudCell cloudCell(int x0, int z0, int size) {
+        if (!cloudOn()) return null;
+        List<IslandFinder.Island> near = liftedNear(x0, z0, x0 + size - 1, z0 + size - 1);
+        if (near.isEmpty()) return null;
+        byte[] top = new byte[size * size];
+        List<Stream> streams = new ArrayList<>();
+        int yMin = Integer.MAX_VALUE, yMax = Integer.MIN_VALUE;
+        boolean any = false;
+        double W = Math.max(0, p.cloudWidth);
+        for (IslandFinder.Island isl : near) {
+            int ct = cloudTop(isl);
+            if (ct - 64 < 1 || ct - 64 > 255) continue;
+            List<Stream> ss = new ArrayList<>();
+            for (Stream st : skyStreams(isl)) if (st.nearRect(x0, z0, x0 + size - 1, z0 + size - 1, 12)) ss.add(st);
+            // the island's land lattice points near enough to the cell
+            List<int[]> pts = new ArrayList<>();
+            if (p.cloudSea) {
+                double m = W * 1.05 + IslandFinder.LATTICE;
+                for (long k : isl.lattice) {
+                    int lx = (int) (k >> 32), lz = (int) k;
+                    double nx = Math.max(x0, Math.min(x0 + size - 1, lx)), nz = Math.max(z0, Math.min(z0 + size - 1, lz));
+                    if ((nx - lx) * (nx - lx) + (nz - lz) * (nz - lz) <= m * m) pts.add(new int[] { lx, lz });
+                }
+            }
+            if (pts.isEmpty() && ss.isEmpty()) continue;
+            double ph1 = unit(isl, 23) * 2 * Math.PI, ph2 = unit(isl, 24) * 2 * Math.PI;
+            for (int dz = 0; dz < size; dz++) for (int dx = 0; dx < size; dx++) {
+                int x = x0 + dx, z = z0 + dz;
+                boolean in = false;
+                if (!pts.isEmpty()) {
+                    double best = Double.MAX_VALUE;
+                    for (int[] q : pts) { double ax = q[0] - x, az = q[1] - z; best = Math.min(best, ax * ax + az * az); }
+                    double ang = Math.atan2(z - isl.cz, x - isl.cx);
+                    double lim = W * (0.8 + 0.14 * Math.sin(5 * ang + ph1) + 0.08 * Math.sin(13 * ang + ph2)) + IslandFinder.LATTICE / 2.0;
+                    in = best <= lim * lim;
+                }
+                // the cloud always reaches round the top of a stream
+                for (Stream st : ss) { double ax = st.x - x, az = st.z - z; if (ax * ax + az * az <= (st.r + 12.0) * (st.r + 12.0)) in = true; }
+                if (!in) continue;
+                int i = dz * size + dx, cur = top[i] & 0xff, v = ct - 64;
+                if (cur == 0 || v > cur) top[i] = (byte) v;
+                any = true;
+            }
+            if (any) { yMin = Math.min(yMin, ct - p.cloudDepth); yMax = Math.max(yMax, ct); }
+            for (Stream st : ss) { streams.add(st); yMin = Math.min(yMin, st.yLow); yMax = Math.max(yMax, st.yTop); }
+        }
+        if (!any && streams.isEmpty()) return null;
+        return new CloudCell(top, streams, yMin, yMax);
     }
 }

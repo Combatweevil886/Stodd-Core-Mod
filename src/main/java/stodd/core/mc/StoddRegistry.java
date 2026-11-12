@@ -15,6 +15,10 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -56,6 +60,13 @@ public final class StoddRegistry {
         return new BubbleBlock(p);
     });
 
+    /** the cloud sea round sky islands (StoddFluids.CLOUD): boats and ships sail on it */
+    public static final RegistryObject<LiquidBlock> DENSE_CLOUD = BLOCKS.register("dense_cloud", () -> new LiquidBlock(StoddFluids.CLOUD,
+        BlockBehaviour.Properties.copy(Blocks.WATER).mapColor(MapColor.SNOW)));
+    /** a knock up stream (StoddFluids.STREAM): carries everything up */
+    public static final RegistryObject<LiquidBlock> SKY_STREAM = BLOCKS.register("sky_stream", () -> new SkyStreamBlock(StoddFluids.STREAM,
+        BlockBehaviour.Properties.copy(Blocks.WATER).mapColor(MapColor.COLOR_LIGHT_BLUE).lightLevel(s -> 6)));
+
     public static final RegistryObject<Codec<? extends DensityFunction>> SKY_DENSITY = DENSITY_TYPES.register("sky", () -> SkyDensity.CODEC.codec());
 
     public static final RegistryObject<StructureType<CityStructure>> CITY = STRUCTURE_TYPES.register("city_block", () -> () -> CityStructure.CODEC);
@@ -67,10 +78,15 @@ public final class StoddRegistry {
     public static final RegistryObject<StructurePieceType> DOME_PIECE = piece("cell_dome", CellDomePiece::new);
     public static final RegistryObject<StructurePieceType> LIFE_PIECE = piece("cell_life", CellLifePiece::new);
     public static final RegistryObject<StructurePieceType> WAYSTONE_PIECE = piece("cell_waystone", CellWaystonePiece::new);
+    public static final RegistryObject<StructurePieceType> CLOUD_PIECE = piece("cell_cloud", CellCloudPiece::new);
 
     public static final RegistryObject<StructurePlacementType<CellGridPlacement>> CELL_GRID = PLACEMENTS.register("cell_grid", () -> () -> CellGridPlacement.CODEC);
 
     public static final RegistryObject<Item> BUBBLE_ITEM = ITEMS.register("bubble", () -> new BlockItem(BUBBLE.get(), new Item.Properties()));
+    public static final RegistryObject<Item> DENSE_CLOUD_BUCKET = ITEMS.register("dense_cloud_bucket",
+        () -> new BucketItem(StoddFluids.CLOUD, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
+    public static final RegistryObject<Item> SKY_STREAM_BUCKET = ITEMS.register("sky_stream_bucket",
+        () -> new BucketItem(StoddFluids.STREAM, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
     public static final RegistryObject<Item> LOG_POSE = ITEMS.register("log_pose", () -> new LogPoseItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
 
     private static RegistryObject<StructurePieceType> piece(String name, StructurePieceType type) {
@@ -79,6 +95,8 @@ public final class StoddRegistry {
 
     public static void register(IEventBus modBus) {
         DENSITY_TYPES.register(modBus);
+        StoddFluids.FLUID_TYPES.register(modBus);
+        StoddFluids.FLUIDS.register(modBus);
         BLOCKS.register(modBus);
         STRUCTURE_TYPES.register(modBus);
         PIECES.register(modBus);
@@ -87,7 +105,11 @@ public final class StoddRegistry {
     }
 
     public static void onCreativeTab(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) event.accept(LOG_POSE.get());
+        if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
+            event.accept(LOG_POSE.get());
+            event.accept(DENSE_CLOUD_BUCKET.get());
+            event.accept(SKY_STREAM_BUCKET.get());
+        }
         if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) event.accept(BUBBLE_ITEM.get());
     }
 }

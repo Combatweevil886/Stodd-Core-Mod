@@ -26,29 +26,34 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
  *   - above the inner sea: every water block becomes air (caves in the island too), waterlogged blocks are drained;
  *   - the inner sea: open water from its surface (the island's coast height) down to its floor, one level, no dry holes;
  *   - the island's top above the water, made under water (dirt, gravel, clay), becomes grass again; sand stays sand;
- *   - invisible light blocks on a grid a few blocks over the ground and the water, because daylight does not reach that deep.
+ *   - invisible light blocks on a grid a few blocks over the ground and the water, because daylight does not reach that deep;
+ *   - its knock up stream, if it has one: an upright column of stodd_core:sky_stream from just under the inner sea, up through the
+ *     roof, to the outer sea's surface, so ships (and swimmers) that came down get back up.
  * It runs first of all the decoration steps (raw_generation), so trees, flowers and animals then see a dry island.
  */
 public final class CellDomePiece extends StructurePiece {
     final int x0, z0, size, lightEvery;
     final double cx, cz, r, base, up, down;
+    final int[] stream;   // x, z, r, yLow, yTop, or empty
 
-    CellDomePiece(int x0, int z0, int size, double cx, double cz, double r, double base, double up, double down, int lightEvery, int yMin, int yMax) {
-        super(StoddRegistry.DOME_PIECE.get(), 0, new BoundingBox(x0, yMin, z0, x0 + size - 1, yMax, z0 + size - 1));
+    CellDomePiece(int x0, int z0, int size, double cx, double cz, double r, double base, double up, double down, int lightEvery, int[] stream, int yMin, int yMax) {
+        super(StoddRegistry.DOME_PIECE.get(), 0, new BoundingBox(x0, yMin, z0, x0 + size - 1, stream.length == 5 ? Math.max(yMax, stream[4]) : yMax, z0 + size - 1));
         this.x0 = x0; this.z0 = z0; this.size = size; this.cx = cx; this.cz = cz; this.r = r; this.base = base; this.up = up; this.down = down;
-        this.lightEvery = lightEvery;
+        this.lightEvery = lightEvery; this.stream = stream;
     }
 
     public CellDomePiece(StructurePieceSerializationContext context, CompoundTag tag) {
         super(StoddRegistry.DOME_PIECE.get(), tag);
         x0 = tag.getInt("X0"); z0 = tag.getInt("Z0"); size = tag.getInt("Size"); lightEvery = tag.getInt("Light");
         cx = tag.getDouble("CX"); cz = tag.getDouble("CZ"); r = tag.getDouble("R"); base = tag.getDouble("Base"); up = tag.getDouble("Up"); down = tag.getDouble("Down");
+        stream = tag.getIntArray("Stream");   // empty in domes saved by 3.1.0 / 3.1.1
     }
 
     @Override
     protected void addAdditionalSaveData(StructurePieceSerializationContext context, CompoundTag tag) {
         tag.putInt("X0", x0); tag.putInt("Z0", z0); tag.putInt("Size", size); tag.putInt("Light", lightEvery);
         tag.putDouble("CX", cx); tag.putDouble("CZ", cz); tag.putDouble("R", r); tag.putDouble("Base", base); tag.putDouble("Up", up); tag.putDouble("Down", down);
+        tag.putIntArray("Stream", stream);
     }
 
     /** the dome's shape (SkyField.Dome.f): a half ellipsoid above base, an upright cylinder below it */
@@ -139,6 +144,15 @@ public final class CellDomePiece extends StructurePiece {
                     m.set(x, ly, z);
                     if (level.getBlockState(m).isAir()) level.setBlock(m, light, 2);
                 }
+            }
+        }
+        // the knock up stream: up from the inner sea, through the roof, to the outer sea's surface
+        if (stream.length == 5) {
+            BlockState sk = StoddRegistry.SKY_STREAM.get().defaultBlockState();
+            double rr = stream[2] + 0.5;
+            for (int x = ax; x <= bx; x++) for (int z = az; z <= bz; z++) {
+                double dx = x - stream[0], dz = z - stream[1];
+                if (dx * dx + dz * dz <= rr * rr) CellCloudPiece.stream(level, m, x, z, stream[3], stream[4], sk);
             }
         }
     }

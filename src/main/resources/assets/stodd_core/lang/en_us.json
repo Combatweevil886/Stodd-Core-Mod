@@ -1,4 +1,10 @@
 {
   "item.stodd_core.log_pose": "Log Pose",
-  "block.stodd_core.bubble": "Bubble"
+  "block.stodd_core.bubble": "Bubble",
+  "block.stodd_core.dense_cloud": "Dense Cloud",
+  "block.stodd_core.sky_stream": "Knock Up Stream",
+  "item.stodd_core.dense_cloud_bucket": "Bucket of Dense Cloud",
+  "item.stodd_core.sky_stream_bucket": "Bucket of Knock Up Stream",
+  "fluid_type.stodd_core.dense_cloud": "Dense Cloud",
+  "fluid_type.stodd_core.sky_stream": "Knock Up Stream"
 }

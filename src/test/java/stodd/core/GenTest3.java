@@ -506,6 +506,46 @@ public final class GenTest3 {
         for (int[] g : isl) if (none.domeAt(g[0], g[1]) != null || none.ground(g[0], g[1], raw.at(g[0], g[1])) != raw.at(g[0], g[1]) || none.deepMask(g[0], g[1]) > 0) untouched = false;
         ok(untouched, "rarity none: no domes, the world untouched");
         ok(p.domeTop() == p.seaLevel - p.deepWaterAbove, "the top of the dome is waterAbove under the sea");
+
+        section("knock up streams and the cloud sea");
+        int streams = 0, inSea = 0, deepOk = 0, domes = 0;
+        boolean streamOk = true, cloudOk = true;
+        for (int[] g : isl) {
+            IslandFinder.Island a = f.rawIslands().islandAt(g[0], g[1]);
+            if (f.isLifted(a)) {
+                for (SkyField.Stream st : f.skyStreams(a)) {
+                    streams++;
+                    if (raw.at(st.x, st.z) >= p.landThreshold || st.yTop != f.cloudTop(a) || st.yLow >= p.seaLevel - 1 || st.r != p.streamRadius) streamOk = false;
+                    if (f.distanceToLand(a, st.x, st.z) <= p.cloudWidth) inSea++;
+                    // the cells round it have the stream and the cloud round its top
+                    SkyField.CloudCell cc = f.cloudCell(st.x - 24, st.z - 24, 48);
+                    if (cc == null || cc.streams.isEmpty() || cc.topAt(24 * 48 + 24) != f.cloudTop(a)) cloudOk = false;
+                }
+                // the cloud sea just off the coast, at the coast's height; nothing far out at sea
+                SkyField.CloudCell far = f.cloudCell(g[0] + 340, g[1] + 340, 48);
+                if (far != null) cloudOk = false;
+            }
+            SkyField.Dome dd = f.domeOf(a);
+            if (dd != null) {
+                domes++;
+                SkyField.Stream st = f.deepStream(dd);
+                if (st != null && Math.hypot(st.x - dd.cx, st.z - dd.cz) + st.r <= dd.r - 6 && raw.at(st.x, st.z) < p.landThreshold
+                    && st.yLow < dd.sea() && st.yTop == p.seaLevel - 1) deepOk++;
+            }
+        }
+        ok(streams > 0 && streamOk, "every sky island's stream stands in open sea next to it and rises to its cloud sea (" + streams + ")");
+        ok(inSea == streams, "...inside the cloud sea");
+        ok(cloudOk, "the cloud sea round the top of every stream at the island's coast height, none far out at sea");
+        ok(domes > 0 && deepOk == domes, "every dome has a stream over its inner sea, up through the roof to the surface (" + deepOk + " of " + domes + ")");
+        SkyField.Params noCloud = new SkyField.Params();
+        noCloud.chance = 0.25; noCloud.deepChance = 0.4; noCloud.minSpawnDistance = 300; noCloud.cloudSea = false; noCloud.streams = 0; noCloud.deepStream = false;
+        SkyField nf = new SkyField(777L, noCloud, raw, (x, z) -> 0);
+        boolean nothing = true;
+        for (int[] g : isl) {
+            IslandFinder.Island a = nf.rawIslands().islandAt(g[0], g[1]);
+            if (nf.cloudCell(g[0] - 24, g[1] - 24, 48) != null || !nf.skyStreams(a).isEmpty() || nf.deepStream(nf.domeOf(a)) != null) nothing = false;
+        }
+        ok(nothing, "all switched off: no cloud, no streams");
     }
 
     // ---------------------------------------------------------------- finding sunken islands, and their villages
