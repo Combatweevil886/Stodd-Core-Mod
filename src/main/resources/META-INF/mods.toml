@@ -5,7 +5,7 @@ issueTrackerURL=""
 
 [[mods]]
 modId="stodd_core"
-version="3.3.0"
+version="3.3.1"
 displayName="STODD Core"
 authors="STODD team"
 description='''The one mod for the "mods 4 stodd" pack (Forge 1.20.1), and an add-on to its power-system mods:

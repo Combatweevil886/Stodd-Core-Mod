@@ -78,7 +78,7 @@ global.stodd.cfg = {
     lighting: 8,             // an invisible light every this many blocks over the island and its sea, as daylight does not reach that deep (0 = none: dark, mobs spawn)
     bubbleLight: 7,          // light given off by the bubble itself, 0 to 15 (needs a game restart)
     bubbleBreakable: false,  // true: the bubble can be broken like glass (and the dome flooded); false: unbreakable (needs a game restart)
-    villages: 0.6,           // share of sunken islands with a village round their middle (0 = none, 1 = all)
+    villages: 0.25,          // share of sunken islands with a village round their middle (0 = none, 1 = all); the rest are plain islands
     villageStyle: 'city_primitive',   // the city style its houses come from (city, city_future, city_primitive); only what fits under the roof is used
     villageRadius: 140       // how far from the middle the village reaches
   },

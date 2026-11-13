@@ -526,9 +526,9 @@
      "t": "key",
      "path": "deepIslands.villages",
      "key": "villages",
-     "def": 0.6,
+     "def": 0.25,
      "re": false,
-     "note": "share of sunken islands with a village round their middle (0 = none, 1 = all)",
+     "note": "share of sunken islands with a village round their middle (0 = none, 1 = all); the rest are plain islands",
      "pre": []
     },
     {

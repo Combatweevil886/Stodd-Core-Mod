@@ -234,6 +234,7 @@ public final class StoddConfig {
         RETIRED.put("deepIslands.waterAbove", new double[] { 10 });
         RETIRED.put("deepIslands.margin", new double[] { 24 });
         RETIRED.put("deepIslands.depthBelow", new double[] { 20 });
+        RETIRED.put("deepIslands.villages", new double[] { 0.6 });   // 3.3.1: a village on a quarter of them, not most
     }
 
     static boolean retired(String path, Object v) {

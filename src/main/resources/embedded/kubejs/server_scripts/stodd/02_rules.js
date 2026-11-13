@@ -75,7 +75,7 @@
         villagers: num(cc.villagers, 0.4), golems: num(cc.golems, 0.04)
       },
       deep: {
-        villages: num(di.villages, 0.6), villageStyle: di.villageStyle || 'city_primitive', villageRadius: di.villageRadius || 140
+        villages: num(di.villages, 0.25), villageStyle: di.villageStyle || 'city_primitive', villageRadius: di.villageRadius || 140
       },
       waystones: {
         worldgen: ws.worldgen !== false,

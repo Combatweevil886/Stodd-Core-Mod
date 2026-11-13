@@ -269,7 +269,7 @@ public final class WorldRules {
         villagers = Math.max(0, MiniJson.num(c.get("villagers"), 0.4));
         golems = Math.max(0, MiniJson.num(c.get("golems"), 0.04));
         Map<String, Object> dp = MiniJson.obj(m.get("deep"));
-        deepVillages = Math.max(0, Math.min(1, MiniJson.num(dp.get("villages"), 0.6)));
+        deepVillages = Math.max(0, Math.min(1, MiniJson.num(dp.get("villages"), 0.25)));
         deepVillageStyle = MiniJson.str(dp.get("villageStyle"), "city_primitive");
         deepVillageRadius = Math.max(48, (int) MiniJson.num(dp.get("villageRadius"), 140));
         Map<String, Object> wsj = MiniJson.obj(m.get("waystones"));

@@ -1,12 +1,12 @@
-# STODD Core 3.3.0: the core mod of *mods 4 stodd (season 2)*, as a real Forge mod
+# STODD Core 3.3.1: the core mod of *mods 4 stodd (season 2)*, as a real Forge mod
 
-Forge 1.20.1 / Forge 47.4.20. **One jar, `mods/stodd_core-3.3.0.jar`.** A **compiled Forge mod** (Java, built with ForgeGradle) and an **add-on to the pack's power-system mods**: True Prime Piece (Devil Fruits), Jujutsu Craft (Cursed Energy), Malum (dark magic), Project: Edgerunner (chrome) and Curios. It holds the **ten origins** and their rules, the **Survival Island world** (guaranteed on servers too) with **sky islands that are normal islands lifted into the sky**, **city islands and dressed islands generated with the terrain like any structure**, the **Log Pose as a real item with its own needle**, the levels, power caps, mastery, level links, waystones, ore tiers and Downgrade Template that run as KubeJS scripts the mod installs for you, and **every setting in `config/stodd/*.toml`** (section 0).
+Forge 1.20.1 / Forge 47.4.20. **One jar, `mods/stodd_core-3.3.1.jar`.** A **compiled Forge mod** (Java, built with ForgeGradle) and an **add-on to the pack's power-system mods**: True Prime Piece (Devil Fruits), Jujutsu Craft (Cursed Energy), Malum (dark magic), Project: Edgerunner (chrome) and Curios. It holds the **ten origins** and their rules, the **Survival Island world** (guaranteed on servers too) with **sky islands that are normal islands lifted into the sky**, **city islands and dressed islands generated with the terrain like any structure**, the **Log Pose as a real item with its own needle**, the levels, power caps, mastery, level links, waystones, ore tiers and Downgrade Template that run as KubeJS scripts the mod installs for you, and **every setting in `config/stodd/*.toml`** (section 0).
 
 ## Getting the jar
 
-The mod is built on GitHub, in the repository **Combatweevil886/Stodd-Core-Mod**: every push compiles it against the real Minecraft 1.20.1 and Forge 47.4.20, runs all the tests, and puts the game-ready jar on the `dist` branch: **https://github.com/Combatweevil886/Stodd-Core-Mod/raw/dist/stodd_core-3.3.0.jar** (also attached to each run under Actions as the artifact `stodd_core`).
+The mod is built on GitHub, in the repository **Combatweevil886/Stodd-Core-Mod**: every push compiles it against the real Minecraft 1.20.1 and Forge 47.4.20, runs all the tests, and puts the game-ready jar on the `dist` branch: **https://github.com/Combatweevil886/Stodd-Core-Mod/raw/dist/stodd_core-3.3.1.jar** (also attached to each run under Actions as the artifact `stodd_core`).
 
-To build it yourself instead: a Java 17 JDK, then `gradlew build` in the project folder; the game-ready jar is the `...-renamed.jar` in `build/libs` (rename it to `stodd_core-3.3.0.jar`). Not the `-unobfuscated` one: that one has development names and does not run in the game.
+To build it yourself instead: a Java 17 JDK, then `gradlew build` in the project folder; the game-ready jar is the `...-renamed.jar` in `build/libs` (rename it to `stodd_core-3.3.1.jar`). Not the `-unobfuscated` one: that one has development names and does not run in the game.
 
 ## How the mod is put together
 
@@ -29,10 +29,14 @@ To build it yourself instead: a Java 17 JDK, then `gradlew build` in the project
 
 ## Install
 
-* Put **`stodd_core-3.3.0.jar`** in `mods/`. **Delete every `stodd_compat-*.jar` and every older `stodd_core-*.jar`.** Start once, stop, start again (the first start installs the scripts; KubeJS and Survival Island read them on the next).
+* Put **`stodd_core-3.3.1.jar`** in `mods/`. **Delete every `stodd_compat-*.jar` and every older `stodd_core-*.jar`.** Start once, stop, start again (the first start installs the scripts; KubeJS and Survival Island read them on the next).
 * **Start a new world.** The cities, dressed islands and sky dressing are generated with new chunks, and the island terrain only applies to new chunks. **On a server, delete (or rename) the world folder** (`level-name` in `server.properties`) before the first start. In an existing world, land that was already generated keeps what it had; set `city.scriptBuilder = true` and `makeover.scriptBuilder = true` in `config/stodd/world.toml` to let the scripts build on that old land the 2.3.0 way.
 * The overrides zip and full-pack zip of earlier versions are not needed any more: the jar installs everything.
 * Same mods as before: Survival Island, Origins, Curios, KubeJS, Waystones, True Prime Piece, Jujutsu Craft, Malum, Project: Edgerunner.
+
+## What changed in 3.3.1
+
+* **Fewer sunken villages**: about a quarter of the sunken islands have a village now (was 60 %); the rest are plain islands (`deepIslands.villages`, section 4c2). A `world.toml` still holding the old 0.6 gets the new share by itself; a value you chose is kept. Only new land changes: domes already generated keep their villages.
 
 ## What changed in 3.3.0
 
@@ -396,7 +400,7 @@ Three styles, each rolled as its own theme, each built block by block around a p
 * **Light.** Daylight does not reach that deep, so an invisible light hangs a few blocks over the ground and the water every `lighting` (8) blocks; set it to 0 for dark, dangerous domes.
 * **How many.** `deepIslands.rarity`: none, very_rare (3 % of the islands), rare (6 %), **normal (10 %)**, common (18 %), very_common (30 %), or an exact `chance`. Never the island at the spawn, never a sky island, never an island two islands grew into (too big for one dome), and never one with another island so close that the hollow round its dome would cut into it.
 * **Hills** are `relief` (0.6) as tall as on the ground and always stay 3 blocks under the roof. The room between the coast and the wall is `margin` (40). `/stodd core island` says "Sunken island ... under a bubble dome below you" when you are over or inside one; `/stodd core world` counts them near the spawn.
-* **Sunken villages.** Most sunken islands (`deepIslands.villages`, 60 %) get a village round their middle, built like a city (section 4b) from the `villageStyle` style's houses (Tribal Town's by default: huts, halls, farms, pens, smithies, markets), only those that fit under the roof with room to spare, within `villageRadius` (140) of the middle, with villagers. Building never touches the dome. (Vanilla villages cannot generate in a dome: the game looks for them at the sea's surface there.)
+* **Sunken villages.** About a quarter of the sunken islands (`deepIslands.villages`, 25 %) get a village round their middle; the rest are plain islands with nothing built on them. A village is built like a city (section 4b) from the `villageStyle` style's houses (Tribal Town's by default: huts, halls, farms, pens, smithies, markets), only those that fit under the roof with room to spare, within `villageRadius` (140) of the middle, with villagers. Building never touches the dome. (Vanilla villages cannot generate in a dome: the game looks for them at the sea's surface there.)
 * **Finding them.** The Log Pose's "Nearest sunken island" mode, "Next island" when you are deep under the sea, and `/stodd locate sunken`. Each has its waystone on the island (section 4).
 * **Ships and the sky islands.** Eureka ships steered from a helm have no height limit of their own, so they climb to the sky islands (y 190 or so, build limit 320) like anywhere else. A ship **without** a helm (only balloons) loses lift with height in Eureka: full at y 64, none at y 400 (`passiveBalloonMinHeight` / `passiveBalloonMaxHeight` in `saves/<world>/serverconfig/valkyrienskies/vs_eureka.toml`), so at y 190 it has about 60 % of its lift and needs more balloons. That is Eureka's own setting; STODD does not change it.
 * **Upgrading from 3.1.0:** a `world.toml` that still holds 3.1.0's defaults (`coastDepth = 16`, `waterAbove = 10`, `margin = 24`, `depthBelow = 20`) gets the new ones by itself (the log and `/stodd config` say so); a value you chose yourself is kept. Domes that were already generated keep their old look, so **start a new world** to see the new one.
@@ -505,7 +509,7 @@ The server crash `... provides no component of type apoli:powers` (`Ticking enti
 
 ## Verify in your first test world
 
-1. **The log at start-up** shows `[STODD Core] 3.3.0 loaded`, `settings: ...config/stodd`, `The STODD island world pack is enabled` and `ISLANDS: ...`. On a server run `/stodd core world` (operator). Then `/stodd addons`: every mod you have should say `[found]`.
+1. **The log at start-up** shows `[STODD Core] 3.3.1 loaded`, `settings: ...config/stodd`, `The STODD island world pack is enabled` and `ISLANDS: ...`. On a server run `/stodd core world` (operator). Then `/stodd addons`: every mod you have should say `[found]`.
 2. Create a world: the world type already shows **Survival Island (Default)**. The Origin screen shows only the ten origins. A Weakling starts with 14 HP and one ring slot; a Brawler has 45 HP and 4 hand slots; a Skyborn takes no fall damage. A non-Sorcerer has no Jujutsu items after a few seconds.
 3. As a Human, right-click a Devil Fruit: refused once, with one message. As a Dark Magician, a Malum altar and scythe work; anyone else is refused. A Sorcerer cannot use the Ripperdoc. As a Swordsman eat a fruit: the message says the other path is closed.
 4. **The Log Pose:** you start with one. The needle points; walk around and it keeps pointing at the same island. Right-click to cycle the modes. Stand in the middle of an island for 3 seconds: "Island recorded", and the needle moves on to the next island.

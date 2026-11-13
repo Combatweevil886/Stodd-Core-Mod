@@ -1259,7 +1259,7 @@
   "golems": 0.04
  },
  "deep": {
-  "villages": 0.6,
+  "villages": 0.25,
   "villageStyle": "city_primitive",
   "villageRadius": 140
  },
