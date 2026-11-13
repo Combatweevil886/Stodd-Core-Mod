@@ -365,6 +365,17 @@
     },
     {
      "t": "key",
+     "path": "skyIslands.cloudSinkers",
+     "key": "cloudSinkers",
+     "def": [
+      "devil_fruit_user"
+     ],
+     "re": false,
+     "note": "origins that sink in the cloud as in the sea (they cannot swim in it and fall through it)",
+     "pre": []
+    },
+    {
+     "t": "key",
      "path": "skyIslands.streams",
      "key": "streams",
      "def": 1,

@@ -52,6 +52,7 @@ global.stodd.cfg = {
     cloudSea: true,
     cloudWidth: 56,          // how far it reaches out from the coast, in blocks (its edge is ragged)
     cloudDepth: 6,           // how deep it is, in blocks (deeper holds heavier ships)
+    cloudSinkers: ['devil_fruit_user'],   // origins that sink in the cloud as in the sea (they cannot swim in it and fall through it)
     // knock up streams: a column of rising water from the sea up to the cloud sea, that carries ships, boats, players and mobs up
     streams: 1,              // how many per sky island (0 = none, at most 8)
     streamRadius: 10         // how wide each one is (radius in blocks: make it wider than your ships)

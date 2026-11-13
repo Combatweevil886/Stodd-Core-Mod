@@ -529,8 +529,8 @@ public final class SkyField {
     private final Map<String, Object> deepStreams = new ConcurrentHashMap<>();
     private final Map<Long, List<IslandFinder.Island>> liftedRegions = new ConcurrentHashMap<>();
 
-    /** The cloud sea's surface round a sky island: one under its coast, as the sea is one under a ground island's. */
-    public int cloudTop(IslandFinder.Island isl) { return (int) Math.round(levelOf(isl)) - 1; }
+    /** The cloud sea's surface round a sky island: three under its coast, so its beaches stand a little clear of the cloud. */
+    public int cloudTop(IslandFinder.Island isl) { return (int) Math.round(levelOf(isl)) - 3; }
 
     boolean cloudOn() { return p.enabled && p.chance > 0 && (p.cloudSea || p.streams > 0); }
 

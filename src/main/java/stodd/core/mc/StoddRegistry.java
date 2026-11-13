@@ -61,7 +61,7 @@ public final class StoddRegistry {
     });
 
     /** the cloud sea round sky islands (StoddFluids.CLOUD): boats and ships sail on it */
-    public static final RegistryObject<LiquidBlock> DENSE_CLOUD = BLOCKS.register("dense_cloud", () -> new LiquidBlock(StoddFluids.CLOUD,
+    public static final RegistryObject<LiquidBlock> DENSE_CLOUD = BLOCKS.register("dense_cloud", () -> new CloudBlock(StoddFluids.CLOUD,
         BlockBehaviour.Properties.copy(Blocks.WATER).mapColor(MapColor.SNOW)));
     /** a knock up stream (StoddFluids.STREAM): carries everything up */
     public static final RegistryObject<LiquidBlock> SKY_STREAM = BLOCKS.register("sky_stream", () -> new SkyStreamBlock(StoddFluids.STREAM,
