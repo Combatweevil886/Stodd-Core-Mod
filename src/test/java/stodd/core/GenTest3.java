@@ -508,7 +508,7 @@ public final class GenTest3 {
         ok(p.domeTop() == p.seaLevel - p.deepWaterAbove, "the top of the dome is waterAbove under the sea");
 
         section("knock up streams and the cloud sea");
-        int streams = 0, inSea = 0, deepOk = 0, domes = 0;
+        int streams = 0, inSea = 0, deepOk = 0, domes = 0, tubeOk = 0;
         boolean streamOk = true, cloudOk = true;
         for (int[] g : isl) {
             IslandFinder.Island a = f.rawIslands().islandAt(g[0], g[1]);
@@ -531,19 +531,24 @@ public final class GenTest3 {
                 SkyField.Stream st = f.deepStream(dd);
                 if (st != null && Math.hypot(st.x - dd.cx, st.z - dd.cz) + st.r <= dd.r - 6 && raw.at(st.x, st.z) < p.landThreshold
                     && st.yLow < dd.sea() && st.yTop == p.seaLevel - 1) deepOk++;
+                SkyField.Stream tb = f.deepTube(dd);
+                if (tb != null && st != null && Math.hypot(tb.x - st.x, tb.z - st.z) >= 2 * tb.r + 24 && tb.r == st.r
+                    && Math.hypot(tb.x - dd.cx, tb.z - dd.cz) + tb.r <= dd.r - 6 && raw.at(tb.x, tb.z) < p.landThreshold
+                    && tb.yLow == dd.sea() && tb.yTop == p.seaLevel - 1 && dd.ceiling(tb.x, tb.z) > dd.sea() + 6) tubeOk++;
             }
         }
         ok(streams > 0 && streamOk, "every sky island's stream stands in open sea next to it and rises to its cloud sea (" + streams + ")");
         ok(inSea == streams, "...inside the cloud sea");
         ok(cloudOk, "the cloud sea round the top of every stream at the island's coast height, none far out at sea");
         ok(domes > 0 && deepOk == domes, "every dome has a stream over its inner sea, up through the roof to the surface (" + deepOk + " of " + domes + ")");
+        ok(tubeOk == domes, "every dome has a bubble tube as wide as its stream, over its sea, apart from the stream, with room under the roof (" + tubeOk + " of " + domes + ")");
         SkyField.Params noCloud = new SkyField.Params();
-        noCloud.chance = 0.25; noCloud.deepChance = 0.4; noCloud.minSpawnDistance = 300; noCloud.cloudSea = false; noCloud.streams = 0; noCloud.deepStream = false;
+        noCloud.chance = 0.25; noCloud.deepChance = 0.4; noCloud.minSpawnDistance = 300; noCloud.cloudSea = false; noCloud.streams = 0; noCloud.deepStream = false; noCloud.deepTube = false;
         SkyField nf = new SkyField(777L, noCloud, raw, (x, z) -> 0);
         boolean nothing = true;
         for (int[] g : isl) {
             IslandFinder.Island a = nf.rawIslands().islandAt(g[0], g[1]);
-            if (nf.cloudCell(g[0] - 24, g[1] - 24, 48) != null || !nf.skyStreams(a).isEmpty() || nf.deepStream(nf.domeOf(a)) != null) nothing = false;
+            if (nf.cloudCell(g[0] - 24, g[1] - 24, 48) != null || !nf.skyStreams(a).isEmpty() || nf.deepStream(nf.domeOf(a)) != null || nf.deepTube(nf.domeOf(a)) != null) nothing = false;
         }
         ok(nothing, "all switched off: no cloud, no streams");
     }

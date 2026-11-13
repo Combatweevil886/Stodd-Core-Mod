@@ -40,7 +40,7 @@ public final class StoddRegistry {
     /** the wall of a sunken island's dome (BubbleBlock); its light and toughness come from [deepIslands] in the config */
     public static final RegistryObject<Block> BUBBLE = BLOCKS.register("bubble", () -> {
         stodd.core.config.StoddConfig c = stodd.core.config.StoddConfig.get();
-        final int light = Math.max(0, Math.min(15, c.integer("deepIslands.bubbleLight", 7)));
+        final int light = Math.max(0, Math.min(15, c.integer("deepIslands.bubbleLight", 13)));
         boolean breakable = c.bool("deepIslands.bubbleBreakable", false);
         BlockBehaviour.Properties p = BlockBehaviour.Properties.of()
             .mapColor(MapColor.WATER)

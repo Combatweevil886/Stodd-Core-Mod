@@ -488,27 +488,36 @@
     },
     {
      "t": "key",
+     "path": "deepIslands.tube",
+     "key": "tube",
+     "def": true,
+     "re": false,
+     "note": "a bubble tube into every dome: an open shaft of air from the surface down through the roof, so ships sail in and drop into its sea",
+     "pre": []
+    },
+    {
+     "t": "key",
      "path": "deepIslands.streamRadius",
      "key": "streamRadius",
-     "def": 8,
+     "def": 10,
      "re": false,
-     "note": "how wide it is (radius in blocks)",
+     "note": "how wide the stream and the tube are (radius in blocks, like the sky islands' streams: make it wider than your ships)",
      "pre": []
     },
     {
      "t": "key",
      "path": "deepIslands.lighting",
      "key": "lighting",
-     "def": 8,
+     "def": 4,
      "re": false,
-     "note": "an invisible light every this many blocks over the island and its sea, as daylight does not reach that deep (0 = none: dark, mobs spawn)",
+     "note": "an invisible full-strength light every this many blocks over the island and its sea, as daylight does not reach that deep (0 = none: dark, mobs spawn)",
      "pre": []
     },
     {
      "t": "key",
      "path": "deepIslands.bubbleLight",
      "key": "bubbleLight",
-     "def": 7,
+     "def": 13,
      "re": false,
      "note": "light given off by the bubble itself, 0 to 15 (needs a game restart)",
      "pre": []

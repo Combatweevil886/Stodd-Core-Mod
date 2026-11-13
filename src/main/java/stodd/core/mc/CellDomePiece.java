@@ -28,18 +28,22 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
  *   - the island's top above the water, made under water (dirt, gravel, clay), becomes grass again; sand stays sand;
  *   - invisible light blocks on a grid a few blocks over the ground and the water, because daylight does not reach that deep;
  *   - its knock up stream, if it has one: an upright column of stodd_core:sky_stream from just under the inner sea, up through the
- *     roof, to the outer sea's surface, so ships (and swimmers) that came down get back up.
+ *     roof, to the outer sea's surface, so ships (and swimmers) that came down get back up;
+ *   - its bubble tube, if it has one: an open shaft of air as wide as the stream, walled with bubble, from the outer sea's
+ *     surface down through the roof, so a ship sails into it and drops into the sea inside (daylight comes down it too).
  * It runs first of all the decoration steps (raw_generation), so trees, flowers and animals then see a dry island.
  */
 public final class CellDomePiece extends StructurePiece {
     final int x0, z0, size, lightEvery;
     final double cx, cz, r, base, up, down;
     final int[] stream;   // x, z, r, yLow, yTop, or empty
+    final int[] tube;     // x, z, r, yLow, yTop, or empty
 
-    CellDomePiece(int x0, int z0, int size, double cx, double cz, double r, double base, double up, double down, int lightEvery, int[] stream, int yMin, int yMax) {
-        super(StoddRegistry.DOME_PIECE.get(), 0, new BoundingBox(x0, yMin, z0, x0 + size - 1, stream.length == 5 ? Math.max(yMax, stream[4]) : yMax, z0 + size - 1));
+    CellDomePiece(int x0, int z0, int size, double cx, double cz, double r, double base, double up, double down, int lightEvery, int[] stream, int[] tube, int yMin, int yMax) {
+        super(StoddRegistry.DOME_PIECE.get(), 0, new BoundingBox(x0, yMin, z0, x0 + size - 1,
+            Math.max(yMax, Math.max(stream.length == 5 ? stream[4] : yMax, tube.length == 5 ? tube[4] : yMax)), z0 + size - 1));
         this.x0 = x0; this.z0 = z0; this.size = size; this.cx = cx; this.cz = cz; this.r = r; this.base = base; this.up = up; this.down = down;
-        this.lightEvery = lightEvery; this.stream = stream;
+        this.lightEvery = lightEvery; this.stream = stream; this.tube = tube;
     }
 
     public CellDomePiece(StructurePieceSerializationContext context, CompoundTag tag) {
@@ -47,6 +51,7 @@ public final class CellDomePiece extends StructurePiece {
         x0 = tag.getInt("X0"); z0 = tag.getInt("Z0"); size = tag.getInt("Size"); lightEvery = tag.getInt("Light");
         cx = tag.getDouble("CX"); cz = tag.getDouble("CZ"); r = tag.getDouble("R"); base = tag.getDouble("Base"); up = tag.getDouble("Up"); down = tag.getDouble("Down");
         stream = tag.getIntArray("Stream");   // empty in domes saved by 3.1.0 / 3.1.1
+        tube = tag.getIntArray("Tube");       // empty in domes saved before 3.4.0
     }
 
     @Override
@@ -54,6 +59,7 @@ public final class CellDomePiece extends StructurePiece {
         tag.putInt("X0", x0); tag.putInt("Z0", z0); tag.putInt("Size", size); tag.putInt("Light", lightEvery);
         tag.putDouble("CX", cx); tag.putDouble("CZ", cz); tag.putDouble("R", r); tag.putDouble("Base", base); tag.putDouble("Up", up); tag.putDouble("Down", down);
         tag.putIntArray("Stream", stream);
+        tag.putIntArray("Tube", tube);
     }
 
     /** the dome's shape (SkyField.Dome.f): a half ellipsoid above base, an upright cylinder below it */
@@ -153,6 +159,26 @@ public final class CellDomePiece extends StructurePiece {
             for (int x = ax; x <= bx; x++) for (int z = az; z <= bz; z++) {
                 double dx = x - stream[0], dz = z - stream[1];
                 if (dx * dx + dz * dz <= rr * rr) CellCloudPiece.stream(level, m, x, z, stream[3], stream[4], sk);
+            }
+        }
+        // the bubble tube: air inside, a wall of bubble round it, from the surface down to where it opens into the dome
+        if (tube.length == 5) {
+            double tr = tube[2] + 0.5, shell = tube[2] + 2.0;
+            for (int x = ax; x <= bx; x++) for (int z = az; z <= bz; z++) {
+                double dx = x - tube[0], dz = z - tube[1], dd = Math.sqrt(dx * dx + dz * dz);
+                if (dd > shell) continue;
+                boolean in = dd <= tr;
+                for (int y = Math.min(maxY, tube[4]); y > tube[3]; y--) {
+                    // down to the dome's open inside (the shell stops on the dome's own wall, so the two walls meet)
+                    if (inside(x, y, z) && !wall(x, y, z)) break;
+                    m.set(x, y, z);
+                    BlockState st = level.getBlockState(m);
+                    if (in) {
+                        if (!st.isAir() && !firm(st)) level.setBlock(m, air, 2);
+                    } else if (!firm(st) && !(st.getBlock() instanceof BubbleBlock)) {
+                        level.setBlock(m, bubble, 2);
+                    }
+                }
             }
         }
     }

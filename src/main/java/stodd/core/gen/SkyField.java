@@ -44,7 +44,7 @@ public final class SkyField {
         public boolean deepEnabled = true;
         public double deepChance = 0.1;
         /** deepCoast: the island's coast inside the dome, and the level of the sea round it in there (the dome's equator) */
-        public int seaLevel = 63, deepCoast = 24, deepWaterAbove = 6, deepDown = 24, deepMargin = 40, deepLighting = 8;
+        public int seaLevel = 63, deepCoast = 24, deepWaterAbove = 6, deepDown = 24, deepMargin = 40, deepLighting = 4;
         public double deepRelief = 0.6;
         /** the slope round a dome: the sea floor is lowered to the dome's foot and rises back to the normal floor over this many blocks */
         public int deepRing = 64;
@@ -53,15 +53,15 @@ public final class SkyField {
         // the cloud sea round sky islands and the knock up streams ([skyIslands]); one up through every dome ([deepIslands])
         public boolean cloudSea = true;
         public int cloudWidth = 56, cloudDepth = 6, streams = 1, streamRadius = 10;
-        public boolean deepStream = true;
-        public int deepStreamRadius = 8;
+        public boolean deepStream = true, deepTube = true;
+        public int deepStreamRadius = 10;
 
         public String key() {
             return enabled + "|" + chance + "|" + minSpawnDistance + "|" + minRadius + "|" + height + "|" + heightVariation + "|" + thickness + "|"
                 + spikes + "|" + relief + "|" + maxHeight + "|" + landThreshold + "|" + centreContinents + "|" + cell + "|" + peakStep + "|" + beaches
                 + "|" + deepEnabled + "|" + deepChance + "|" + seaLevel + "|" + deepCoast + "|" + deepWaterAbove + "|" + deepDown + "|" + deepMargin
                 + "|" + deepLighting + "|" + deepRelief + "|" + deepReach + "|" + deepRing
-                + "|" + cloudSea + "|" + cloudWidth + "|" + cloudDepth + "|" + streams + "|" + streamRadius + "|" + deepStream + "|" + deepStreamRadius;
+                + "|" + cloudSea + "|" + cloudWidth + "|" + cloudDepth + "|" + streams + "|" + streamRadius + "|" + deepStream + "|" + deepStreamRadius + "|" + deepTube;
         }
 
         /** the highest block of a bubble dome (always under the sea) */
@@ -590,25 +590,53 @@ public final class SkyField {
     /** The knock up stream of a sunken island: over the sea inside its dome, from just under the inner sea up to the outer sea's surface. */
     public Stream deepStream(Dome d) {
         if (d == null || !p.deepStream || p.deepStreamRadius <= 0) return null;
+        Stream[] two = deepShafts(d);
+        return two[0];
+    }
+
+    /**
+     * The bubble tube of a sunken island, as wide as its stream: an open shaft of air walled with bubble from the outer sea's
+     * surface down through the dome's roof, so a ship sails into it and drops into the sea inside. yLow is the inner sea's surface.
+     */
+    public Stream deepTube(Dome d) {
+        if (d == null || !p.deepTube || p.deepStreamRadius <= 0) return null;
+        return deepShafts(d)[1];
+    }
+
+    /**
+     * Where a dome's stream and tube stand: over its inner sea (no land under them), as near the island as there is sea, where
+     * the roof is highest (the most room for a ship), and apart from each other. [0] = the stream, [1] = the tube; null = none.
+     */
+    Stream[] deepShafts(Dome d) {
         Object o = deepStreams.get(d.key());
-        if (o != null) return o == NONE ? null : (Stream) o;
+        if (o instanceof Stream[]) return (Stream[]) o;
         int sr = Math.max(2, p.deepStreamRadius);
-        Stream found = null;
+        Stream[] out = new Stream[2];
         double a0 = unit(d.island, 25) * 2 * Math.PI;
-        outer:
-        for (int t = 0; t < 16; t++) {
-            double ang = a0 + t * Math.PI / 8;
-            for (double dist = d.r - sr - 8; dist >= Math.max(sr + 4, d.r * 0.35); dist -= 6) {
-                int x = (int) Math.round(d.cx + dist * Math.cos(ang)), z = (int) Math.round(d.cz + dist * Math.sin(ang));
-                if (Math.hypot(x - d.cx, z - d.cz) + sr > d.r - 6) continue;
-                if (!clearDisc(x, z, sr + 3)) continue;
-                found = new Stream(x, z, sr, d.sea() - 6, p.seaLevel - 1);
-                break outer;
+        for (int which = 0; which < 2; which++) {
+            Stream best = null;
+            double bestRoof = -1e9;
+            for (int t = 0; t < 24; t++) {
+                double ang = a0 + which * Math.PI + t * Math.PI / 12;
+                for (double dist = Math.max(sr + 4, d.r * 0.3); dist <= d.r - sr - 6; dist += 6) {
+                    int x = (int) Math.round(d.cx + dist * Math.cos(ang)), z = (int) Math.round(d.cz + dist * Math.sin(ang));
+                    if (Math.hypot(x - d.cx, z - d.cz) + sr + 2 > d.r - 4) continue;
+                    if (which == 1 && out[0] != null && Math.hypot(x - out[0].x, z - out[0].z) < 2 * sr + 24) continue;
+                    if (!clearDisc(x, z, sr + 3)) continue;
+                    // the lowest roof over the disc: the room a ship has under it
+                    double roof = Math.min(d.ceiling(x + sr, z), Math.min(d.ceiling(x - sr, z), Math.min(d.ceiling(x, z + sr), d.ceiling(x, z - sr))));
+                    if (roof > bestRoof) {
+                        bestRoof = roof;
+                        best = which == 0 ? new Stream(x, z, sr, d.sea() - 6, p.seaLevel - 1) : new Stream(x, z, sr, d.sea(), p.seaLevel - 1);
+                    }
+                    break;    // the first sea along this direction is the nearest to the island: the highest roof on it
+                }
             }
+            out[which] = best;
         }
         if (deepStreams.size() > 100_000) deepStreams.clear();
-        deepStreams.put(d.key(), found == null ? NONE : found);
-        return found;
+        deepStreams.put(d.key(), out);
+        return out;
     }
 
     /** The sky islands whose cloud sea may reach the rectangle (looked up per 256 x 256 region). */

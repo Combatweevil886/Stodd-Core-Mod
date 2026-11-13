@@ -74,9 +74,10 @@ global.stodd.cfg = {
     depthBelow: 24,          // how far the dome reaches under the inner sea (at least 20; the sea in there is at most 18 deep)
     slope: 64,               // round the dome the sea floor is lowered to its foot and rises back over this many blocks (0 = no hollow)
     stream: true,            // a knock up stream inside every dome: from its sea up through the roof to the surface, so ships that came down get back up
-    streamRadius: 8,         // how wide it is (radius in blocks)
-    lighting: 8,             // an invisible light every this many blocks over the island and its sea, as daylight does not reach that deep (0 = none: dark, mobs spawn)
-    bubbleLight: 7,          // light given off by the bubble itself, 0 to 15 (needs a game restart)
+    tube: true,              // a bubble tube into every dome: an open shaft of air from the surface down through the roof, so ships sail in and drop into its sea
+    streamRadius: 10,        // how wide the stream and the tube are (radius in blocks, like the sky islands' streams: make it wider than your ships)
+    lighting: 4,             // an invisible full-strength light every this many blocks over the island and its sea, as daylight does not reach that deep (0 = none: dark, mobs spawn)
+    bubbleLight: 13,         // light given off by the bubble itself, 0 to 15 (needs a game restart)
     bubbleBreakable: false,  // true: the bubble can be broken like glass (and the dome flooded); false: unbreakable (needs a game restart)
     villages: 0.25,          // share of sunken islands with a village round their middle (0 = none, 1 = all); the rest are plain islands
     villageStyle: 'city_primitive',   // the city style its houses come from (city, city_future, city_primitive); only what fits under the roof is used

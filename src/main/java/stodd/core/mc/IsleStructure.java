@@ -92,9 +92,9 @@ public final class IsleStructure extends Structure {
             if (ds.isEmpty()) return Optional.empty();
             SkyField.Dome d = ds.get(0);
             int yMin = (int) Math.floor(d.base - d.down) - 2, yMax = (int) Math.ceil(d.base + d.up) + 2;
-            SkyField.Stream st = f.deepStream(d);
+            SkyField.Stream st = f.deepStream(d), tb = f.deepTube(d);
             final CellDomePiece piece = new CellDomePiece(x0, z0, cell, d.cx, d.cz, d.r, d.base, d.up, d.down, f.p.deepLighting,
-                st != null ? st.array() : new int[0], yMin, yMax);
+                st != null ? st.array() : new int[0], tb != null ? tb.array() : new int[0], yMin, yMax);
             return Optional.of(new GenerationStub(new BlockPos(mx, (int) d.base + 2, mz), builder -> builder.addPiece(piece)));
         }
         if ("cloud".equals(kind)) {

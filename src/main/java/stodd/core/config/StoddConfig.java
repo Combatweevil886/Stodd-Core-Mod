@@ -235,6 +235,9 @@ public final class StoddConfig {
         RETIRED.put("deepIslands.margin", new double[] { 24 });
         RETIRED.put("deepIslands.depthBelow", new double[] { 20 });
         RETIRED.put("deepIslands.villages", new double[] { 0.6 });   // 3.3.1: a village on a quarter of them, not most
+        RETIRED.put("deepIslands.lighting", new double[] { 8 });     // 3.4.0: brighter domes
+        RETIRED.put("deepIslands.bubbleLight", new double[] { 7 });
+        RETIRED.put("deepIslands.streamRadius", new double[] { 8 }); // 3.4.0: as wide as the sky islands' streams
     }
 
     static boolean retired(String path, Object v) {
@@ -587,7 +590,8 @@ public final class StoddConfig {
         p.deepDown = (int) Math.round(clampNote("deepIslands.depthBelow", num("deepIslands.depthBelow", 24), 20, 60));
         p.deepRing = (int) Math.round(clampNote("deepIslands.slope", num("deepIslands.slope", 64), 0, 200));
         p.deepStream = bool("deepIslands.stream", true);
-        p.deepStreamRadius = (int) Math.round(clampNote("deepIslands.streamRadius", num("deepIslands.streamRadius", 8), 2, 32));
+        p.deepStreamRadius = (int) Math.round(clampNote("deepIslands.streamRadius", num("deepIslands.streamRadius", 10), 2, 32));
+        p.deepTube = bool("deepIslands.tube", true);
         p.cloudSea = bool("skyIslands.cloudSea", true);
         p.cloudWidth = (int) Math.round(clampNote("skyIslands.cloudWidth", num("skyIslands.cloudWidth", 56), 8, 200));
         p.cloudDepth = (int) Math.round(clampNote("skyIslands.cloudDepth", num("skyIslands.cloudDepth", 6), 1, 24));
@@ -601,7 +605,7 @@ public final class StoddConfig {
             isize = pr.equals("packed") ? 110 : pr.equals("large") ? 200 : pr.equals("grand") ? 300 : 140;
         }
         p.deepReach = (int) Math.round(isize * 1.6 + p.deepMargin + 96 + p.deepRing);
-        p.deepLighting = (int) Math.round(clampNote("deepIslands.lighting", num("deepIslands.lighting", 8), 0, 64));
+        p.deepLighting = (int) Math.round(clampNote("deepIslands.lighting", num("deepIslands.lighting", 4), 0, 64));
         p.landThreshold = num("islandLandThreshold", -0.19);
         p.peakStep = Math.max(8, integer("islandPeakStep", 32));
         p.cell = Math.max(16, integer("city.cell", 48));
