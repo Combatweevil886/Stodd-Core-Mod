@@ -101,7 +101,11 @@
         },
         sorcery: {
           items: C.sorceryItems || [], namespaces: re(C.sorceryNamespaces), bookId: re(C.sorceryBookIdPattern),
-          bookName: re(C.sorceryBookNamePattern), itemPattern: re(C.sorceryItemPattern)
+          bookName: re(C.sorceryBookNamePattern),
+          // the technique items and the resources alike: nobody without Cursed Energy may use either
+          itemPattern: C.sorceryResourcePattern && C.sorceryItemPattern
+            ? { src: '(?:' + String(C.sorceryItemPattern.source) + ')|(?:' + String(C.sorceryResourcePattern.source) + ')', i: !!C.sorceryItemPattern.ignoreCase }
+            : re(C.sorceryItemPattern)
         },
         ripperdocBlocks: C.ripperdocBlocks || [], ripperdocEntity: re(C.ripperdocEntityPattern),
         slotIds: C.slotIds || [], slots: C.slots || {}, slotsByMilestone: C.slotsByMilestone || {}, slotMilestoneEvery: C.slotMilestoneEvery || 5,

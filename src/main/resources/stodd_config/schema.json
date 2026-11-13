@@ -3284,11 +3284,23 @@
      "t": "key",
      "path": "sorceryItemPattern",
      "key": "sorceryItemPattern",
-     "def": "/^(jujutsucraft|jjk_addon|jujutsucrafts|sorceryfight):[a-z0-9_]*(technique|skill_selection|selection_book|skill_book|sukuna_finger|sorcerer_shard|reroll)[a-z0-9_]*$/",
+     "def": "/^(jujutsucraft|jjk_addon|jujutsucrafts|sorceryfight):[a-z0-9_]*(technique|skill_selection|selection_book|skill_book|reroll)[a-z0-9_]*$/",
      "re": true,
      "note": "",
      "pre": [
       "Jujutsu Craft's Skill Selection Book / Cursed Technique Changer and addon equivalents"
+     ]
+    },
+    {
+     "t": "key",
+     "path": "sorceryResourcePattern",
+     "key": "sorceryResourcePattern",
+     "def": "/^(jujutsucraft|jjk_addon|jujutsucrafts|sorceryfight):[a-z0-9_]*(finger|sorcerer_shard|cursed_object|cursed_womb|death_painting)[a-z0-9_]*$/",
+     "re": true,
+     "note": "",
+     "pre": [
+      "Jujutsu resources that hold Cursed Energy: Sukuna's fingers, sorcerer shards, cursed objects. Nobody who cannot use Cursed",
+      "Energy may USE (eat, absorb) one; whether they may HOLD one is jjkOutsiders.holdResources."
      ]
     },
     {
@@ -4134,6 +4146,108 @@
     },
     {
      "t": "table",
+     "path": "jjkOutsiders",
+     "pre": [
+      "Origins that cannot use Cursed Energy, and what they may still do with the Jujutsu mods' items"
+     ]
+    },
+    {
+     "t": "key",
+     "path": "jjkOutsiders.holdResources",
+     "key": "holdResources",
+     "def": [
+      "devil_fruit_user"
+     ],
+     "re": false,
+     "note": "",
+     "pre": [
+      "may hold, carry, store and trade the Jujutsu resources (cursed fingers, shards, cursed tools, materials), but never use",
+      "one to gain Cursed Energy, and never pick a cursed technique (technique books, skill selection, rerolls are still taken)"
+     ]
+    },
+    {
+     "t": "key",
+     "path": "jjkOutsiders.noArmor",
+     "key": "noArmor",
+     "def": [
+      "devil_fruit_user"
+     ],
+     "re": false,
+     "note": "",
+     "pre": [
+      "may not wear the Jujutsu mods' armor (anything of theirs in an armor slot goes back into the inventory)"
+     ]
+    },
+    {
+     "t": "table",
+     "path": "fruitLuck",
+     "pre": [
+      "---- JUJUTSU STARTER ITEMS (15_powers.js)",
+      "Jujutsu Craft hands every new player a random cursed technique and its starter items. Only origins whose rule is",
+      "sorcery:true (Sorcerer, Brawler) keep them. For everybody else the technique is reset and EVERYTHING that comes from a",
+      "Jujutsu mod (not just books) is removed from the inventory when the origin is chosen, and again for starterWindowTicks.",
+      "Devil Fruit luck: these origins find Devil Fruits more often. On top of whatever True Prime Piece itself puts in the loot,",
+      "each chest they open, each monster they kill and each catch they fish has this chance to hold one more random fruit."
+     ]
+    },
+    {
+     "t": "key",
+     "path": "fruitLuck.origins",
+     "key": "origins",
+     "def": [
+      "devil_fruit_user"
+     ],
+     "re": false,
+     "note": "",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "fruitLuck.chests",
+     "key": "chests",
+     "def": 0.08,
+     "re": false,
+     "note": "8 % of the chests they open (structure, dungeon and village chests)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "fruitLuck.monsters",
+     "key": "monsters",
+     "def": 0.004,
+     "re": false,
+     "note": "0.4 % of the hostile mobs they kill (1 in 250)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "fruitLuck.bosses",
+     "key": "bosses",
+     "def": 0.25,
+     "re": false,
+     "note": "25 % of the bosses they kill (a mob with at least bossMinHealth health)",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "fruitLuck.fishing",
+     "key": "fishing",
+     "def": 0.03,
+     "re": false,
+     "note": "3 % of their catches",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "fruitLuck.exclude",
+     "key": "exclude",
+     "def": "/(box|chest|book|encyclopedia|seed|sapling|bag|basket|crate|juice|pie|salad)/",
+     "re": true,
+     "note": "not a fruit to eat",
+     "pre": []
+    },
+    {
+     "t": "table",
      "path": "hold",
      "pre": [
       "A power a player already HOLDS (it arrived some way other than an item the gate could stop, e.g. a fruit eaten",
@@ -4183,12 +4297,7 @@
     {
      "t": "table",
      "path": "jjk",
-     "pre": [
-      "---- JUJUTSU STARTER ITEMS (15_powers.js)",
-      "Jujutsu Craft hands every new player a random cursed technique and its starter items. Only origins whose rule is",
-      "sorcery:true (Sorcerer, Brawler) keep them. For everybody else the technique is reset and EVERYTHING that comes from a",
-      "Jujutsu mod (not just books) is removed from the inventory when the origin is chosen, and again for starterWindowTicks."
-     ]
+     "pre": []
     },
     {
      "t": "key",

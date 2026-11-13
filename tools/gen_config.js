@@ -34,6 +34,7 @@ const FILES = [
     keys: ['origins', 'originNames', 'rules', 'systems', 'systemNames', 'slotsFromJar', 'slotIds', 'slots', 'slotsByMilestone',
       'slotMilestoneEvery', 'cyberCapacity', 'cyberCapacityCommands', 'giveKiroshiItem', 'cyberStarterKit', 'kiroshiInstallCommands',
       'skyborn', 'detect', 'sorceryItems', 'sorceryNamespaces', 'sorceryBookIdPattern', 'sorceryBookNamePattern', 'sorceryItemPattern',
+      'sorceryResourcePattern', 'jjkOutsiders', 'fruitLuck',
       'jjcVariablesClass', 'hold', 'holdSweepTicks', 'ripperdocBlocks', 'ripperdocEntityPattern', 'jjk']
   },
   {

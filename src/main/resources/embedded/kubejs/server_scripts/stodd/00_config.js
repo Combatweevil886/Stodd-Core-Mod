@@ -162,6 +162,16 @@ global.stodd.cfg = {
   // Jujutsu Craft hands every new player a random cursed technique and its starter items. Only origins whose rule is
   // sorcery:true (Sorcerer, Brawler) keep them. For everybody else the technique is reset and EVERYTHING that comes from a
   // Jujutsu mod (not just books) is removed from the inventory when the origin is chosen, and again for starterWindowTicks.
+  // Devil Fruit luck: these origins find Devil Fruits more often. On top of whatever True Prime Piece itself puts in the loot,
+  // each chest they open, each monster they kill and each catch they fish has this chance to hold one more random fruit.
+  fruitLuck: {
+    origins: ['devil_fruit_user'],
+    chests: 0.08,            // 8 % of the chests they open (structure, dungeon and village chests)
+    monsters: 0.004,         // 0.4 % of the hostile mobs they kill (1 in 250)
+    bosses: 0.25,            // 25 % of the bosses they kill (a mob with at least bossMinHealth health)
+    fishing: 0.03,           // 3 % of their catches
+    exclude: /(box|chest|book|encyclopedia|seed|sapling|bag|basket|crate|juice|pie|salad)/   // not a fruit to eat
+  },
   jjk: {
     purgeStarter: true,
     starterWindowTicks: 6000,     // after choosing an origin, keep sweeping for this long (5 minutes) in case the mod hands items out late
@@ -415,7 +425,18 @@ global.stodd.cfg = {
   sorceryBookIdPattern: /(book|tome|scroll|grimoire|manual|technique|skill_select|selection|reroll)/,
   sorceryBookNamePattern: /(cursed technique|technique (book|scroll|tome|selection)|(book|scroll|tome) of .*technique|skill selection)/i,
   // Jujutsu Craft's Skill Selection Book / Cursed Technique Changer and addon equivalents
-  sorceryItemPattern: /^(jujutsucraft|jjk_addon|jujutsucrafts|sorceryfight):[a-z0-9_]*(technique|skill_selection|selection_book|skill_book|sukuna_finger|sorcerer_shard|reroll)[a-z0-9_]*$/,
+  sorceryItemPattern: /^(jujutsucraft|jjk_addon|jujutsucrafts|sorceryfight):[a-z0-9_]*(technique|skill_selection|selection_book|skill_book|reroll)[a-z0-9_]*$/,
+  // Jujutsu resources that hold Cursed Energy: Sukuna's fingers, sorcerer shards, cursed objects. Nobody who cannot use Cursed
+  // Energy may USE (eat, absorb) one; whether they may HOLD one is jjkOutsiders.holdResources.
+  sorceryResourcePattern: /^(jujutsucraft|jjk_addon|jujutsucrafts|sorceryfight):[a-z0-9_]*(finger|sorcerer_shard|cursed_object|cursed_womb|death_painting)[a-z0-9_]*$/,
+  // Origins that cannot use Cursed Energy, and what they may still do with the Jujutsu mods' items
+  jjkOutsiders: {
+    // may hold, carry, store and trade the Jujutsu resources (cursed fingers, shards, cursed tools, materials), but never use
+    // one to gain Cursed Energy, and never pick a cursed technique (technique books, skill selection, rerolls are still taken)
+    holdResources: ['devil_fruit_user'],
+    // may not wear the Jujutsu mods' armor (anything of theirs in an armor slot goes back into the inventory)
+    noArmor: ['devil_fruit_user']
+  },
   // Jujutsu Craft (MCreator) player variables. PlayerCurseTechnique 0 = non-sorcerer, -1 = Heavenly Restriction.
   jjcVariablesClass: 'net.mcreator.jujutsucraft.network.JujutsucraftModVariables',
   // A power a player already HOLDS (it arrived some way other than an item the gate could stop, e.g. a fruit eaten

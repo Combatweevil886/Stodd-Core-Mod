@@ -327,7 +327,41 @@ section('jujutsu starter purge')
   }
   const STARTER = ['jujutsucraft:cursed_technique_book', 'jujutsucraft:skill_selection_book', 'jujutsucraft:sukuna_finger', 'jujutsucraft:cursed_tool_blade', 'jujutsucraft:black_flash_charm']
   const KEEP = ['jujutsucraft:cursed_ore', 'jujutsucraft:cursed_ingot', 'minecraft:bread']
-  ;['human', 'weakling', 'swordsman', 'devil_fruit_user', 'cyberware_user', 'marksman', 'skyborn', 'dark_magician'].forEach(o => {
+  {
+    // a Devil Fruit User keeps the Jujutsu resources (cursed fingers, cursed tools, charms) but not the technique items
+    const p = mk('devil_fruit_user', STARTER.concat(KEEP), 7)
+    S.onOriginChanged(p, 'devil_fruit_user', '')
+    for (let a = 3; a < 200; a += 20) { p.age = a; handlersOf('tick').forEach(h => h.fn({ player: p })) }
+    const left = p.left()
+    ok(left.indexOf('jujutsucraft:cursed_technique_book') < 0 && left.indexOf('jujutsucraft:skill_selection_book') < 0, 'devil_fruit_user: the technique items are taken back (' + left.join(',') + ')')
+    ok(['jujutsucraft:sukuna_finger', 'jujutsucraft:cursed_tool_blade', 'jujutsucraft:black_flash_charm'].every(id => left.indexOf(id) >= 0), 'devil_fruit_user: keeps the cursed finger and the other Jujutsu resources')
+    ok(KEEP.every(id => left.indexOf(id) >= 0), 'devil_fruit_user: materials and vanilla items stay')
+    ok(p.cap.PlayerCurseTechnique === 0, 'devil_fruit_user: the random cursed technique is reset')
+    ok(p.msgs.filter(m => /may keep and trade Jujutsu resources/.test(m)).length === 1, 'devil_fruit_user: told what they may keep')
+    const finger = { id: 'jujutsucraft:sukuna_finger', isEmpty: () => false, getHoverName: () => ({ getString: () => 'Sukuna Finger' }) }
+    ok(S.isSorceryStack(finger) && S.isSorceryResource(finger), 'a cursed finger is a Cursed Energy resource')
+    ok(S.canUse(p, 'sorcery') === false, 'devil_fruit_user: may hold a finger but not use (eat) it: no Cursed Energy')
+    // well after the starter window the finger is still kept, a technique book still goes
+    clock += 100000
+    const book = { id: 'jujutsucraft:cursed_technique_book', isEmpty: () => false, getHoverName: () => ({ getString: () => '' }) }
+    const q = mk('devil_fruit_user', [], 0)
+    const items2 = [finger, book]
+    q.getInventory = () => ({ getContainerSize: () => items2.length, getItem: i => items2[i] || { isEmpty: () => true, id: 'minecraft:air' }, removeItemNoUpdate: i => { const x = items2[i]; items2[i] = null; return x } })
+    S.stripSorceryItems(q)
+    ok(items2[0] === finger && items2[1] == null, 'devil_fruit_user later on: the finger stays, the technique book goes')
+    // Jujutsu armor in an armor slot goes back into the inventory
+    const armor = { id: 'jujutsucraft:jujutsu_high_uniform_chestplate', isEmpty: () => false, getHoverName: () => ({ getString: () => '' }) }
+    const slots = []; for (let i = 0; i < 41; i++) slots.push(null)
+    slots[38] = armor
+    const added = []
+    const r = mk('devil_fruit_user', [], 0)
+    r.getInventory = () => ({ getContainerSize: () => 41, getItem: i => slots[i] || { isEmpty: () => true, id: 'minecraft:air' },
+      removeItemNoUpdate: i => { const x = slots[i]; slots[i] = null; return x }, add: st => { added.push(st); return true } })
+    ok(S.mustNotWearJjkArmor(r) && S.takeOffJjkArmor(r) === 1 && slots[38] == null && added[0] === armor, 'devil_fruit_user: Jujutsu armor comes off into the inventory')
+    const sor = mk('sorcerer', [], 0)
+    ok(!S.mustNotWearJjkArmor(sor) && !S.mayHoldJjkResources(mk('human', [], 0)), 'a sorcerer may wear it; a human still may not keep the resources')
+  }
+  ;['human', 'weakling', 'swordsman', 'cyberware_user', 'marksman', 'skyborn', 'dark_magician'].forEach(o => {
     const p = mk(o, STARTER.concat(KEEP), 7)
     S.onOriginChanged(p, o, '')
     for (let a = 3; a < 200; a += 20) { p.age = a; handlersOf('tick').forEach(h => h.fn({ player: p })) }

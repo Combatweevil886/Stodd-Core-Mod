@@ -67,6 +67,11 @@ public final class StoddRegistry {
     public static final RegistryObject<LiquidBlock> SKY_STREAM = BLOCKS.register("sky_stream", () -> new SkyStreamBlock(StoddFluids.STREAM,
         BlockBehaviour.Properties.copy(Blocks.WATER).mapColor(MapColor.COLOR_LIGHT_BLUE).lightLevel(s -> 6)));
 
+    /** Devil Fruit luck: a global loot modifier (data/forge/loot_modifiers/global_loot_modifiers.json) */
+    public static final DeferredRegister<Codec<? extends net.minecraftforge.common.loot.IGlobalLootModifier>> LOOT_MODIFIERS =
+        DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, StoddCore.MOD_ID);
+    public static final RegistryObject<Codec<FruitLuck>> FRUIT_LUCK = LOOT_MODIFIERS.register("fruit_luck", () -> FruitLuck.CODEC);
+
     public static final RegistryObject<Codec<? extends DensityFunction>> SKY_DENSITY = DENSITY_TYPES.register("sky", () -> SkyDensity.CODEC.codec());
 
     public static final RegistryObject<StructureType<CityStructure>> CITY = STRUCTURE_TYPES.register("city_block", () -> () -> CityStructure.CODEC);
@@ -96,6 +101,7 @@ public final class StoddRegistry {
     public static void register(IEventBus modBus) {
         DENSITY_TYPES.register(modBus);
         StoddFluids.FLUID_TYPES.register(modBus);
+        LOOT_MODIFIERS.register(modBus);
         StoddFluids.FLUIDS.register(modBus);
         BLOCKS.register(modBus);
         STRUCTURE_TYPES.register(modBus);

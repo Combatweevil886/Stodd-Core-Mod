@@ -109,12 +109,30 @@
   }
 
   // ------------------------------------------- The Cursed Technique book
-  // Is this stack something that grants / selects a cursed technique?
+  // A Jujutsu resource that holds Cursed Energy (a cursed finger, a sorcerer shard ...): only a sorcerer may use one, and only
+  // the origins in jjkOutsiders.holdResources may keep one without using it
+  S.isSorceryResource = function (stack) {
+    try {
+      if (stack == null || stack.isEmpty()) return false
+      return C.sorceryResourcePattern != null && C.sorceryResourcePattern.test(String(stack.id))
+    } catch (e) { return false }
+  }
+  let JO = C.jjkOutsiders || {}
+  function listed(list, player) {
+    try { let o = S.getOrigin(player); return o != null && (list || []).indexOf(String(o)) >= 0 } catch (e) { return false }
+  }
+  S.mayHoldJjkResources = function (player) { return listed(JO.holdResources, player) }
+  S.mustNotWearJjkArmor = function (player) {
+    try { return !player.isCreative() && listed(JO.noArmor, player) && !S.canUse(player, 'sorcery') } catch (e) { return false }
+  }
+  function jjkNs(id) { return C.sorceryNamespaces != null && C.sorceryNamespaces.test(id) }
+  // Is this stack something that grants / selects a cursed technique (or a resource that holds Cursed Energy)?
   S.isSorceryStack = function (stack) {
     try {
       if (stack == null || stack.isEmpty()) return false
       let id = String(stack.id)
       if (C.sorceryItems.indexOf(id) >= 0 || C.sorceryItemPattern.test(id)) return true
+      if (C.sorceryResourcePattern != null && C.sorceryResourcePattern.test(id)) return true
       if (C.sorceryNamespaces.test(id)) {
         if (C.sorceryBookIdPattern.test(id.substring(id.indexOf(':') + 1))) return true
         let name = ''
@@ -125,14 +143,16 @@
     return false
   }
   // Removes every such item from the player's inventory (main, hotbar, armor, offhand). Returns how many stacks went.
+  // The origins that may hold the resources keep them (they still cannot use them).
   S.stripSorceryItems = function (player) {
     let removed = 0
     try {
       let inv = player.getInventory()
       let n = inv.getContainerSize()
+      let keepRes = S.mayHoldJjkResources(player)
       for (let i = 0; i < n; i++) {
         let st = inv.getItem(i)
-        if (S.isSorceryStack(st)) { inv.removeItemNoUpdate(i); removed++ }
+        if (S.isSorceryStack(st) && !(keepRes && S.isSorceryResource(st))) { inv.removeItemNoUpdate(i); removed++ }
       }
     } catch (e) { S.log('strip sorcery items ' + e) }
     if (removed > 0) {
@@ -151,13 +171,54 @@
   // The moment one appears (picked up, handed out on spawn, crafted, taken from a chest)
   PlayerEvents.inventoryChanged(event => {
     let player = event.player
-    if (player == null || !S.mustLoseSorceryItems(player)) return
+    if (player == null) return
+    if (S.mustNotWearJjkArmor(player)) player.server.scheduleInTicks(1, () => { try { S.takeOffJjkArmor(player) } catch (e) { } })
+    if (!S.mustLoseSorceryItems(player)) return
     if (!S.isSorceryStack(event.item)) return
+    if (S.mayHoldJjkResources(player) && S.isSorceryResource(event.item)) return
     player.server.scheduleInTicks(1, () => { try { S.stripSorceryItems(player) } catch (e) { } })
   })
+
+  // ------------------------------------------------- Jujutsu armor
+  // Anything from a Jujutsu mod in an armor slot of an origin in jjkOutsiders.noArmor goes back into the inventory (or to the
+  // ground when it is full). Slots 36-39 are the armor (boots, leggings, chestplate, helmet).
+  S.isJjkArmorSlotItem = function (stack) {
+    try {
+      if (stack == null || stack.isEmpty()) return false
+      let id = String(stack.id)
+      if (!jjkNs(id)) return false
+      let path = id.substring(id.indexOf(':') + 1)
+      return !(JK.keep != null && JK.keep.test(path) && !/(helmet|chestplate|leggings|boots|uniform|mask|blindfold)/.test(path))
+    } catch (e) { return false }
+  }
+  S.takeOffJjkArmor = function (player) {
+    let moved = 0
+    try {
+      let inv = player.getInventory()
+      for (let i = 36; i <= 39 && i < inv.getContainerSize(); i++) {
+        let st = inv.getItem(i)
+        if (!S.isJjkArmorSlotItem(st)) continue
+        let off = inv.removeItemNoUpdate(i)
+        if (off == null || off.isEmpty()) continue
+        if (!inv.add(off)) player.drop(off, false)
+        moved++
+      }
+    } catch (e) { S.log('jjk armor ' + e) }
+    if (moved > 0) {
+      let k = '', now = Date.now()
+      try { k = String(S.uuidOf ? S.uuidOf(player) : player.username) } catch (e) { k = String(player.username) }
+      if ((armorTold.get(k) || 0) + 10000 < now) {
+        armorTold.set(k, now)
+        player.setStatusMessage(Text.darkPurple('Jujutsu armor answers only to Cursed Energy. ').append(Text.gray('It slips off.')))
+      }
+    }
+    return moved
+  }
+  let armorTold = new Map()
   // Safety net every ~2 seconds, and right after login / respawn / origin change
   PlayerEvents.tick(event => {
     let p = event.player
+    if (p.age % 20 === 9 && S.mustNotWearJjkArmor(p)) S.takeOffJjkArmor(p)
     if (p.age % 40 !== 21) return
     if (S.mustLoseSorceryItems(p)) S.stripSorceryItems(p)
   })
@@ -197,14 +258,22 @@
       return true
     } catch (e) { return false }
   }
-  // Returns how many stacks were removed (the technique reset is reported to the player too).
+  // Returns how many stacks were removed (the technique reset is reported to the player too). An origin that may hold the
+  // Jujutsu resources only loses the technique items (and the armor it may not wear); the rest of the kit stays.
   S.purgeJjkStarter = function (player) {
     let removed = 0, cleared = false
     try {
       let inv = player.getInventory()
       let n = inv.getContainerSize()
+      let holder = S.mayHoldJjkResources(player), noArmor = S.mustNotWearJjkArmor(player)
       for (let i = 0; i < n; i++) {
-        if (S.isJjkStarterStack(inv.getItem(i))) { inv.removeItemNoUpdate(i); removed++ }
+        let st = inv.getItem(i)
+        if (!S.isJjkStarterStack(st)) continue
+        if (holder && !(S.isSorceryStack(st) && !S.isSorceryResource(st))) {
+          if (noArmor && i >= 36 && i <= 39) { let off = inv.removeItemNoUpdate(i); if (!inv.add(off)) player.drop(off, false) }
+          continue
+        }
+        inv.removeItemNoUpdate(i); removed++
       }
     } catch (e) { S.log('jjk purge ' + e) }
     try {
@@ -214,7 +283,9 @@
       let d = S.data(player)
       if (!d.getBoolean('jjkTold')) {
         d.putBoolean('jjkTold', true)
-        player.tell(Text.darkPurple('[Jujutsu] ').append(Text.white('Your origin cannot channel Cursed Energy, so the starter technique and items from the Jujutsu mod were taken back.')))
+        player.tell(Text.darkPurple('[Jujutsu] ').append(Text.white(S.mayHoldJjkResources(player)
+          ? 'Your origin cannot channel Cursed Energy, so the starter technique was taken back. You may keep and trade Jujutsu resources (cursed fingers too), but not use them or wear Jujutsu armor.'
+          : 'Your origin cannot channel Cursed Energy, so the starter technique and items from the Jujutsu mod were taken back.')))
       }
       S.log(player.username + ' jjk starter purge: ' + removed + ' stack(s), technique cleared=' + cleared)
     }

@@ -2288,7 +2288,7 @@
     "i": true
    },
    "itemPattern": {
-    "src": "^(jujutsucraft|jjk_addon|jujutsucrafts|sorceryfight):[a-z0-9_]*(technique|skill_selection|selection_book|skill_book|sukuna_finger|sorcerer_shard|reroll)[a-z0-9_]*$",
+    "src": "(?:^(jujutsucraft|jjk_addon|jujutsucrafts|sorceryfight):[a-z0-9_]*(technique|skill_selection|selection_book|skill_book|reroll)[a-z0-9_]*$)|(?:^(jujutsucraft|jjk_addon|jujutsucrafts|sorceryfight):[a-z0-9_]*(finger|sorcerer_shard|cursed_object|cursed_womb|death_painting)[a-z0-9_]*$)",
     "i": false
    }
   },
