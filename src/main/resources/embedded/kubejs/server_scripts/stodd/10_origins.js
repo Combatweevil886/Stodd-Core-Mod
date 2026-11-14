@@ -55,15 +55,32 @@
     C.cyberCapacityCommands.forEach(t => S.run(player.server, t.replace('{p}', player.username).replace('{v}', String(value))))
   }
 
+  // The Cyberware User's starting chrome: installed, not handed out. Edgerunner may still be settling in right after the origin is
+  // chosen, so it is tried a few times; whatever cannot be installed is given as an item (giveKiroshiItem).
   function giveCyberKit(player) {
     let d = S.data(player)
     if (d.getBoolean('cyberKit')) return
     d.putBoolean('cyberKit', true)
     C.kiroshiInstallCommands.forEach(t => S.run(player.server, t.replace('{p}', player.username)))
-    if (C.giveKiroshiItem) {
-      C.cyberStarterKit.forEach(id => { try { player.give(Item.of(id)) } catch (e) { } })
-      player.tell(Text.aqua('[Cyberware] ').append(Text.white('Your Kiroshi Optics came with you. Place the Ripperdoc and sit in it to slot them in, free of Load issues for a body built like yours.')))
+    let todo = (C.cyberStarterImplants || []).slice()
+    let tries = 0
+    function attempt() {
+      tries++
+      let left = []
+      todo.forEach(id => {
+        let r = S.installImplant(player, id)
+        if (r === 'installed') player.tell(Text.aqua('[Cyberware] ').append(Text.white('Your ' + S.itemName(id) + ' are already installed. Open your cyberware to use them.')))
+        else if (r !== 'had') left.push(id)
+      })
+      todo = left
+      if (todo.length === 0) return
+      if (tries < 4) { player.server.scheduleInTicks(40, () => { try { attempt() } catch (e) { } }); return }
+      if (C.giveKiroshiItem) {
+        todo.forEach(id => { try { player.give(Item.of(id)) } catch (e) { } })
+        player.tell(Text.aqua('[Cyberware] ').append(Text.white('Your starting chrome could not be installed here, so it came with you: install it at a Ripperdoc.')))
+      }
     }
+    player.server.scheduleInTicks(20, () => { try { attempt() } catch (e) { } })
   }
 
   // ------------------------------------------------------------ Path rules

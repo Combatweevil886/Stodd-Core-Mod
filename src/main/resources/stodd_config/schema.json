@@ -3215,12 +3215,11 @@
      "t": "key",
      "path": "giveKiroshiItem",
      "key": "giveKiroshiItem",
-     "def": false,
+     "def": true,
      "re": false,
-     "note": "the jar's stodd:cyberware_user/kit power already gives the starter kit",
+     "note": "",
      "pre": [
-      "Cyberware User starting kit (given once). If you find a direct install command, add it to",
-      "kiroshiInstallCommands and set giveKiroshiItem to false."
+      "when an implant cannot be installed (Edgerunner missing or changed), give it as an item instead"
      ]
     },
     {
@@ -3228,12 +3227,25 @@
      "path": "cyberStarterKit",
      "key": "cyberStarterKit",
      "def": [
-      "project_edgerunner:basic_kiroshi_optics",
-      "project_edgerunner:ripperdoc"
+      "project_edgerunner:basic_kiroshi_optics"
+     ],
+     "re": false,
+     "note": "the fallback items",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "cyberStarterImplants",
+     "key": "cyberStarterImplants",
+     "def": [
+      "project_edgerunner:basic_kiroshi_optics"
      ],
      "re": false,
      "note": "",
-     "pre": []
+     "pre": [
+      "Cyberware User starting chrome: these implants are INSTALLED when the origin is chosen (once), through Project: Edgerunner's",
+      "own cyberware data, as the Ripperdoc would (body slot, load, power). Nothing is handed out: no item, no Ripperdoc."
+     ]
     },
     {
      "t": "key",

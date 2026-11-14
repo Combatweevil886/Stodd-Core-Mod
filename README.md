@@ -39,6 +39,7 @@ To build it yourself instead: a Java 17 JDK, then `gradlew build` in the project
 
 * **STODD Chrome 1.0.0, a new addon for Project: Edgerunner** (its own jar, section 8): eleven more implants for the Ripperdoc so a Cyberware User keeps up with the strongest origins: five midgame (tier 3) and six endgame (tier 5), assembled at the tailoring bench from Edgerunner's own components.
 * **Both mods have a logo now**, shown in the in-game mods list and by launchers that read it.
+* **The Cyberware User starts with the Kiroshi Optics installed**, no longer with the optics and a Ripperdoc in the inventory. They go straight into the face slot through Project: Edgerunner's own cyberware data (load, power and HUD as if a Ripperdoc had put them in), a moment after the origin is chosen. If that is not possible (Edgerunner missing or changed), the optics are given as an item instead (`giveKiroshiItem`). The implants installed this way: `cyberStarterImplants` in `config/stodd/origins.toml`. Only a newly chosen Cyberware User gets them; one who already had the kit keeps what they have.
 
 ## What changed in 3.4.1
 
@@ -205,7 +206,7 @@ Every origin keeps Haki. Slot totals run Weakling (1) < Cyberware 12 < Devil Fru
 * Slots by level: L1 **1**, L5 **6**, L10 **9**, L15 **12**, L20 **16**, L25 **19**, L30 **22**, L35 **24** (`slotsByMilestone.weakling` in `config/stodd/origins.toml`).
 * A Weakling who changes to another origin drops to that origin's cap.
 
-**How it works.** Each origin is a set of Origins/Apoli powers inside the jar: `marker` (entity tag `stodd_o_<origin>`), attribute/damage powers, `slots` (`/curios set` for every slot on choosing the origin, login, respawn and once a minute), `cyber` (`/projectedgerunner cyberware capacity set`), `kit` (Cyberware User's Kiroshi Optics and Ripperdoc), `fists` / `iron_skin` / `poor_aim` (Brawler), `swift` (Skyborn), and the locks `no_fruit`, `no_sorcery`, `no_magic`, `no_magic_block`, `no_chrome`.
+**How it works.** Each origin is a set of Origins/Apoli powers inside the jar: `marker` (entity tag `stodd_o_<origin>`), attribute/damage powers, `slots` (`/curios set` for every slot on choosing the origin, login, respawn and once a minute), `cyber` (`/projectedgerunner cyberware capacity set`), `kit` (marks the Cyberware User's starting chrome; the scripts install it), `fists` / `iron_skin` / `poor_aim` (Brawler), `swift` (Skyborn), and the locks `no_fruit`, `no_sorcery`, `no_magic`, `no_magic_block`, `no_chrome`.
 
 ## 1a. Finding the other mods' items (read this)
 

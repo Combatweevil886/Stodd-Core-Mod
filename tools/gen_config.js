@@ -32,7 +32,7 @@ const FILES = [
       'cyberware), cyberware capacity, how each system\'s items are recognised, and the Jujutsu starter-kit purge. Apply with /reload.'
     ],
     keys: ['origins', 'originNames', 'rules', 'systems', 'systemNames', 'slotsFromJar', 'slotIds', 'slots', 'slotsByMilestone',
-      'slotMilestoneEvery', 'cyberCapacity', 'cyberCapacityCommands', 'giveKiroshiItem', 'cyberStarterKit', 'kiroshiInstallCommands',
+      'slotMilestoneEvery', 'cyberCapacity', 'cyberCapacityCommands', 'giveKiroshiItem', 'cyberStarterKit', 'cyberStarterImplants', 'kiroshiInstallCommands',
       'skyborn', 'detect', 'sorceryItems', 'sorceryNamespaces', 'sorceryBookIdPattern', 'sorceryBookNamePattern', 'sorceryItemPattern',
       'sorceryResourcePattern', 'jjkOutsiders', 'fruitLuck',
       'jjcVariablesClass', 'hold', 'holdSweepTicks', 'ripperdocBlocks', 'ripperdocEntityPattern', 'jjk']

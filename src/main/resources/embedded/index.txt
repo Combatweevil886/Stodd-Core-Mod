@@ -59,6 +59,7 @@ S	kubejs/server_scripts/stodd/05_util.js
 S	kubejs/server_scripts/stodd/06_discover.js
 S	kubejs/server_scripts/stodd/07_guards.js
 S	kubejs/server_scripts/stodd/10_origins.js
+S	kubejs/server_scripts/stodd/12_chrome.js
 S	kubejs/server_scripts/stodd/15_powers.js
 S	kubejs/server_scripts/stodd/20_levels.js
 S	kubejs/server_scripts/stodd/22_mastery.js

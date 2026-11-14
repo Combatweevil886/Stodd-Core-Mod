@@ -375,10 +375,12 @@ global.stodd.cfg = {
     'projectedgerunner cyberware capacity set {p} {v}',
     'projectedgerunner cyberware capacity set {v} {p}'
   ],
-  // Cyberware User starting kit (given once). If you find a direct install command, add it to
-  // kiroshiInstallCommands and set giveKiroshiItem to false.
-  giveKiroshiItem: false,   // the jar's stodd:cyberware_user/kit power already gives the starter kit
-  cyberStarterKit: ['project_edgerunner:basic_kiroshi_optics', 'project_edgerunner:ripperdoc'],
+  // Cyberware User starting chrome: these implants are INSTALLED when the origin is chosen (once), through Project: Edgerunner's
+  // own cyberware data, as the Ripperdoc would (body slot, load, power). Nothing is handed out: no item, no Ripperdoc.
+  cyberStarterImplants: ['project_edgerunner:basic_kiroshi_optics'],
+  // when an implant cannot be installed (Edgerunner missing or changed), give it as an item instead
+  giveKiroshiItem: true,
+  cyberStarterKit: ['project_edgerunner:basic_kiroshi_optics'],   // the fallback items
   kiroshiInstallCommands: [],
 
   // Who may use what.  true = yes, false = never, 'path' = only ONE of that origin's 'path' systems, chosen by first use.

@@ -361,6 +361,32 @@ section('jujutsu starter purge')
     const sor = mk('sorcerer', [], 0)
     ok(!S.mustNotWearJjkArmor(sor) && !S.mayHoldJjkResources(mk('human', [], 0)), 'a sorcerer may wear it; a human still may not keep the resources')
   }
+  {
+    // the Cyberware User's Kiroshi Optics go straight in through Edgerunner's cyberware data (no items)
+    let stored = JSON.stringify({ current_load: 5, installed_body_slots: { legs: 'project_edgerunner:fortified_ankles' } })
+    const bridge = {
+      hasInstalledItem: (pl, id) => { const d = JSON.parse(stored); return Object.values(d.installed_body_slots || {}).indexOf(id) >= 0 },
+      toCyberwareJson: () => stored, replaceCyberwareJson: (pl, j) => { stored = j; return true }
+    }
+    const orig = global.Java.loadClass
+    global.Java.loadClass = n => n === 'com.edgerunner.cyberware.CyberwareScriptBridge' ? bridge : orig(n)
+    global.getCyberwareInstallComponentConfig = id => id === 'project_edgerunner:basic_kiroshi_optics'
+      ? { item: id, body_slot: 'face', legacy_slot_key: 'face', activation_mode: 'passive', load_cost: 8, palladium_power: id } : null
+    global.resolveCyberwarePhysicalSlotForBodySlot = slot => slot === 'face' ? 4 : -1
+    S.run = () => true
+    vm.runInThisContext(fs.readFileSync(path.join(DIR, '12_chrome.js'), 'utf8'), { filename: '12_chrome.js' })
+    const q = mk('cyberware_user', [], 0)
+    ok(S.installImplant(q, 'project_edgerunner:basic_kiroshi_optics') === 'installed', 'the Kiroshi Optics are installed')
+    const d = JSON.parse(stored)
+    ok(d.installed_body_slots.face === 'project_edgerunner:basic_kiroshi_optics' && d.installed_physical.slot_4 === 'project_edgerunner:basic_kiroshi_optics'
+      && d.installed_components.face === 'project_edgerunner:basic_kiroshi_optics', '...in the face slot, its physical slot and the old component key')
+    ok(d.current_load === 13 && d.installed_body_slots.legs === 'project_edgerunner:fortified_ankles', '...their load added, the other chrome left alone')
+    ok(S.installImplant(q, 'project_edgerunner:basic_kiroshi_optics') === 'had', 'never twice')
+    ok(S.installImplant(q, 'project_edgerunner:unknown') === null, 'an implant Edgerunner does not know: not installed (the item is given instead)')
+    ok(S.cfg.cyberStarterImplants.join() === 'project_edgerunner:basic_kiroshi_optics' && S.cfg.cyberStarterKit.indexOf('project_edgerunner:ripperdoc') < 0, 'no Ripperdoc handed out any more')
+    global.Java.loadClass = orig
+    delete global.getCyberwareInstallComponentConfig; delete global.resolveCyberwarePhysicalSlotForBodySlot
+  }
   ;['human', 'weakling', 'swordsman', 'cyberware_user', 'marksman', 'skyborn', 'dark_magician'].forEach(o => {
     const p = mk(o, STARTER.concat(KEEP), 7)
     S.onOriginChanged(p, o, '')
