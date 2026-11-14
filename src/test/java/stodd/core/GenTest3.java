@@ -461,8 +461,10 @@ public final class GenTest3 {
         section("sunken islands: an island in its own sea, the dome standing free");
         // the sea round the island inside: real sea biomes, at most 18 blocks deep, and the sea floor round the dome lowered
         int sx = (int) Math.round(d.cx + d.r - 6), sz = (int) Math.round(d.cz);
-        ok(raw.at(sx, sz) < p.landThreshold && f.domeClimate(sx, (int) d.base - 3, sz) && f.climateContinents(sx, sz) < p.landThreshold,
-            "the sea inside the dome is sea, for the biomes too (ocean and beach biomes in there)");
+        ok(raw.at(sx, sz) < p.landThreshold && f.domeClimate(sx, (int) d.base - 3, sz) && f.climateContinents(sx, sz) >= -0.10 - 1e-9,
+            "the water round the island inside the dome has land climate, as round a sky island (no ocean biomes, no ocean structures in there)");
+        int lx = (int) Math.round(d.island.cx), lz = (int) Math.round(d.island.cz);
+        ok(raw.at(lx, lz) >= p.landThreshold && f.climateContinents(lx, lz) == raw.at(lx, lz), "the island itself has its own climate, as a sky island has");
         ok(Math.abs(f.deepApron(sx, sz) - (d.base - 18)) < 1e-9 && f.deepApron(sx, sz) > d.base - d.down, "the inner sea is at most 18 deep, above the dome's bottom");
         ok(d.sea() == (int) Math.floor(d.base) && d.base == p.deepCoast, "the inner sea's surface is the island's coast height");
         boolean carve = true;

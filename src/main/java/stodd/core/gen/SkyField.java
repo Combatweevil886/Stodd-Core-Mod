@@ -445,9 +445,9 @@ public final class SkyField {
      */
     public double climateContinents(int x, int z) {
         Column c = column(x, z);
-        // inside a dome: the island's own, ocean and beach included (the sea round it in there is a real sea)
-        if (c.dome != null && !c.sky) return c.raw;
-        double v = c.sky ? c.raw : INLAND;
+        // a sky island and a sunken island alike: the island's own land biomes, and land climate (never ocean) round it, so the
+        // sea round a sunken island inside its dome is a lake in the island's biomes, as the air round a sky island is
+        double v = c.sky || c.dome != null ? c.raw : INLAND;
         return p.beaches ? Math.max(v, p.landThreshold + 0.005) : Math.max(v, INLAND);
     }
 

@@ -31,7 +31,9 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
  *     roof, to the outer sea's surface, so ships (and swimmers) that came down get back up;
  *   - its bubble tube, if it has one: an open shaft of air as wide as the stream, walled with bubble, from the outer sea's
  *     surface down through the roof, so a ship sails into it and drops into the sea inside (daylight comes down it too).
- * It runs first of all the decoration steps (raw_generation), so trees, flowers and animals then see a dry island.
+ * It runs late in the decoration (fluid_springs): until then the dome is full of sea water, so geodes, dungeons, mineshafts, fossils
+ * and lakes (which all refuse water) are not built into its open air; then it is drained, before the trees, flowers and grass
+ * (vegetal_decoration) and the animals, which see a dry island.
  */
 public final class CellDomePiece extends StructurePiece {
     final int x0, z0, size, lightEvery;
