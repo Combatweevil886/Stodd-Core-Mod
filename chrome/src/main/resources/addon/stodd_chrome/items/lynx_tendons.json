@@ -1,0 +1,24 @@
+{
+  "type": "palladium:default",
+  "max_stack_size": 1,
+  "rarity": "rare",
+  "creative_mode_tab": "project_edgerunner:cyberpunk",
+  "tooltip": [
+    {
+      "text": "Midgame implant (Legs)",
+      "color": "#AAAAAA"
+    },
+    {
+      "text": "Tier: 3 | Load: 20",
+      "color": "#BF40BF"
+    },
+    {
+      "text": "Spring-steel tendons: +10% speed, step up full blocks.",
+      "color": "#66CCFF"
+    },
+    {
+      "text": "STODD Chrome",
+      "color": "#555555"
+    }
+  ]
+}

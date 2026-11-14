@@ -1,0 +1,41 @@
+{
+  "type": "palladium:item_tailoring",
+  "title": {
+    "translate": "tailoring.stodd_chrome.adrenal_pump"
+  },
+  "tool": {
+    "item": "project_edgerunner:soldering_iron"
+  },
+  "tool_icon": "project_edgerunner:item/soldering_iron_tool_icon_bw",
+  "category": "project_edgerunner:cyberware_tailoring",
+  "requires_unlocking": false,
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "project_edgerunner:hemo_chamber_t2"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "project_edgerunner:bio_monitor_t2"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "palladium:heart_shaped_herb"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:glistering_melon_slice"
+      },
+      "count": 4
+    }
+  ],
+  "results": {
+    "chest": "stodd_chrome:adrenal_pump"
+  }
+}

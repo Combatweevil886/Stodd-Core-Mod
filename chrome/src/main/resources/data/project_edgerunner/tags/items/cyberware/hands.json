@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "stodd_chrome:grip_servos",
+    "stodd_chrome:monowire_grips"
+  ]
+}

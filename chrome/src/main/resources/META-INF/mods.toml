@@ -1,0 +1,49 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="All Rights Reserved"
+issueTrackerURL="https://github.com/Combatweevil886/Stodd-Core-Mod/issues"
+
+[[mods]]
+modId="stodd_chrome"
+version="1.0.0"
+displayName="STODD Chrome"
+logoFile="logo.png"
+authors="STODD"
+description='''An addon for Project: Edgerunner: eleven more implants for the Ripperdoc, so a Cyberware User keeps up with the
+strongest origins. Five midgame implants (tier 3) and six endgame implants (tier 5), assembled at the tailoring bench with the
+soldering iron from Edgerunner's own components, Palladium circuits and the rarest vanilla materials. Settings: config/stodd/chrome.json.'''
+
+[[dependencies.stodd_chrome]]
+modId="forge"
+mandatory=true
+versionRange="[47,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.stodd_chrome]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.20.1]"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.stodd_chrome]]
+modId="project_edgerunner"
+mandatory=true
+versionRange="[1.1.2,)"
+ordering="AFTER"
+side="BOTH"
+
+[[dependencies.stodd_chrome]]
+modId="palladium"
+mandatory=true
+versionRange="[4.4.0,)"
+ordering="AFTER"
+side="BOTH"
+
+[[dependencies.stodd_chrome]]
+modId="kubejs"
+mandatory=true
+versionRange="[2001.6,)"
+ordering="AFTER"
+side="BOTH"

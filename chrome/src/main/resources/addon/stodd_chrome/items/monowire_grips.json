@@ -1,0 +1,24 @@
+{
+  "type": "palladium:default",
+  "max_stack_size": 1,
+  "rarity": "epic",
+  "creative_mode_tab": "project_edgerunner:cyberpunk",
+  "tooltip": [
+    {
+      "text": "Endgame implant (Hands)",
+      "color": "#AAAAAA"
+    },
+    {
+      "text": "Tier: 5 | Load: 80",
+      "color": "#BF40BF"
+    },
+    {
+      "text": "Monomolecular wire in the fingertips: +6 attack damage, +15% damage, +1 attack reach.",
+      "color": "#66CCFF"
+    },
+    {
+      "text": "STODD Chrome",
+      "color": "#555555"
+    }
+  ]
+}

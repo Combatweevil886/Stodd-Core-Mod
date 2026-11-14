@@ -1,12 +1,12 @@
-# STODD Core 3.4.1: the core mod of *mods 4 stodd (season 2)*, as a real Forge mod
+# STODD Core 3.4.2: the core mod of *mods 4 stodd (season 2)*, as a real Forge mod
 
-Forge 1.20.1 / Forge 47.4.20. **One jar, `mods/stodd_core-3.4.1.jar`.** A **compiled Forge mod** (Java, built with ForgeGradle) and an **add-on to the pack's power-system mods**: True Prime Piece (Devil Fruits), Jujutsu Craft (Cursed Energy), Malum (dark magic), Project: Edgerunner (chrome) and Curios. It holds the **ten origins** and their rules, the **Survival Island world** (guaranteed on servers too) with **sky islands that are normal islands lifted into the sky**, **city islands and dressed islands generated with the terrain like any structure**, the **Log Pose as a real item with its own needle**, the levels, power caps, mastery, level links, waystones, ore tiers and Downgrade Template that run as KubeJS scripts the mod installs for you, and **every setting in `config/stodd/*.toml`** (section 0).
+Forge 1.20.1 / Forge 47.4.20. **One jar, `mods/stodd_core-3.4.2.jar`.** A **compiled Forge mod** (Java, built with ForgeGradle) and an **add-on to the pack's power-system mods**: True Prime Piece (Devil Fruits), Jujutsu Craft (Cursed Energy), Malum (dark magic), Project: Edgerunner (chrome) and Curios. It holds the **ten origins** and their rules, the **Survival Island world** (guaranteed on servers too) with **sky islands that are normal islands lifted into the sky**, **city islands and dressed islands generated with the terrain like any structure**, the **Log Pose as a real item with its own needle**, the levels, power caps, mastery, level links, waystones, ore tiers and Downgrade Template that run as KubeJS scripts the mod installs for you, and **every setting in `config/stodd/*.toml`** (section 0).
 
 ## Getting the jar
 
-The mod is built on GitHub, in the repository **Combatweevil886/Stodd-Core-Mod**: every push compiles it against the real Minecraft 1.20.1 and Forge 47.4.20, runs all the tests, and puts the game-ready jar on the `dist` branch: **https://github.com/Combatweevil886/Stodd-Core-Mod/raw/dist/stodd_core-3.4.1.jar** (also attached to each run under Actions as the artifact `stodd_core`).
+The mod is built on GitHub, in the repository **Combatweevil886/Stodd-Core-Mod**: every push compiles it against the real Minecraft 1.20.1 and Forge 47.4.20, runs all the tests, and puts the game-ready jar on the `dist` branch: **https://github.com/Combatweevil886/Stodd-Core-Mod/raw/dist/stodd_core-3.4.2.jar** (also attached to each run under Actions as the artifact `stodd_core`).
 
-To build it yourself instead: a Java 17 JDK, then `gradlew build` in the project folder; the game-ready jar is the `...-renamed.jar` in `build/libs` (rename it to `stodd_core-3.4.1.jar`). Not the `-unobfuscated` one: that one has development names and does not run in the game.
+To build it yourself instead: a Java 17 JDK, then `gradlew build` in the project folder; the game-ready jar is the `...-renamed.jar` in `build/libs` (rename it to `stodd_core-3.4.2.jar`). Not the `-unobfuscated` one: that one has development names and does not run in the game.
 
 ## How the mod is put together
 
@@ -29,10 +29,16 @@ To build it yourself instead: a Java 17 JDK, then `gradlew build` in the project
 
 ## Install
 
-* Put **`stodd_core-3.4.1.jar`** in `mods/`. **Delete every `stodd_compat-*.jar` and every older `stodd_core-*.jar`.** Start once, stop, start again (the first start installs the scripts; KubeJS and Survival Island read them on the next).
+* Put **`stodd_core-3.4.2.jar`** in `mods/`. **Delete every `stodd_compat-*.jar` and every older `stodd_core-*.jar`.** Start once, stop, start again (the first start installs the scripts; KubeJS and Survival Island read them on the next).
 * **Start a new world.** The cities, dressed islands and sky dressing are generated with new chunks, and the island terrain only applies to new chunks. **On a server, delete (or rename) the world folder** (`level-name` in `server.properties`) before the first start. In an existing world, land that was already generated keeps what it had; set `city.scriptBuilder = true` and `makeover.scriptBuilder = true` in `config/stodd/world.toml` to let the scripts build on that old land the 2.3.0 way.
 * The overrides zip and full-pack zip of earlier versions are not needed any more: the jar installs everything.
+* **Optional: `stodd_chrome-1.0.0.jar`**, the Project: Edgerunner addon with eleven more implants (section 8). Put it in `mods/` next to STODD Core; it needs Project: Edgerunner, Palladium and KubeJS, which the pack has.
 * Same mods as before: Survival Island, Origins, Curios, KubeJS, Waystones, True Prime Piece, Jujutsu Craft, Malum, Project: Edgerunner.
+
+## What changed in 3.4.2
+
+* **STODD Chrome 1.0.0, a new addon for Project: Edgerunner** (its own jar, section 8): eleven more implants for the Ripperdoc so a Cyberware User keeps up with the strongest origins: five midgame (tier 3) and six endgame (tier 5), assembled at the tailoring bench from Edgerunner's own components.
+* **Both mods have a logo now**, shown in the in-game mods list and by launchers that read it.
 
 ## What changed in 3.4.1
 
@@ -498,6 +504,29 @@ STODD Core 3 is built as an add-on to the pack's power-system mods: it does not 
 
 *Honest limit:* none of these mods' data names could be read here (their jars are not reachable from this workspace). The Java side finds the data by looking (capabilities by name, MCreator variables by their sync method), never by a hard-coded class, so a wrong guess makes a link say NOT LINKED rather than break anything.
 
+## 8. STODD Chrome: more implants for Project: Edgerunner (`stodd_chrome-1.0.0.jar`)
+
+An addon for Project: Edgerunner, in its own jar. It works the way Edgerunner's own chrome does: you **assemble an implant at the tailoring bench with the soldering iron** (Edgerunner's Cyberware Tailoring tab), **install it at the Ripperdoc** in its body slot, it takes **load** from your cyberware capacity, and while it is installed it gives a power you can see in the powers screen. Every origin that may use chrome can install them; a Cyberware User (600 capacity at level 1, 1,000 at level 20) can carry far more of them than anyone else.
+
+| Implant | Tier | Body slot | Load | What it gives | Assembled from |
+|---|---|---|---|---|---|
+| Synaptic Accelerator | 3 | Nervous System | 24 | +10% attack speed, +5% speed | Temporal Regulator T2, Phase Stabilizer T3, 2 Quartz Circuits, 4 gold |
+| Subdermal Plating | 3 | Skin | 22 | +4 armor, +2 toughness | Scarab Shell Plate T2, Kinetic Damper Frame T3, 6 titanium, 2 diamonds |
+| Grip Servos | 3 | Hands | 18 | +2 attack damage, +1 block reach | 2 Kinetic Actuators T1, Myofiber Bundle T2, 2 Lead Circuits, 6 iron |
+| Adrenal Pump | 3 | Circulatory System | 26 | +2 hearts, heals ½ heart every 5 s | Hemo Chamber T2, Bio Monitor T2, Heart-Shaped Herb, 4 glistering melon |
+| Lynx Tendons | 3 | Legs | 20 | +10% speed, step up full blocks | Spring Recoil Array T3, 2 Joint Servos T1, 2 rabbit's feet, 4 titanium |
+| **Kerenzikov Reflex Core** | 5 | Nervous System | 75 | +30% attack speed, +12% speed, **20% chance to slip any attack** (at most every 3 s) | Latency Shunt T4, Quantum Sync Lattice T5, Neural Matrix T4, 4 Vibranium Circuits, a nether star, 4 echo shards |
+| **Titan Dermal Weave** | 5 | Skin | 85 | +8 armor, +6 toughness, 40% knockback resistance, **immune to explosions** | Iconic Skeletal Chassis T5, 2 Ballistic Spine Plates T3, 6 vibranium, 2 netherite ingots, a nether star |
+| **Monowire Grips** | 5 | Hands | 80 | +6 attack damage, +15% damage, +1 attack reach | Arms Actuator Matrix T4, Arms Power Core T4, Apogee Overdrive Kernel T5, 2 Vibranium Flux Capacitors, 2 netherite ingots, 2 echo shards |
+| **Second Heart** | 5 | Circulatory System | 95 | +6 hearts, heals ½ heart every 2 s, **a killing blow leaves you standing** at 8 health with resistance, regeneration and absorption (once every 3 minutes) | 2 Regen Nanite Scaffolds T5, Trauma Booster Module T4, 2 Vibranium Circuits, 2 totems of undying, a nether star |
+| **Overclocked Neocortex** | 5 | Frontal Cortex | 90 | +20% damage, +2 luck, +1.5 attack and block reach | OS Core T5, 2 Neural Matrices T4, Quantum Sync Lattice T5, Optic Fusion Controller T4, 4 dragon's breath, a nether star |
+| **Apex Sprint Actuators** | 5 | Legs | 70 | +25% speed, step up two blocks, **no fall damage** | Falcon Overclocker T4, Cooldown Optimizer T4, Iconic Skeletal Chassis T5, 4 vibranium, a netherite ingot, 4 phantom membranes |
+
+* **Body slots.** One implant per body slot, as in Edgerunner. Hands, Nervous System and Skin were empty in Edgerunner, so those six implants add to what you can carry; the others compete with Edgerunner's own (Second Heart or Adrenal Pump instead of the Blood Pump, the Neocortex instead of the Axolotl, Lynx or Apex instead of the tendons or ankles).
+* **Settings: `config/stodd/chrome.json`** (written the first time the server starts): for each implant `enabled`, `load` and `strength` (multiplies every bonus it gives: 0.5 is half, 2 is double), and `dodgeChance`, `dodgeCooldownSeconds`, `secondHeartCooldownSeconds`, `secondHeartHealth`. Changes apply on the next start or `/reload`. The load in an item's tooltip is the default.
+* **How it fits in:** Palladium reads every mod jar as an addon pack, so STODD Chrome's items, powers, recipes and its script sit next to Edgerunner's own, and it registers its implants through Edgerunner's own cyberware registry. It changes nothing of Edgerunner's.
+* **Honest limits:** not tried in the game yet. Its recipes use only items checked in the Project: Edgerunner 1.1.2 jar, Palladium's circuits and metals (which Edgerunner's own recipes use) and vanilla items. If an implant installs but its bonus does not show, or the Ripperdoc refuses it, the log says why (`[STODD Chrome]`).
+
 ## Tests that were run (and what was not)
 
 Every push to the GitHub repository runs all of these; the jar on the `dist` branch only exists if they all passed.
@@ -522,7 +551,7 @@ The server crash `... provides no component of type apoli:powers` (`Ticking enti
 
 ## Verify in your first test world
 
-1. **The log at start-up** shows `[STODD Core] 3.4.1 loaded`, `settings: ...config/stodd`, `The STODD island world pack is enabled` and `ISLANDS: ...`. On a server run `/stodd core world` (operator). Then `/stodd addons`: every mod you have should say `[found]`.
+1. **The log at start-up** shows `[STODD Core] 3.4.2 loaded`, `settings: ...config/stodd`, `The STODD island world pack is enabled` and `ISLANDS: ...`. On a server run `/stodd core world` (operator). Then `/stodd addons`: every mod you have should say `[found]`.
 2. Create a world: the world type already shows **Survival Island (Default)**. The Origin screen shows only the ten origins. A Weakling starts with 14 HP and one ring slot; a Brawler has 45 HP and 4 hand slots; a Skyborn takes no fall damage. A non-Sorcerer has no Jujutsu items after a few seconds.
 3. As a Human, right-click a Devil Fruit: refused once, with one message. As a Dark Magician, a Malum altar and scythe work; anyone else is refused. A Sorcerer cannot use the Ripperdoc. As a Swordsman eat a fruit: the message says the other path is closed.
 4. **The Log Pose:** you start with one. The needle points; walk around and it keeps pointing at the same island. Right-click to cycle the modes. Stand in the middle of an island for 3 seconds: "Island recorded", and the needle moves on to the next island.

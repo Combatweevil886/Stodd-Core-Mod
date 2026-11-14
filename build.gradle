@@ -74,6 +74,34 @@ tasks.withType(JavaCompile).configureEach {
     options.compilerArgs += ['-Xlint:all,-processing,-serial']
 }
 
+// STODD Chrome, the Project: Edgerunner addon: its own jar (build/libs/stodd_chrome-<version>.jar), next to STODD Core's. It is all
+// data (made by tools/gen_chrome.py) and one empty @Mod class, which uses nothing of Minecraft's, so nothing needs renaming.
+sourceSets {
+    chrome {
+        java.srcDir 'chrome/src/main/java'
+        resources.srcDir 'chrome/src/main/resources'
+        compileClasspath += sourceSets.main.compileClasspath
+    }
+}
+
+tasks.register('chromeJar', Jar) {
+    from sourceSets.chrome.output
+    archiveBaseName = 'stodd_chrome'
+    archiveVersion = chrome_version
+    archiveClassifier = ''
+    destinationDirectory = layout.buildDirectory.dir('libs')
+    manifest {
+        attributes([
+            'Implementation-Title'  : 'STODD Chrome',
+            'Implementation-Version': chrome_version,
+            'Implementation-Vendor' : 'STODD',
+            'Automatic-Module-Name' : 'stodd_chrome'
+        ])
+    }
+}
+
+tasks.named('assemble') { dependsOn 'chromeJar' }
+
 // The island, city, dressed-island, origin-rule and Log Pose logic (stodd.core.gen) needs nothing but the JDK; these run it against
 // reference values produced by the KubeJS scripts themselves (tools/gen_vectors.js, needs Node).
 def vectors = layout.buildDirectory.file('stodd/vectors.json')

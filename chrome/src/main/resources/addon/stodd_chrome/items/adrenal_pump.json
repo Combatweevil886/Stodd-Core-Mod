@@ -1,0 +1,24 @@
+{
+  "type": "palladium:default",
+  "max_stack_size": 1,
+  "rarity": "rare",
+  "creative_mode_tab": "project_edgerunner:cyberpunk",
+  "tooltip": [
+    {
+      "text": "Midgame implant (Circulatory System)",
+      "color": "#AAAAAA"
+    },
+    {
+      "text": "Tier: 3 | Load: 26",
+      "color": "#BF40BF"
+    },
+    {
+      "text": "Synthetic adrenal gland: +2 hearts, heals half a heart every 5 s.",
+      "color": "#66CCFF"
+    },
+    {
+      "text": "STODD Chrome",
+      "color": "#555555"
+    }
+  ]
+}

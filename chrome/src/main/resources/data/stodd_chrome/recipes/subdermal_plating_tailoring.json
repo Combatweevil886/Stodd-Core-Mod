@@ -1,0 +1,41 @@
+{
+  "type": "palladium:item_tailoring",
+  "title": {
+    "translate": "tailoring.stodd_chrome.subdermal_plating"
+  },
+  "tool": {
+    "item": "project_edgerunner:soldering_iron"
+  },
+  "tool_icon": "project_edgerunner:item/soldering_iron_tool_icon_bw",
+  "category": "project_edgerunner:cyberware_tailoring",
+  "requires_unlocking": false,
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "project_edgerunner:scarab_shell_plate_t2"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "project_edgerunner:kinetic_damper_frame_t3"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "palladium:titanium_ingot"
+      },
+      "count": 6
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:diamond"
+      },
+      "count": 2
+    }
+  ],
+  "results": {
+    "chest": "stodd_chrome:subdermal_plating"
+  }
+}

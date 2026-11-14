@@ -1,0 +1,41 @@
+{
+  "type": "palladium:item_tailoring",
+  "title": {
+    "translate": "tailoring.stodd_chrome.lynx_tendons"
+  },
+  "tool": {
+    "item": "project_edgerunner:soldering_iron"
+  },
+  "tool_icon": "project_edgerunner:item/soldering_iron_tool_icon_bw",
+  "category": "project_edgerunner:cyberware_tailoring",
+  "requires_unlocking": false,
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "project_edgerunner:spring_recoil_array_t3"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "project_edgerunner:joint_servo_t1"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:rabbit_foot"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "palladium:titanium_ingot"
+      },
+      "count": 4
+    }
+  ],
+  "results": {
+    "chest": "stodd_chrome:lynx_tendons"
+  }
+}

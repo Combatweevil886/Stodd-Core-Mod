@@ -1,0 +1,24 @@
+{
+  "type": "palladium:default",
+  "max_stack_size": 1,
+  "rarity": "rare",
+  "creative_mode_tab": "project_edgerunner:cyberpunk",
+  "tooltip": [
+    {
+      "text": "Midgame implant (Nervous System)",
+      "color": "#AAAAAA"
+    },
+    {
+      "text": "Tier: 3 | Load: 24",
+      "color": "#BF40BF"
+    },
+    {
+      "text": "Rewired motor nerves: +10% attack speed, +5% speed.",
+      "color": "#66CCFF"
+    },
+    {
+      "text": "STODD Chrome",
+      "color": "#555555"
+    }
+  ]
+}

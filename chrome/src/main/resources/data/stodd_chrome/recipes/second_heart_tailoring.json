@@ -1,0 +1,47 @@
+{
+  "type": "palladium:item_tailoring",
+  "title": {
+    "translate": "tailoring.stodd_chrome.second_heart"
+  },
+  "tool": {
+    "item": "project_edgerunner:soldering_iron"
+  },
+  "tool_icon": "project_edgerunner:item/soldering_iron_tool_icon_bw",
+  "category": "project_edgerunner:cyberware_tailoring",
+  "requires_unlocking": false,
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "project_edgerunner:regen_nanite_scaffold_t5"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "project_edgerunner:trauma_booster_module_t4"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "palladium:vibranium_circuit"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:totem_of_undying"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:nether_star"
+      },
+      "count": 1
+    }
+  ],
+  "results": {
+    "chest": "stodd_chrome:second_heart"
+  }
+}

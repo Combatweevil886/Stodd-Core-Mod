@@ -1,0 +1,24 @@
+{
+  "type": "palladium:default",
+  "max_stack_size": 1,
+  "rarity": "epic",
+  "creative_mode_tab": "project_edgerunner:cyberpunk",
+  "tooltip": [
+    {
+      "text": "Endgame implant (Circulatory System)",
+      "color": "#AAAAAA"
+    },
+    {
+      "text": "Tier: 5 | Load: 95",
+      "color": "#BF40BF"
+    },
+    {
+      "text": "A backup heart: +6 hearts, heals half a heart every 2 s, and once every 3 minutes a killing blow leaves you standing.",
+      "color": "#66CCFF"
+    },
+    {
+      "text": "STODD Chrome",
+      "color": "#555555"
+    }
+  ]
+}

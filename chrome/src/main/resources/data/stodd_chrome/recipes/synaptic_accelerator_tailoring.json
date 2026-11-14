@@ -1,0 +1,41 @@
+{
+  "type": "palladium:item_tailoring",
+  "title": {
+    "translate": "tailoring.stodd_chrome.synaptic_accelerator"
+  },
+  "tool": {
+    "item": "project_edgerunner:soldering_iron"
+  },
+  "tool_icon": "project_edgerunner:item/soldering_iron_tool_icon_bw",
+  "category": "project_edgerunner:cyberware_tailoring",
+  "requires_unlocking": false,
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "project_edgerunner:temporal_regulator_t2"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "project_edgerunner:phase_stabilizer_t3"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "palladium:quartz_circuit"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:gold_ingot"
+      },
+      "count": 4
+    }
+  ],
+  "results": {
+    "chest": "stodd_chrome:synaptic_accelerator"
+  }
+}

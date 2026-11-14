@@ -24,7 +24,8 @@ jobs:
           node tools/gen_config.js
           python3 tools/gen_sky_world.py
           node tools/gen_world_json.js src/main/resources/embedded/kubejs/server_scripts/stodd src/main/resources/stodd_world.json
-          git diff --exit-code -- src/main/resources || (echo "run node tools/gen_config.js and python3 tools/gen_sky_world.py, then commit" && exit 1)
+          python3 tools/gen_chrome.py
+          git diff --exit-code -- src/main/resources chrome || (echo "run node tools/gen_config.js, python3 tools/gen_sky_world.py and python3 tools/gen_chrome.py, then commit" && exit 1)
       - uses: gradle/actions/setup-gradle@v4
       - name: Build the mod (ForgeGradle downloads Minecraft and Forge 1.20.1 the first time)
         run: ./gradlew build stoddTests --stacktrace
@@ -32,6 +33,7 @@ jobs:
         run: |
           node tools/lint.js src/main/resources/embedded/kubejs/server_scripts/stodd src/main/resources/embedded/kubejs/startup_scripts/stodd_startup.js
           node tools/runall.js src/main/resources/embedded/kubejs/server_scripts/stodd
+          node tools/test_chrome.js
       - name: Collect the jar
         run: |
           mkdir dist
@@ -39,6 +41,9 @@ jobs:
           # Renamer writes the game-ready (SRG) jar as ...-renamed.jar; that is the one for mods/
           jar=$(find build -name 'stodd_core-*-renamed.jar' | head -n 1)
           cp "$jar" "dist/stodd_core-$ver.jar"
+          # STODD Chrome, the Project: Edgerunner addon
+          cver=$(grep '^chrome_version=' gradle.properties | cut -d= -f2)
+          cp "build/libs/stodd_chrome-$cver.jar" "dist/stodd_chrome-$cver.jar"
           ls -l dist
           test -n "$(ls dist)"
       - uses: actions/upload-artifact@v4

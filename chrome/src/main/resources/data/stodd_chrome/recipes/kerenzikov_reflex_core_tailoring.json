@@ -1,0 +1,53 @@
+{
+  "type": "palladium:item_tailoring",
+  "title": {
+    "translate": "tailoring.stodd_chrome.kerenzikov_reflex_core"
+  },
+  "tool": {
+    "item": "project_edgerunner:soldering_iron"
+  },
+  "tool_icon": "project_edgerunner:item/soldering_iron_tool_icon_bw",
+  "category": "project_edgerunner:cyberware_tailoring",
+  "requires_unlocking": false,
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "project_edgerunner:latency_shunt_t4"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "project_edgerunner:quantum_sync_lattice_t5"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "project_edgerunner:neural_matrix_t4"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "palladium:vibranium_circuit"
+      },
+      "count": 4
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:nether_star"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:echo_shard"
+      },
+      "count": 4
+    }
+  ],
+  "results": {
+    "chest": "stodd_chrome:kerenzikov_reflex_core"
+  }
+}

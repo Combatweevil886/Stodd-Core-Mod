@@ -1,0 +1,53 @@
+{
+  "type": "palladium:item_tailoring",
+  "title": {
+    "translate": "tailoring.stodd_chrome.monowire_grips"
+  },
+  "tool": {
+    "item": "project_edgerunner:soldering_iron"
+  },
+  "tool_icon": "project_edgerunner:item/soldering_iron_tool_icon_bw",
+  "category": "project_edgerunner:cyberware_tailoring",
+  "requires_unlocking": false,
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "project_edgerunner:arms_actuator_matrix_t4"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "project_edgerunner:arms_power_core_t4"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "project_edgerunner:apogee_overdrive_kernel_t5"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "palladium:vibranium_flux_capacitor"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:netherite_ingot"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:echo_shard"
+      },
+      "count": 2
+    }
+  ],
+  "results": {
+    "chest": "stodd_chrome:monowire_grips"
+  }
+}

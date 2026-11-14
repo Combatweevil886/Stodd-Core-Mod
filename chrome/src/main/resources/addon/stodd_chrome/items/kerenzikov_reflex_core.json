@@ -1,0 +1,24 @@
+{
+  "type": "palladium:default",
+  "max_stack_size": 1,
+  "rarity": "epic",
+  "creative_mode_tab": "project_edgerunner:cyberpunk",
+  "tooltip": [
+    {
+      "text": "Endgame implant (Nervous System)",
+      "color": "#AAAAAA"
+    },
+    {
+      "text": "Tier: 5 | Load: 75",
+      "color": "#BF40BF"
+    },
+    {
+      "text": "Military reflex booster: +30% attack speed, +12% speed, and a 20% chance to slip any attack (once every 3 s).",
+      "color": "#66CCFF"
+    },
+    {
+      "text": "STODD Chrome",
+      "color": "#555555"
+    }
+  ]
+}

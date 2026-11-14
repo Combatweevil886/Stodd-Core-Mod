@@ -5,8 +5,9 @@ issueTrackerURL=""
 
 [[mods]]
 modId="stodd_core"
-version="3.4.1"
+version="3.4.2"
 displayName="STODD Core"
+logoFile="logo.png"
 authors="STODD team"
 description='''The one mod for the "mods 4 stodd" pack (Forge 1.20.1), and an add-on to its power-system mods:
 True Prime Piece (Devil Fruits), Jujutsu Craft (Cursed Energy), Malum (dark magic), Project: Edgerunner (chrome) and Curios.
