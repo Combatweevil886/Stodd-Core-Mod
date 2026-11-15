@@ -436,11 +436,20 @@
     },
     {
      "t": "key",
-     "path": "deepIslands.coastDepth",
-     "key": "coastDepth",
+     "path": "deepIslands.domeBase",
+     "key": "domeBase",
      "def": 12,
      "re": false,
-     "note": "height of the island's coast inside the dome and of the water round it in there (the outer sea is at 63): low, so the hills have room",
+     "note": "height of the dome's widest point: its curved roof rises from here to waterAbove under the sea (63); its wall goes straight down below it",
+     "pre": []
+    },
+    {
+     "t": "key",
+     "path": "deepIslands.coastDepth",
+     "key": "coastDepth",
+     "def": -3,
+     "re": false,
+     "note": "height of the island's coast inside the dome and of the water round it in there: under domeBase, so the hills have room under the roof",
      "pre": []
     },
     {
@@ -476,7 +485,7 @@
      "key": "depthBelow",
      "def": 24,
      "re": false,
-     "note": "how far the dome reaches under the inner sea (at least 20; the sea in there is at most 18 deep)",
+     "note": "how far the dome reaches under the inner sea (coastDepth; at least 20, the sea in there is at most 18 deep)",
      "pre": []
     },
     {

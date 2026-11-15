@@ -103,7 +103,7 @@ files[DF + '/overworld/sky_islands.json'] = {'type': 'minecraft:squeeze', 'argum
 # ---------------------------------------------------------------- sunken islands under bubble domes (3.1)
 # Inside a dome the terrain is the sunken island only, as it would be on the ground: its own continentalness everywhere under the
 # dome (the island, its beaches and the shallow sea round it), lowered so its coast is at deepIslands.coastDepth, its hills kept
-# under the roof and the sea in there at most 18 blocks deep. Round the dome the sea floor is lowered to the dome's foot and rises
+# under the roof (squeezed softly near it) and the sea in there at most 18 blocks deep. Round the dome the sea floor is lowered to the dome's foot and rises
 # back over a slope (deep/carve), so the dome stands free on the sea floor. Outside, the ground as before. Above the inner sea the
 # water is drained, and the wall built, by the dome structure (CellDomePiece).
 files[DF + '/deep/mask.json'] = flat(sky('deep_mask'))
@@ -126,9 +126,13 @@ for name in ('offset', 'factor', 'jaggedness'):
 files[DF + '/deep/depth.json'] = add(
     {'type': 'minecraft:y_clamped_gradient', 'from_value': 1.5, 'from_y': -64, 'to_value': -1.5, 'to_y': 320},
     add('stodd:deep/lift', add(-0.50375, mul('stodd:deep/relief', add(0.50375, 'stodd:deep/offset')))))
+# the roof, softly (3.4.5): from 20 blocks under the roof up, the island's hills are squeezed to about a fifth of their height, so a
+# tall hill becomes a rounded one under the roof instead of a flat top cut off by it (the hard cap under it stays as a backstop)
+files[DF + '/deep/roof_squeeze.json'] = mul(-0.03, {'type': 'minecraft:max', 'argument1': add(20.0, add('stodd:overworld/y', mul(-1.0, 'stodd:deep/ceiling'))),
+                                                    'argument2': 0.0})
 files[DF + '/deep/sloped_cheese.json'] = add(
     mul(4.0, {'type': 'minecraft:quarter_negative', 'argument': mul(
-        add('stodd:deep/depth', mul(mul('stodd:deep/jaggedness', 'stodd:deep/relief'),
+        add(add('stodd:deep/depth', 'stodd:deep/roof_squeeze'), mul(mul('stodd:deep/jaggedness', 'stodd:deep/relief'),
                                     {'type': 'minecraft:half_negative', 'argument': {'type': 'minecraft:noise', 'noise': 'minecraft:jagged', 'xz_scale': 1500.0, 'y_scale': 0.0}})),
         'stodd:deep/factor')}),
     'minecraft:overworld/base_3d_noise')

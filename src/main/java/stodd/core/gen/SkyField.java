@@ -43,8 +43,9 @@ public final class SkyField {
         // sunken islands under bubble domes ([deepIslands])
         public boolean deepEnabled = true;
         public double deepChance = 0.1;
-        /** deepCoast: the island's coast inside the dome, and the level of the sea round it in there (the dome's equator) */
-        public int seaLevel = 63, deepCoast = 12, deepWaterAbove = 6, deepDown = 24, deepMargin = 40, deepLighting = 4;
+        /** deepCoast: the island's coast inside the dome, and the level of the sea round it in there; deepBase: the dome's widest
+         *  point, where its curved roof starts (the wall goes straight down from there), never under the coast */
+        public int seaLevel = 63, deepCoast = -3, deepBase = 12, deepWaterAbove = 6, deepDown = 24, deepMargin = 40, deepLighting = 4;
         public double deepRelief = 0.85;
         /** the slope round a dome: the sea floor is lowered to the dome's foot and rises back to the normal floor over this many blocks */
         public int deepRing = 64;
@@ -59,13 +60,16 @@ public final class SkyField {
         public String key() {
             return enabled + "|" + chance + "|" + minSpawnDistance + "|" + minRadius + "|" + height + "|" + heightVariation + "|" + thickness + "|"
                 + spikes + "|" + relief + "|" + maxHeight + "|" + landThreshold + "|" + centreContinents + "|" + cell + "|" + peakStep + "|" + beaches
-                + "|" + deepEnabled + "|" + deepChance + "|" + seaLevel + "|" + deepCoast + "|" + deepWaterAbove + "|" + deepDown + "|" + deepMargin
+                + "|" + deepEnabled + "|" + deepChance + "|" + seaLevel + "|" + deepCoast + "|" + deepBase + "|" + deepWaterAbove + "|" + deepDown + "|" + deepMargin
                 + "|" + deepLighting + "|" + deepRelief + "|" + deepReach + "|" + deepRing
                 + "|" + cloudSea + "|" + cloudWidth + "|" + cloudDepth + "|" + streams + "|" + streamRadius + "|" + deepStream + "|" + deepStreamRadius + "|" + deepTube;
         }
 
         /** the highest block of a bubble dome (always under the sea) */
         public int domeTop() { return seaLevel - deepWaterAbove; }
+
+        /** the dome's widest point: deepBase, or the coast if that is higher */
+        public int domeBase() { return Math.max(deepBase, deepCoast); }
 
         public boolean deepOn() { return deepEnabled && deepChance > 0; }
 
@@ -105,17 +109,22 @@ public final class SkyField {
     public static final double NO_CARVE = 10000;
 
     /**
-     * The bubble dome of a sunken island. Above base (the island's coast, and the level of the sea round it inside) a flattened
-     * half ellipsoid rising `up` blocks to the top (always under the sea); below base an upright cylinder of the same width reaching
-     * `down` blocks into the ground, which holds the inner sea and the island's roots. Round it the sea floor is lowered to its
-     * foot and rises back over `ring` blocks, so the dome stands free on the sea floor.
+     * The bubble dome of a sunken island. Above base (its widest point) a flattened half ellipsoid rising `up` blocks to the top
+     * (always under the sea); below base an upright cylinder of the same width reaching `down` blocks into the ground, which holds
+     * the inner sea and the island's roots. The island's coast and the sea round it inside are at `coast`, at or under base (3.4.5:
+     * 15 blocks under it, so the island has more room under the roof). Round it the sea floor is lowered to its foot and rises back
+     * over `ring` blocks, so the dome stands free on the sea floor.
      */
     public static final class Dome {
         public final IslandFinder.Island island;
-        public final double cx, cz, r, base, up, down, ring;
-        Dome(IslandFinder.Island island, double cx, double cz, double r, double base, double up, double down, double ring) {
+        public final double cx, cz, r, base, up, down, ring, coast;
+        Dome(IslandFinder.Island island, double cx, double cz, double r, double base, double up, double down, double ring, double coast) {
             this.island = island; this.cx = cx; this.cz = cz; this.r = r; this.base = base; this.up = up; this.down = down; this.ring = ring;
+            this.coast = coast;
         }
+
+        /** the highest block of the dome */
+        public double top() { return base + up; }
 
         /** < 1 inside, 1 on the surface, > 1 outside */
         public double f(double x, double y, double z) {
@@ -124,14 +133,17 @@ public final class SkyField {
             return Math.max(h, (base - y) / down);
         }
 
-        /** the inner sea's surface (water up to this block inside the dome, air above) */
-        public int sea() { return (int) Math.floor(base); }
+        /** the inner sea's surface (water up to this block inside the dome, air above): the island's coast */
+        public int sea() { return (int) Math.floor(coast); }
 
-        /** the highest the sea floor may reach at (x, z): the dome's foot under and next to it, rising over the ring, NO_CARVE beyond */
+        /**
+         * the highest the sea floor may reach at (x, z): under the dome the bottom of its inner sea (only what the aquifers and the
+         * surface rules go by: the island's terrain is the dome's own), next to it the dome's foot, rising over the ring, NO_CARVE beyond
+         */
         public double carve(double x, double z) {
             double dd = Math.sqrt((x - cx) * (x - cx) + (z - cz) * (z - cz));
             double foot = base - 3;
-            if (dd <= r) return foot;
+            if (dd <= r) return Math.min(foot, coast - 24);
             if (dd >= r + ring) return NO_CARVE;
             double t = (dd - r) / ring, s = t * t * (3 - 2 * t);
             return foot + 80 * s;
@@ -223,7 +235,8 @@ public final class SkyField {
             double far = 0;
             for (long k : isl.lattice) far = Math.max(far, Math.hypot((int) (k >> 32) - isl.cx, (int) k - isl.cz));
             double r = far + IslandFinder.LATTICE + p.deepMargin;
-            double base = p.deepCoast, up = Math.max(8, p.domeTop() - base), down = Math.max(4, p.deepDown), ring = Math.max(0, p.deepRing);
+            double coast = p.deepCoast, base = p.domeBase(), up = Math.max(8, p.domeTop() - base), ring = Math.max(0, p.deepRing);
+            double down = (base - coast) + Math.max(4, p.deepDown);
             // every point under the dome and its slope must be able to find it (domesNear looks this far): a bigger island (two grown
             // into one) stays where it is
             boolean fits = r + ring <= reach() - 16;
@@ -238,7 +251,7 @@ public final class SkyField {
                     }
                 }
             }
-            if (fits) d = new Dome(isl, isl.cx, isl.cz, r, base, up, down, ring);
+            if (fits) d = new Dome(isl, isl.cx, isl.cz, r, base, up, down, ring, coast);
         }
         if (domes.size() > 200_000) domes.clear();
         domes.put(isl.key(), d == null ? NONE : d);
@@ -477,7 +490,7 @@ public final class SkyField {
     /** the continentalness the sunken terrain is made from (the island's own; -1 where no dome is) */
     public double deepContinents(int x, int z) { Column c = column(x, z); return c.dome != null ? c.raw : -1; }
 
-    public double deepLift(int x, int z) { Column c = column(x, z); return c.dome != null ? (c.dome.base - 64) / 128.0 : 0; }
+    public double deepLift(int x, int z) { Column c = column(x, z); return c.dome != null ? (c.dome.coast - 64) / 128.0 : 0; }
 
     public double deepRelief() { return p.deepRelief; }
 
@@ -485,7 +498,7 @@ public final class SkyField {
     public double deepCeiling(int x, int z) { Column c = column(x, z); return c.dome != null ? c.dome.ceiling(x, z) - 3 : -64; }
 
     /** the deepest the sea inside the dome gets: solid ground from here down (at most 18 blocks of water, above the dome's bottom) */
-    public double deepApron(int x, int z) { Column c = column(x, z); return c.dome != null ? c.dome.base - Math.min(c.dome.down - 2, 18) : -64; }
+    public double deepApron(int x, int z) { Column c = column(x, z); return c.dome != null ? c.dome.coast - Math.min(c.dome.coast - (c.dome.base - c.dome.down) - 2, 18) : -64; }
 
     /** the highest the sea floor may reach here (round a dome it is lowered, so the dome stands free); NO_CARVE elsewhere */
     public double deepCarve(int x, int z) { return column(x, z).carve; }
@@ -528,6 +541,47 @@ public final class SkyField {
     private final Map<String, List<Stream>> skyStreams = new ConcurrentHashMap<>();
     private final Map<String, Object> deepStreams = new ConcurrentHashMap<>();
     private final Map<Long, List<IslandFinder.Island>> liftedRegions = new ConcurrentHashMap<>();
+    private final Map<String, float[]> coastRays = new ConcurrentHashMap<>();
+
+    static final int RAYS = 512;
+
+    /**
+     * How far out from a sky island's centre its land goes, in each of RAYS directions (its outermost land along the ray). The
+     * cloud sea starts there and goes outwards, so a valley, lake or bay inside the island's outline gets no cloud.
+     */
+    public float[] coastRays(IslandFinder.Island isl) {
+        float[] c = coastRays.get(isl.key());
+        if (c != null) return c;
+        float[] out = new float[RAYS];
+        double maxT = isl.radius * 2.4 + 96;
+        for (int a = 0; a < RAYS; a++) {
+            double ang = a * 2 * Math.PI / RAYS, cs = Math.cos(ang), sn = Math.sin(ang);
+            double last = 0;
+            for (double s2 = 0; s2 <= maxT; s2 += 3) {
+                if (raw.at((int) Math.round(isl.cx + s2 * cs), (int) Math.round(isl.cz + s2 * sn)) >= p.landThreshold) last = s2;
+            }
+            out[a] = (float) last;
+        }
+        // a ray can slip between two points of land: take the farthest of each ray and its neighbours
+        float[] wide = new float[RAYS];
+        for (int a = 0; a < RAYS; a++) {
+            float m = 0;
+            for (int k = -2; k <= 2; k++) m = Math.max(m, out[Math.floorMod(a + k, RAYS)]);
+            wide[a] = m;
+        }
+        if (coastRays.size() > 20_000) coastRays.clear();
+        coastRays.put(isl.key(), wide);
+        return wide;
+    }
+
+    /** true when (x, z) is outside a sky island's outline: past its outermost land, seen from its centre */
+    public boolean outsideIsland(IslandFinder.Island isl, int x, int z) {
+        double dx = x - isl.cx, dz = z - isl.cz;
+        double u = Math.atan2(dz, dx) / (2 * Math.PI);
+        if (u < 0) u += 1;
+        int a = Math.min(RAYS - 1, (int) (u * RAYS));
+        return Math.sqrt(dx * dx + dz * dz) > coastRays(isl)[a] + 4;   // + a little over the 3-block step of the rays
+    }
 
     /** The cloud sea's surface round a sky island: three under its coast, so its beaches stand a little clear of the cloud. */
     public int cloudTop(IslandFinder.Island isl) { return (int) Math.round(levelOf(isl)) - 3; }
@@ -697,7 +751,7 @@ public final class SkyField {
             for (int dz = 0; dz < size; dz++) for (int dx = 0; dx < size; dx++) {
                 int x = x0 + dx, z = z0 + dz;
                 boolean in = false;
-                if (!pts.isEmpty()) {
+                if (!pts.isEmpty() && outsideIsland(isl, x, z)) {
                     double best = Double.MAX_VALUE;
                     for (int[] q : pts) { double ax = q[0] - x, az = q[1] - z; best = Math.min(best, ax * ax + az * az); }
                     double ang = Math.atan2(z - isl.cz, x - isl.cx);

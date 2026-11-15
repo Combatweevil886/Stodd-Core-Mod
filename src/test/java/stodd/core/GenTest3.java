@@ -194,14 +194,14 @@ public final class GenTest3 {
 
         section("config: an old default moves to the new one, a value someone chose stays");
         String old = new String(Files.readAllBytes(world), StandardCharsets.UTF_8);
-        old = old.replace("coastDepth = 12", "coastDepth = 16").replace("waterAbove = 6", "waterAbove = 10").replace("margin = 40", "margin = 31");
+        old = old.replace("coastDepth = -3", "coastDepth = 16").replace("waterAbove = 6", "waterAbove = 10").replace("margin = 40", "margin = 31");
         Files.write(world, old.getBytes(StandardCharsets.UTF_8));
         StoddConfig c3b = StoddConfig.load(game);
         SkyField.Params pb = c3b.skyParams();
-        ok(pb.deepCoast == 12 && pb.domeTop() == 57, "the 3.1.0 defaults of the sunken islands become the new ones: coast " + pb.deepCoast + ", top " + pb.domeTop());
+        ok(pb.deepCoast == -3 && pb.domeBase() == 12 && pb.domeTop() == 57, "the 3.1.0 defaults of the sunken islands become the new ones: coast " + pb.deepCoast + ", widest point " + pb.domeBase() + ", top " + pb.domeTop());
         ok(pb.deepMargin == 31, "a value someone chose is kept: " + pb.deepMargin);
         String rewritten = new String(Files.readAllBytes(world), StandardCharsets.UTF_8);
-        ok(rewritten.contains("coastDepth = 12") && rewritten.contains("margin = 31"), "the file is rewritten with the new default, the chosen value kept");
+        ok(rewritten.contains("coastDepth = -3") && rewritten.contains("margin = 31"), "the file is rewritten with the new default, the chosen value kept");
         boolean toldOld = false;
         for (String n : c3b.notes()) if (n.contains("deepIslands.coastDepth") && n.contains("old default")) toldOld = true;
         ok(toldOld, "the move is reported: " + c3b.notes());
@@ -465,8 +465,11 @@ public final class GenTest3 {
             "the water round the island inside the dome has land climate, as round a sky island (no ocean biomes, no ocean structures in there)");
         int lx = (int) Math.round(d.island.cx), lz = (int) Math.round(d.island.cz);
         ok(raw.at(lx, lz) >= p.landThreshold && f.climateContinents(lx, lz) == raw.at(lx, lz), "the island itself has its own climate, as a sky island has");
-        ok(Math.abs(f.deepApron(sx, sz) - (d.base - 18)) < 1e-9 && f.deepApron(sx, sz) > d.base - d.down, "the inner sea is at most 18 deep, above the dome's bottom");
-        ok(d.sea() == (int) Math.floor(d.base) && d.base == p.deepCoast, "the inner sea's surface is the island's coast height");
+        ok(Math.abs(f.deepApron(sx, sz) - (d.coast - 18)) < 1e-9 && f.deepApron(sx, sz) > d.base - d.down, "the inner sea is at most 18 deep, above the dome's bottom");
+        ok(d.sea() == (int) Math.floor(d.coast) && d.coast == p.deepCoast && d.base == p.domeBase(), "the inner sea's surface is the island's coast height");
+        ok(d.base == 12 && d.top() == 57 && d.coast == -3 && d.base - d.down == d.coast - p.deepDown,
+            "3.4.5: the dome where it was (widest at y 12, top at 57), the island and its sea 15 blocks lower (coast at -3), the dome's bottom as far under them as before");
+        ok(f.deepCeiling(d.island.cx, d.island.cz) - d.coast >= 50, "room for hills: " + (int) (f.deepCeiling(d.island.cx, d.island.cz) - d.coast) + " blocks from the coast to the roof in the middle");
         boolean carve = true;
         for (int k = 0; k < 24; k++) {
             double ang = k * Math.PI / 12;
@@ -474,7 +477,7 @@ public final class GenTest3 {
             for (double rr = 0; rr <= d.r + d.ring + 20; rr += 4) {
                 int x = (int) Math.round(d.cx + rr * Math.cos(ang)), z = (int) Math.round(d.cz + rr * Math.sin(ang));
                 double c = f.carveAt(x, z), dd = Math.hypot(x - d.cx, z - d.cz);
-                if (dd < d.r - 1 && Math.abs(c - (d.base - 3)) > 1e-9) carve = false;          // under the dome: its foot
+                if (dd < d.r - 1 && Math.abs(c - Math.min(d.base - 3, d.coast - 24)) > 1e-9) carve = false;   // under the dome: under its inner sea
                 if (dd > d.r + d.ring + 1 && c != SkyField.NO_CARVE) carve = false;          // beyond the slope: untouched
                 if (c + 1e-9 < prev && c != SkyField.NO_CARVE) carve = false;                // rising outwards
                 if (c != SkyField.NO_CARVE) prev = c;
@@ -512,6 +515,7 @@ public final class GenTest3 {
         section("knock up streams and the cloud sea");
         int streams = 0, inSea = 0, deepOk = 0, domes = 0, tubeOk = 0;
         boolean streamOk = true, cloudOk = true;
+        int cloudCols = 0, cloudInside = 0, cloudCoast = 0;
         for (int[] g : isl) {
             IslandFinder.Island a = f.rawIslands().islandAt(g[0], g[1]);
             if (f.isLifted(a)) {
@@ -526,6 +530,28 @@ public final class GenTest3 {
                 // the cloud sea just off the coast, at the coast's height; nothing far out at sea
                 SkyField.CloudCell far = f.cloudCell(g[0] + 340, g[1] + 340, 48);
                 if (far != null) cloudOk = false;
+                // 3.4.5: only outside the island's outline, from its coast outwards: never over its land, its valleys or its lakes
+                int R = a.radius * 2 + p.cloudWidth + 48;
+                for (int cx0 = Math.floorDiv(g[0] - R, 48) * 48; cx0 <= g[0] + R; cx0 += 48)
+                    for (int cz0 = Math.floorDiv(g[1] - R, 48) * 48; cz0 <= g[1] + R; cz0 += 48) {
+                        SkyField.CloudCell cc = f.cloudCell(cx0, cz0, 48);
+                        if (cc == null) continue;
+                        for (int k = 0; k < 48 * 48; k++) {
+                            if (cc.topAt(k) == Integer.MIN_VALUE || cc.topAt(k) != f.cloudTop(a)) continue;
+                            int x = cx0 + k % 48, z = cz0 + k / 48;
+                            boolean nearStream = false;
+                            for (SkyField.Stream st : f.skyStreams(a)) if (Math.hypot(st.x - x, st.z - z) <= st.r + 12.5) nearStream = true;
+                            if (nearStream) continue;
+                            cloudCols++;
+                            if (!f.outsideIsland(a, x, z)) cloudInside++;
+                            else if (raw.at(x, z) >= p.landThreshold) {
+                                // land outside this island's outline: another island's, or a sliver of its own coast the rays missed
+                                IslandFinder.Island o = f.rawIslands().islandAt(x, z);
+                                if (o == null || o.key().equals(a.key())) cloudInside++;
+                            }
+                            if (f.distanceToLand(a, x, z) < 8) cloudCoast++;
+                        }
+                    }
             }
             SkyField.Dome dd = f.domeOf(a);
             if (dd != null) {
@@ -542,6 +568,7 @@ public final class GenTest3 {
         ok(streams > 0 && streamOk, "every sky island's stream stands in open sea next to it and rises to its cloud sea (" + streams + ")");
         ok(inSea == streams, "...inside the cloud sea");
         ok(cloudOk, "the cloud sea round the top of every stream at the island's coast height, none far out at sea");
+        ok(cloudCols > 0 && cloudInside == 0 && cloudCoast > 0, "the cloud sea starts at the coast and goes outwards, none inside an island's outline (" + cloudCols + " cloud columns, " + cloudInside + " inside, " + cloudCoast + " at the coast)");
         ok(domes > 0 && deepOk == domes, "every dome has a stream over its inner sea, up through the roof to the surface (" + deepOk + " of " + domes + ")");
         ok(tubeOk == domes, "every dome has a bubble tube as wide as its stream, over its sea, apart from the stream, with room under the roof (" + tubeOk + " of " + domes + ")");
         SkyField.Params noCloud = new SkyField.Params();

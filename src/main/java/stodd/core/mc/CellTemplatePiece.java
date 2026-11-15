@@ -30,8 +30,13 @@ public final class CellTemplatePiece extends TemplateStructurePiece {
         try { return Rotation.valueOf(tag.getString("Rot")); } catch (IllegalArgumentException e) { return Rotation.NONE; }
     }
 
+    /**
+     * keepLiquids off: vanilla would waterlog every stair, slab, fence and pane it places next to water, and spread that from block
+     * to block. Under a sunken island's dome the neighbouring chunks are still full of sea water while a building goes up (they are
+     * drained when their own turn comes), so whole rows of a sunken village came out waterlogged.
+     */
     static StructurePlaceSettings settings(Rotation rotation) {
-        return new StructurePlaceSettings().setRotation(rotation);
+        return new StructurePlaceSettings().setRotation(rotation).setKeepLiquids(false);
     }
 
     static Rotation rotation(int r) {

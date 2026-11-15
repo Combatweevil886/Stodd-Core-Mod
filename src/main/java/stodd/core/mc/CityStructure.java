@@ -60,7 +60,7 @@ public final class CityStructure extends Structure {
             if (isl == null || d == null) return Optional.empty();
             double u = (Hash.hash3(isl.cx - 77, isl.cz + 91, seed ^ 0x6d2b79f5) & 0xffffff) / (double) 0x1000000;
             if (u >= rules.deepVillages) return Optional.empty();
-            int lo = (int) d.base + 1, hi = (int) (d.base + d.up * 0.45);
+            int lo = (int) d.coast + 1, hi = (int) (d.coast + (d.top() - d.coast) * 0.45);
             CityPlanner.Plan plan = tools.cities.planDeep(tools.deep, isl, heights, seed, rules.deepVillageStyle, rules.deepVillageRadius, lo, Math.max(lo, hi),
                 (cx0, cz0, cell2, street) -> {
                     // the lowest roof over the cell's four corners, 3 blocks of air kept under it

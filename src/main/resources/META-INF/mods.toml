@@ -5,7 +5,7 @@ issueTrackerURL=""
 
 [[mods]]
 modId="stodd_core"
-version="3.4.4"
+version="3.4.5"
 displayName="STODD Core"
 logoFile="logo.png"
 authors="STODD team"

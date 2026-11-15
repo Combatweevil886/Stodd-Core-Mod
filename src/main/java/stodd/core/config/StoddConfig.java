@@ -230,7 +230,7 @@ public final class StoddConfig {
     /** Defaults that a newer version changed: a file still holding one gets the new default (3.1.1: the sunken islands' new look). */
     static final Map<String, double[]> RETIRED = new LinkedHashMap<>();
     static {
-        RETIRED.put("deepIslands.coastDepth", new double[] { 16, 24 });   // 3.4.4: lower, for taller hills
+        RETIRED.put("deepIslands.coastDepth", new double[] { 12, 16, 24 });   // 3.4.4, 3.4.5: lower, for taller hills (the dome stays: domeBase)
         RETIRED.put("deepIslands.relief", new double[] { 0.6 });
         RETIRED.put("deepIslands.waterAbove", new double[] { 10 });
         RETIRED.put("deepIslands.margin", new double[] { 24 });
@@ -585,7 +585,8 @@ public final class StoddConfig {
         p.deepChance = deepChance();
         p.deepEnabled = p.deepChance > 0;
         p.deepWaterAbove = (int) Math.round(clampNote("deepIslands.waterAbove", num("deepIslands.waterAbove", 6), 4, 50));
-        p.deepCoast = (int) Math.round(clampNote("deepIslands.coastDepth", num("deepIslands.coastDepth", 12), -30, p.seaLevel - p.deepWaterAbove - 16));
+        p.deepCoast = (int) Math.round(clampNote("deepIslands.coastDepth", num("deepIslands.coastDepth", -3), -30, p.seaLevel - p.deepWaterAbove - 16));
+        p.deepBase = (int) Math.round(clampNote("deepIslands.domeBase", num("deepIslands.domeBase", 12), -30, p.seaLevel - p.deepWaterAbove - 16));
         p.deepRelief = clampNote("deepIslands.relief", num("deepIslands.relief", 0.85), 0.1, 1.5);
         p.deepMargin = (int) Math.round(clampNote("deepIslands.margin", num("deepIslands.margin", 40), 6, 200));
         p.deepDown = (int) Math.round(clampNote("deepIslands.depthBelow", num("deepIslands.depthBelow", 24), 20, 60));

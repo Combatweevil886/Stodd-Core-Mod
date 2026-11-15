@@ -9,7 +9,11 @@
         "type": "minecraft:mul",
         "argument1": {
           "type": "minecraft:add",
-          "argument1": "stodd:deep/depth",
+          "argument1": {
+            "type": "minecraft:add",
+            "argument1": "stodd:deep/depth",
+            "argument2": "stodd:deep/roof_squeeze"
+          },
           "argument2": {
             "type": "minecraft:mul",
             "argument1": {

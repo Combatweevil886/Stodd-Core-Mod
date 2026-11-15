@@ -38,13 +38,15 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
 public final class CellDomePiece extends StructurePiece {
     final int x0, z0, size, lightEvery;
     final double cx, cz, r, base, up, down;
+    final double coast;   // the island's coast and the inner sea's surface (at or under base, the dome's widest point)
     final int[] stream;   // x, z, r, yLow, yTop, or empty
     final int[] tube;     // x, z, r, yLow, yTop, or empty
 
-    CellDomePiece(int x0, int z0, int size, double cx, double cz, double r, double base, double up, double down, int lightEvery, int[] stream, int[] tube, int yMin, int yMax) {
+    CellDomePiece(int x0, int z0, int size, double cx, double cz, double r, double base, double up, double down, double coast, int lightEvery, int[] stream, int[] tube, int yMin, int yMax) {
         super(StoddRegistry.DOME_PIECE.get(), 0, new BoundingBox(x0, yMin, z0, x0 + size - 1,
             Math.max(yMax, Math.max(stream.length == 5 ? stream[4] : yMax, tube.length == 5 ? tube[4] : yMax)), z0 + size - 1));
         this.x0 = x0; this.z0 = z0; this.size = size; this.cx = cx; this.cz = cz; this.r = r; this.base = base; this.up = up; this.down = down;
+        this.coast = coast;
         this.lightEvery = lightEvery; this.stream = stream; this.tube = tube;
     }
 
@@ -52,6 +54,7 @@ public final class CellDomePiece extends StructurePiece {
         super(StoddRegistry.DOME_PIECE.get(), tag);
         x0 = tag.getInt("X0"); z0 = tag.getInt("Z0"); size = tag.getInt("Size"); lightEvery = tag.getInt("Light");
         cx = tag.getDouble("CX"); cz = tag.getDouble("CZ"); r = tag.getDouble("R"); base = tag.getDouble("Base"); up = tag.getDouble("Up"); down = tag.getDouble("Down");
+        coast = tag.contains("Coast") ? tag.getDouble("Coast") : base;   // domes saved before 3.4.5: the coast was the widest point
         stream = tag.getIntArray("Stream");   // empty in domes saved by 3.1.0 / 3.1.1
         tube = tag.getIntArray("Tube");       // empty in domes saved before 3.4.0
     }
@@ -60,6 +63,7 @@ public final class CellDomePiece extends StructurePiece {
     protected void addAdditionalSaveData(StructurePieceSerializationContext context, CompoundTag tag) {
         tag.putInt("X0", x0); tag.putInt("Z0", z0); tag.putInt("Size", size); tag.putInt("Light", lightEvery);
         tag.putDouble("CX", cx); tag.putDouble("CZ", cz); tag.putDouble("R", r); tag.putDouble("Base", base); tag.putDouble("Up", up); tag.putDouble("Down", down);
+        tag.putDouble("Coast", coast);
         tag.putIntArray("Stream", stream);
         tag.putIntArray("Tube", tube);
     }
@@ -110,7 +114,7 @@ public final class CellDomePiece extends StructurePiece {
         BlockState grass = Blocks.GRASS_BLOCK.defaultBlockState();
         BlockState light = Blocks.LIGHT.defaultBlockState().setValue(LightBlock.LEVEL, 15);
         int minY = level.getMinBuildHeight() + 1, maxY = level.getMaxBuildHeight() - 1;
-        int sea = (int) Math.floor(base);
+        int sea = (int) Math.floor(coast);
         BlockPos.MutableBlockPos m = new BlockPos.MutableBlockPos();
         for (int x = ax; x <= bx; x++) for (int z = az; z <= bz; z++) {
             double h = ((x - cx) * (x - cx) + (z - cz) * (z - cz)) / (r * r);

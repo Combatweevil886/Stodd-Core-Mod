@@ -118,7 +118,7 @@ public final class StoddApi {
             java.util.List<int[]> out = new java.util.ArrayList<>();
             for (stodd.core.gen.IslandIndex.Hit h : res.list) {
                 stodd.core.gen.SkyField.Dome d = t.skyField.domeAt(h.island.cx, h.island.cz);
-                out.add(new int[] { h.island.cx, h.island.cz, h.island.radius, d == null ? 16 : (int) d.base, d == null ? 50 : (int) (d.base + d.up) });
+                out.add(new int[] { h.island.cx, h.island.cz, h.island.radius, d == null ? 0 : (int) d.coast, d == null ? 50 : (int) d.top() });
             }
             return out.toArray(new int[0][]);
         } catch (Throwable t) { return new int[0][]; }

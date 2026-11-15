@@ -20,6 +20,7 @@ S	kubejs/data/stodd/worldgen/density_function/deep/lift.json
 S	kubejs/data/stodd/worldgen/density_function/deep/mask.json
 S	kubejs/data/stodd/worldgen/density_function/deep/offset.json
 S	kubejs/data/stodd/worldgen/density_function/deep/relief.json
+S	kubejs/data/stodd/worldgen/density_function/deep/roof_squeeze.json
 S	kubejs/data/stodd/worldgen/density_function/deep/sloped_cheese.json
 S	kubejs/data/stodd/worldgen/density_function/overworld/continents.json
 S	kubejs/data/stodd/worldgen/density_function/overworld/continents_raw.json
