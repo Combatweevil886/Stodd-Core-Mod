@@ -83,6 +83,15 @@ public final class CellDomePiece extends StructurePiece {
         return !s.isAir() && s.getFluidState().isEmpty() && !s.canBeReplaced() && s.blocksMotion() && !(s.getBlock() instanceof FallingBlock);
     }
 
+    /** biomes whose ground is sand anyway */
+    static boolean keepsSand(WorldGenLevel level, BlockPos pos) {
+        try {
+            net.minecraft.core.Holder<net.minecraft.world.level.biome.Biome> b = level.getBiome(pos);
+            return b.is(net.minecraft.tags.BiomeTags.IS_BEACH) || b.is(net.minecraft.tags.BiomeTags.IS_BADLANDS)
+                || b.is(net.minecraftforge.common.Tags.Biomes.IS_DESERT);
+        } catch (Throwable t) { return true; }
+    }
+
     static boolean underwaterTop(BlockState s) {
         return s.is(Blocks.DIRT) || s.is(Blocks.GRAVEL) || s.is(Blocks.CLAY) || s.is(Blocks.MUD) || s.is(Blocks.COARSE_DIRT);
     }
@@ -139,11 +148,21 @@ public final class CellDomePiece extends StructurePiece {
                 if (!open && y < sea) break;
             }
             if (ground == Integer.MIN_VALUE) continue;
-            // the island's top above the water was made under water: grass again (sand stays sand)
+            // the island's top above the water was made under water (dirt, gravel, sand): its grass again, with dirt under it;
+            // sand stays sand where the biome is a desert, badlands or a beach
             if (ground > sea) {
                 m.set(x, ground, z);
                 BlockState top = level.getBlockState(m);
-                if (underwaterTop(top) && level.getBlockState(m.above()).isAir()) level.setBlock(m, grass, 2);
+                boolean sandy = top.is(Blocks.SAND) || top.is(Blocks.RED_SAND);
+                if ((underwaterTop(top) || (sandy && !keepsSand(level, m))) && level.getBlockState(m.above()).isAir()) {
+                    level.setBlock(m, grass, 2);
+                    for (int k = 1; k <= 3; k++) {
+                        m.set(x, ground - k, z);
+                        BlockState under = level.getBlockState(m);
+                        if (under.is(Blocks.SAND) || under.is(Blocks.RED_SAND) || under.is(Blocks.GRAVEL) || under.is(Blocks.SANDSTONE) || under.is(Blocks.CLAY))
+                            level.setBlock(m, Blocks.DIRT.defaultBlockState(), 2);
+                    }
+                }
             }
             // light, since the daylight does not come down this deep (over the water too)
             if (lightEvery > 0 && Math.floorMod(x, lightEvery) == 0 && Math.floorMod(z, lightEvery) == 0) {
@@ -183,5 +202,33 @@ public final class CellDomePiece extends StructurePiece {
                 }
             }
         }
+        // the heightmaps: the island inside the dome, not the sea over it, so the biome's trees, grass, flowers and animals are
+        // placed on the island (DomeHeightmaps; worked out again from the blocks once the chunk is finished)
+        net.minecraft.world.level.chunk.ChunkAccess chunk = level.getChunk(chunkPos.x, chunkPos.z);
+        for (int x = Math.max(ax, chunkPos.getMinBlockX()); x <= Math.min(bx, chunkPos.getMaxBlockX()); x++)
+            for (int z = Math.max(az, chunkPos.getMinBlockZ()); z <= Math.min(bz, chunkPos.getMaxBlockZ()); z++) {
+                double h = ((x - cx) * (x - cx) + (z - cz) * (z - cz)) / (r * r);
+                if (h > 0.97 || nearShaft(x, z, stream) || nearShaft(x, z, tube)) continue;
+                int roof = (int) Math.floor(base + up * Math.sqrt(1 - h)) - 1;
+                int yBot = Math.max(minY, (int) Math.floor(base - down));
+                int ground = Integer.MIN_VALUE, floor = Integer.MIN_VALUE;
+                for (int y = roof; y >= yBot; y--) {
+                    m.set(x, y, z);
+                    BlockState st = level.getBlockState(m);
+                    boolean ours = st.getBlock() instanceof BubbleBlock || st.getBlock() instanceof LightBlock;
+                    if (ground == Integer.MIN_VALUE && !st.isAir() && !ours) ground = y;
+                    if (!ours && st.blocksMotion()) { floor = y; break; }
+                }
+                if (floor == Integer.MIN_VALUE) continue;
+                if (ground == Integer.MIN_VALUE) ground = floor;
+                DomeHeightmaps.set(chunk, x & 15, z & 15, ground, floor);
+            }
+    }
+
+    /** within (a little round) a stream's or tube's disc */
+    static boolean nearShaft(int x, int z, int[] s) {
+        if (s == null || s.length != 5) return false;
+        double dx = x - s[0], dz = z - s[1], rr = s[2] + 3.0;
+        return dx * dx + dz * dz <= rr * rr;
     }
 }

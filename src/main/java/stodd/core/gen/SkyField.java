@@ -44,8 +44,8 @@ public final class SkyField {
         public boolean deepEnabled = true;
         public double deepChance = 0.1;
         /** deepCoast: the island's coast inside the dome, and the level of the sea round it in there (the dome's equator) */
-        public int seaLevel = 63, deepCoast = 24, deepWaterAbove = 6, deepDown = 24, deepMargin = 40, deepLighting = 4;
-        public double deepRelief = 0.6;
+        public int seaLevel = 63, deepCoast = 12, deepWaterAbove = 6, deepDown = 24, deepMargin = 40, deepLighting = 4;
+        public double deepRelief = 0.85;
         /** the slope round a dome: the sea floor is lowered to the dome's foot and rises back to the normal floor over this many blocks */
         public int deepRing = 64;
         /** how far from a point the middle of a dome over it can be: an island's radius + the margin + the ring (from the spawn-island size) */
@@ -67,7 +67,7 @@ public final class SkyField {
         /** the highest block of a bubble dome (always under the sea) */
         public int domeTop() { return seaLevel - deepWaterAbove; }
 
-        boolean deepOn() { return deepEnabled && deepChance > 0; }
+        public boolean deepOn() { return deepEnabled && deepChance > 0; }
 
         /** the lowest a sky island's surface can be (the rim of the lowest island) */
         public int lowestSurface() { return height - heightVariation - 4; }

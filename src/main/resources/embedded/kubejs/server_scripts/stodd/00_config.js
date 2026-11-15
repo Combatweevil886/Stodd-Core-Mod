@@ -68,9 +68,9 @@ global.stodd.cfg = {
     // share of the islands that are sunk:  none (0)  very_rare (3%)  rare (6%)  normal (10%)  common (18%)  very_common (30%)
     rarity: 'normal',
     chance: -1,              // exact share instead of the rarity, 0 to 1 (-1 = use rarity)
-    coastDepth: 24,          // height of the island's coast inside the dome and of the sea round it in there (the outer sea is at 63)
+    coastDepth: 12,          // height of the island's coast inside the dome and of the water round it in there (the outer sea is at 63): low, so the hills have room
     waterAbove: 6,           // at least this much water over the top of the dome (at least 4: the dome never reaches the surface)
-    relief: 0.6,             // how tall the hills are compared with the same island on the ground; they always stay under the roof
+    relief: 0.85,            // how tall the hills are compared with the same island on the ground (as on sky islands); they always stay under the roof
     margin: 40,              // room between the island's coast and the dome's wall: the shallow sea round the island in there
     depthBelow: 24,          // how far the dome reaches under the inner sea (at least 20; the sea in there is at most 18 deep)
     slope: 64,               // round the dome the sea floor is lowered to its foot and rises back over this many blocks (0 = no hollow)

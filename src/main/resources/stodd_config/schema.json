@@ -438,9 +438,9 @@
      "t": "key",
      "path": "deepIslands.coastDepth",
      "key": "coastDepth",
-     "def": 24,
+     "def": 12,
      "re": false,
-     "note": "height of the island's coast inside the dome and of the sea round it in there (the outer sea is at 63)",
+     "note": "height of the island's coast inside the dome and of the water round it in there (the outer sea is at 63): low, so the hills have room",
      "pre": []
     },
     {
@@ -456,9 +456,9 @@
      "t": "key",
      "path": "deepIslands.relief",
      "key": "relief",
-     "def": 0.6,
+     "def": 0.85,
      "re": false,
-     "note": "how tall the hills are compared with the same island on the ground; they always stay under the roof",
+     "note": "how tall the hills are compared with the same island on the ground (as on sky islands); they always stay under the roof",
      "pre": []
     },
     {

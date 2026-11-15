@@ -49,6 +49,7 @@ public final class StoddCore {
         MinecraftForge.EVENT_BUS.addListener(WorldCheck::onServerStarted);
         MinecraftForge.EVENT_BUS.addListener(ModCommands::onRegisterCommands);
         MinecraftForge.EVENT_BUS.addListener(LogPose::onPlayerTick);
+        MinecraftForge.EVENT_BUS.addListener(stodd.core.mc.DomeHeightmaps::onChunkLoad);
         MinecraftForge.EVENT_BUS.addListener(LogPose::onLoggedIn);
         MinecraftForge.EVENT_BUS.addListener(LogPose::onLoggedOut);
         OriginGate.install();

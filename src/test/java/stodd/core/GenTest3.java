@@ -194,14 +194,14 @@ public final class GenTest3 {
 
         section("config: an old default moves to the new one, a value someone chose stays");
         String old = new String(Files.readAllBytes(world), StandardCharsets.UTF_8);
-        old = old.replace("coastDepth = 24", "coastDepth = 16").replace("waterAbove = 6", "waterAbove = 10").replace("margin = 40", "margin = 31");
+        old = old.replace("coastDepth = 12", "coastDepth = 16").replace("waterAbove = 6", "waterAbove = 10").replace("margin = 40", "margin = 31");
         Files.write(world, old.getBytes(StandardCharsets.UTF_8));
         StoddConfig c3b = StoddConfig.load(game);
         SkyField.Params pb = c3b.skyParams();
-        ok(pb.deepCoast == 24 && pb.domeTop() == 57, "the 3.1.0 defaults of the sunken islands become the new ones: coast " + pb.deepCoast + ", top " + pb.domeTop());
+        ok(pb.deepCoast == 12 && pb.domeTop() == 57, "the 3.1.0 defaults of the sunken islands become the new ones: coast " + pb.deepCoast + ", top " + pb.domeTop());
         ok(pb.deepMargin == 31, "a value someone chose is kept: " + pb.deepMargin);
         String rewritten = new String(Files.readAllBytes(world), StandardCharsets.UTF_8);
-        ok(rewritten.contains("coastDepth = 24") && rewritten.contains("margin = 31"), "the file is rewritten with the new default, the chosen value kept");
+        ok(rewritten.contains("coastDepth = 12") && rewritten.contains("margin = 31"), "the file is rewritten with the new default, the chosen value kept");
         boolean toldOld = false;
         for (String n : c3b.notes()) if (n.contains("deepIslands.coastDepth") && n.contains("old default")) toldOld = true;
         ok(toldOld, "the move is reported: " + c3b.notes());
