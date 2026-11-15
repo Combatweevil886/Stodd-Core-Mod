@@ -2,7 +2,7 @@
   "type": "palladium:default",
   "max_stack_size": 1,
   "rarity": "rare",
-  "creative_mode_tab": "project_edgerunner:cyberpunk",
+  "creative_mode_tab": "project_edgerunner:project_edgerunner",
   "tooltip": [
     {
       "text": "Midgame implant (Legs)",

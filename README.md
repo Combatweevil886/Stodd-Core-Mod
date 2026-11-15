@@ -32,10 +32,12 @@ To build it yourself instead: a Java 17 JDK, then `gradlew build` in the project
 * Put **`stodd_core-3.4.4.jar`** in `mods/`. **Delete every `stodd_compat-*.jar` and every older `stodd_core-*.jar`.** Start once, stop, start again (the first start installs the scripts; KubeJS and Survival Island read them on the next).
 * **Start a new world.** The cities, dressed islands and sky dressing are generated with new chunks, and the island terrain only applies to new chunks. **On a server, delete (or rename) the world folder** (`level-name` in `server.properties`) before the first start. In an existing world, land that was already generated keeps what it had; set `city.scriptBuilder = true` and `makeover.scriptBuilder = true` in `config/stodd/world.toml` to let the scripts build on that old land the 2.3.0 way.
 * The overrides zip and full-pack zip of earlier versions are not needed any more: the jar installs everything.
-* **Optional: `stodd_chrome-1.0.0.jar`**, the Project: Edgerunner addon with eleven more implants (section 8). Put it in `mods/` next to STODD Core; it needs Project: Edgerunner, Palladium and KubeJS, which the pack has.
+* **Optional: `stodd_chrome-1.0.1.jar`**, the Project: Edgerunner addon with eleven more implants (section 8). Put it in `mods/` next to STODD Core; it needs Project: Edgerunner, Palladium and KubeJS, which the pack has.
 * Same mods as before: Survival Island, Origins, Curios, KubeJS, Waystones, True Prime Piece, Jujutsu Craft, Malum, Project: Edgerunner.
 
 ## What changed in 3.4.4
+
+* **STODD Chrome 1.0.1: the implants show up now.** In 1.0.0 they were in no creative tab, so neither the creative menu nor JEI listed them (they named Edgerunner's tab `project_edgerunner:cyberpunk`, which does not exist; Edgerunner's own items are listed by its tab file instead). They are now at the end of the **Project: Edgerunner** tab and in JEI. Replace `stodd_chrome-1.0.0.jar` with `stodd_chrome-1.0.1.jar`.
 
 * **Trees, grass, flowers and animals on sunken islands** (section 4c2). They were missing because the game places a biome's plants and animals from the top of the chunk down, and over a dome the top is the sea; now they are placed on the island inside, as on a sky island.
 * **No more sand patches on the hills**: the island's top, made under water, becomes the biome's grass again (sand stays only in deserts, badlands and beaches).
@@ -518,7 +520,7 @@ STODD Core 3 is built as an add-on to the pack's power-system mods: it does not 
 
 *Honest limit:* none of these mods' data names could be read here (their jars are not reachable from this workspace). The Java side finds the data by looking (capabilities by name, MCreator variables by their sync method), never by a hard-coded class, so a wrong guess makes a link say NOT LINKED rather than break anything.
 
-## 8. STODD Chrome: more implants for Project: Edgerunner (`stodd_chrome-1.0.0.jar`)
+## 8. STODD Chrome: more implants for Project: Edgerunner (`stodd_chrome-1.0.1.jar`)
 
 An addon for Project: Edgerunner, in its own jar. It works the way Edgerunner's own chrome does: you **assemble an implant at the tailoring bench with the soldering iron** (Edgerunner's Cyberware Tailoring tab), **install it at the Ripperdoc** in its body slot, it takes **load** from your cyberware capacity, and while it is installed it gives a power you can see in the powers screen. Every origin that may use chrome can install them; a Cyberware User (600 capacity at level 1, 1,000 at level 20) can carry far more of them than anyone else.
 

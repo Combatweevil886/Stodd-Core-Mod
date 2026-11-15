@@ -5,7 +5,7 @@ issueTrackerURL="https://github.com/Combatweevil886/Stodd-Core-Mod/issues"
 
 [[mods]]
 modId="stodd_chrome"
-version="1.0.0"
+version="1.0.1"
 displayName="STODD Chrome"
 logoFile="logo.png"
 authors="STODD"

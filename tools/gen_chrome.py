@@ -99,7 +99,7 @@ def main():
         end = im['tier'] >= 5
         write('addon/%s/items/%s.json' % (NS, im['id']), {
             'type': 'palladium:default', 'max_stack_size': 1, 'rarity': 'epic' if end else 'rare',
-            'creative_mode_tab': PE + ':cyberpunk',
+            'creative_mode_tab': PE + ':project_edgerunner',  # the tab Edgerunner's addon defines (its items' ':cyberpunk' names no tab)
             'tooltip': [
                 {'text': '%s (%s)' % ('Endgame implant' if end else 'Midgame implant', SLOT_NAMES[im['slot']]), 'color': '#AAAAAA'},
                 {'text': 'Tier: %d | Load: %d' % (im['tier'], im['load']), 'color': '#BF40BF'},

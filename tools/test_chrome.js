@@ -27,7 +27,7 @@ const lang = read('assets/stodd_chrome/lang/en_us.json')
 ok(items.length === 11, 'eleven implants: ' + items.length)
 items.forEach(id => {
   const it = read('addon/stodd_chrome/items/' + id + '.json')
-  ok(it.type === 'palladium:default' && it.max_stack_size === 1 && it.creative_mode_tab === 'project_edgerunner:cyberpunk', id + ': a Palladium item in Edgerunner\'s tab')
+  ok(it.type === 'palladium:default' && it.max_stack_size === 1 && it.creative_mode_tab === 'project_edgerunner:project_edgerunner', id + ': a Palladium item in Edgerunner\'s tab')
   ok(fs.existsSync(path.join(RES, 'assets/stodd_chrome/textures/item/' + id + '.png')), id + ': its icon')
   ok(read('assets/stodd_chrome/models/item/' + id + '.json').textures.layer0 === 'stodd_chrome:item/' + id, id + ': its model')
   ok(typeof lang['item.stodd_chrome.' + id] === 'string' && typeof lang['tailoring.stodd_chrome.' + id] === 'string', id + ': its names')
